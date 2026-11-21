@@ -78,5 +78,7 @@ for pid, label, accent, lp, dp, li, di in PRESETS:
         side = mix(bgc, ink, 0.035 if m == "light" else 0.05)
         out += [f'sidebar-bg = "{side}"', f'page-bg = "{bgc}"', f'accent = "{acc}"',
                 f'tree-selected-bg = "{mix(bgc, acc, 0.14)}"', f'tree-selected-fg = "{ink}"',
-                f'hover-bg = "{mix(bgc, acc, 0.07)}"', f'panel-bg = "{side}"', '']
+                f'hover-bg = "{mix(bgc, acc, 0.07)}"', f'panel-bg = "{side}"',
+                f'tree-fg = "{mix(ink, bgc, 0.12)}"', f'tree-dir-fg = "{ink}"', f'tree-icon = "{mix(acc, bgc, 0.2)}"',
+                f'surface-border = "{mix(bgc, ink, 0.1)}"', f'panel-border = "{mix(bgc, ink, 0.1)}"', '']
 sys.stdout.write("\n".join(out))

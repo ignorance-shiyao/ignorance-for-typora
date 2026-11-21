@@ -143,9 +143,12 @@ bullet = "disc"
 marker-color = "$accent"
 
 [chrome]
-surface-radius = "10px"
+surface-radius = "14px"
 surface-shadow = "none"
-tree-selected-radius = "6px"
+surface-inset = "8px"
+surface-gap = "8px"
+tree-selected-shadow = "none"
+tree-selected-radius = "8px"
 divider-width = "1px"
 
 [chrome.light]
@@ -165,7 +168,7 @@ hover-bg = "#1B2B43"
 panel-bg = "#111827"
 
 [layout]
-sidebar = "docked"
+sidebar = "card"
 editor = "docked"
-detail = "docked"
+detail = "card"
 
