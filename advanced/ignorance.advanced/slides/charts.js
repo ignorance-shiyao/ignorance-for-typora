@@ -1,10 +1,7 @@
 // Built-in chart renderer for slides: draws an option object (bar, line and
-// pie; see chart-source.js for the fence format) as an SVG string. No chart library is
-// bundled; anything outside this subset throws a readable error and the slide
-// shows the source instead.
+// pie; see chart-source.js for the fence format) as an SVG string. No chart
+// library is bundled.
 import { palette, esc, textWidth } from "./colors.js";
-
-const SUPPORTED = ["bar", "line", "pie"];
 
 const one = (v) => (Array.isArray(v) ? v[0] : v) || {};
 const list = (v) => (v === undefined ? [] : Array.isArray(v) ? v : [v]);
@@ -69,9 +66,6 @@ export function renderChartSvg(option, theme, size = {}) {
   const colors = Array.isArray(option.color) && option.color.length ? option.color : c.series;
   const series = list(option.series);
   if (!series.length) throw new Error("没有 series，无法画图。");
-  for (const s of series) {
-    if (!SUPPORTED.includes(s.type)) throw new Error(`演示里不支持图表类型 ${s.type}，可用 bar、line、pie。`);
-  }
   const text = (x, y, s, o = {}) =>
     `<text x="${f(x)}" y="${f(y)}" font-size="${o.size || 18}" fill="${o.fill || c.muted}" text-anchor="${o.anchor || "middle"}"${o.weight ? ` font-weight="${o.weight}"` : ""}>${esc(s)}</text>`;
   const out = [];

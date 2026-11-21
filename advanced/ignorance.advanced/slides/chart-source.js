@@ -1,7 +1,7 @@
 // Reads a ```chart fence in the format of Typora's official Charts extension
 // (typora.chart) and turns it into the option object slides/charts.js draws:
 //
-//   type: bar | line | pie
+//   type: bar | line | pie   (any other value draws bars)
 //   title: Optional title
 //   series: Name A, Name B        (optional, one name per value column)
 //   label, value[, value2 ...]
@@ -22,8 +22,8 @@ export function parseChart(source) {
     rows.push({ label: cells[0], values });
   }
   if (!rows.length) throw new Error("图表没有数据行。");
-  const type = meta.type.toLowerCase();
-  if (!["bar", "line", "pie"].includes(type)) throw new Error(`不支持图表类型 ${meta.type}，可用 bar、line、pie。`);
+  // Like the official Charts extension: anything that is not line or pie draws bars.
+  const type = ["line", "pie"].includes(meta.type.toLowerCase()) ? meta.type.toLowerCase() : "bar";
   const option = {};
   if (meta.title) option.title = { text: meta.title };
   if (type === "pie") {

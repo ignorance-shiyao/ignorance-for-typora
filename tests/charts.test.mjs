@@ -19,10 +19,9 @@ test("pie rows become named slices", () => {
   assert.deepEqual(o.series[0].data, [{ name: "甲", value: 3 }, { name: "乙", value: 1 }]);
 });
 
-test("bad rows, empty fences and unknown types fail with a readable message", () => {
+test("bad rows and empty fences fail with a readable message", () => {
   assert.throws(() => parseChart("type: bar\nQ1, abc"), /无法读取/);
   assert.throws(() => parseChart("type: bar"), /没有数据行/);
-  assert.throws(() => parseChart("type: radar\nA, 1"), /不支持图表类型 radar/);
 });
 
 const parse = (svg) => {
@@ -50,8 +49,7 @@ test("titles are escaped and each bar series gets its own slot", () => {
   assert.equal((svg.match(/<path/g) || []).length, 4);
 });
 
-test("unsupported series types and mixed pie fail with a readable message", () => {
-  assert.throws(() => renderChartSvg({ series: [{ type: "radar", data: [1] }] }, light), /不支持图表类型 radar/);
+test("mixed pie and empty series fail with a readable message", () => {
   assert.throws(() => renderChartSvg({ series: [{ type: "pie", data: [{ value: 1 }] }, { type: "bar", data: [1] }] }, light), /pie 不能/);
   assert.throws(() => renderChartSvg({}, light), /没有 series/);
 });
@@ -106,4 +104,9 @@ test("unbalanced subgraphs, edges to a subgraph and overlapping layouts fail rea
   assert.throws(() => renderFlowSvg("graph TD\n subgraph a\n A\n end\n B --> a", light), /不支持连到 subgraph/);
   // X sits on the path between two members of one subgraph, in a middle layer.
   assert.throws(() => renderFlowSvg("graph LR\n subgraph g\n  A\n  C\n end\n A --> X --> Y\n X --> C\n Z --> C", light), /夹进了其他节点/);
+});
+
+test("an unknown chart type draws bars, as the official Charts extension does", () => {
+  assert.equal(parseChart("type: radar\nA, 1\nB, 2").series[0].type, "bar");
+  assert.equal(parseChart("A, 1").series[0].type, "bar");
 });
