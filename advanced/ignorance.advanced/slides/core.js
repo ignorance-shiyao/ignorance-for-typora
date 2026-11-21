@@ -176,3 +176,6 @@ export function slideKey(slide) {
   const walk = (node) => [node.type, node.text, node.attrs, (node.children || []).map(walk)];
   return JSON.stringify(slide ? slide.nodes.map(walk) : null);
 }
+
+// Typora stores the list kind in attrs.listType: "ol", "ul" or "task".
+export const listTag = (attrs) => (attrs?.listType === "ol" ? "ol" : "ul");

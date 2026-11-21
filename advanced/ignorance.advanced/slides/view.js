@@ -1,7 +1,7 @@
 // Slides detail view: the current document as 16:9 slides. Slides are split
 // on `---` (or before each h1/h2 when the note has no rule). In the panel it
 // shows the current slide and a list; in fullsize it is the presentation.
-import { slideKey, splitSlides, parseInline, headingText, safeUrl, slideLayout, kpiParts, footnoteDefinitions } from "./core.js";
+import { slideKey, splitSlides, parseInline, headingText, safeUrl, slideLayout, kpiParts, footnoteDefinitions, listTag } from "./core.js";
 import { parseChart } from "./chart-source.js";
 import { renderChartSvg } from "./charts.js";
 import { renderFlowSvg } from "./flow.js";
@@ -208,8 +208,7 @@ function renderBlock(node) {
       return box;
     }
     case "list": {
-      const type = node.attrs?.listType;
-      const list = el(type === "ordered" || node.attrs?.ordered ? "ol" : "ul", type === "task" ? "task" : undefined);
+      const list = el(listTag(node.attrs), node.attrs?.listType === "task" ? "task" : undefined);
       if (node.attrs?.start > 1) list.start = node.attrs.start;
       for (const item of node.children) list.append(renderBlock(item));
       return list;

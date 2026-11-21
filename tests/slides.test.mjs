@@ -149,3 +149,11 @@ test("footnote definitions are collected by id from def_footnote blocks", () => 
   ]);
   assert.deepEqual([...defs], [["n", "脚注**正文**"], ["m", "无空格"]]);
 });
+
+test("listTag: Typora marks ordered lists with listType 'ol'", async () => {
+  const { listTag } = await import("../advanced/ignorance.advanced/slides/core.js");
+  assert.equal(listTag({ listType: "ol" }), "ol");
+  assert.equal(listTag({ listType: "ul" }), "ul");
+  assert.equal(listTag({ listType: "task" }), "ul");
+  assert.equal(listTag(undefined), "ul");
+});
