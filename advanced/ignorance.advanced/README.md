@@ -22,11 +22,11 @@
 
 ## 第三方库
 
-以下库原样取自各自的发布包，未做修改，许可文本放在同一文件夹。
+以下库取自各自的发布包，除 Lucide 数据文件加了 `export default` 前缀外未做修改，许可文本放在同一文件夹。
 
 | 库 | 版本 | 许可 | 用途 | 文件 |
 |---|---|---|---|---|
 | KaTeX | 0.16.11 | MIT | 演示里的数学公式 | `vendor/katex/` |
-| Lucide（Iconify 打包） | 待确认 | ISC | 演示里的图标短码 | `vendor/lucide-icons.js` |
+| Lucide（`@iconify-json/lucide`） | 1.2.136 | ISC | 演示里的图标短码 | `vendor/lucide-icons.js`（发布包的 `icons.json`，前面加了 `export default` 以便按模块加载，数据与发布包逐项一致） |
 
 两者是上游发布的压缩版本；本扩展自己的代码都是可读源码。
