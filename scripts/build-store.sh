@@ -1,0 +1,22 @@
+#!/bin/zsh
+# Assemble the packages for typora/typora-extensions under store/ (not committed):
+#   store/themes/<theme id>/       from theme/ignorance (built) + theme/store/
+#   store/extensions/<id>/         a copy of each folder in advanced/ that is store-ready
+# Store images (cover.webp, screenshot.webp) are taken from theme/store/ and the extension folders.
+set -euo pipefail
+ROOT="${0:A:h:h}"
+"$ROOT/scripts/build-theme.sh" >/dev/null
+OUT="$ROOT/store"
+rm -rf "$OUT" && mkdir -p "$OUT/themes" "$OUT/extensions"
+THEME_ID="$(python3 -I -c 'import json,sys; print(json.load(open(sys.argv[1]))["id"])' "$ROOT/theme/store/typora-extension.json")"
+T="$OUT/themes/$THEME_ID"
+mkdir -p "$T/themes/ignorance"
+cp "$ROOT/theme/store/typora-extension.json" "$ROOT/theme/store/README.md" "$T/"
+cp "$ROOT/LICENSE" "$T/LICENSE"
+cp "$ROOT/theme/ignorance/theme.toml" "$ROOT/theme/ignorance/theme.css" "$T/themes/ignorance/"
+for img in cover.webp screenshot.webp; do [[ -f "$ROOT/theme/store/$img" ]] && cp "$ROOT/theme/store/$img" "$T/$img"; done
+for ext in ignorance.file-viewers; do
+  cp -R "$ROOT/advanced/$ext" "$OUT/extensions/$ext"
+done
+echo "assembled $OUT"
+find "$OUT" -type f | sed "s#$OUT/##" | sort | head -60

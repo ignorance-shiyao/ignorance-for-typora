@@ -1,6 +1,6 @@
 #!/bin/zsh
 # Theme -> ~/.config/Typora/Themes/ignorance (a copy; Typora scans themes only at launch, so restart it).
-# Extension -> ~/.config/Typora/Extensions/ignorance.advanced (a symlink). Typora caches detail-view
+# Extensions -> ~/.config/Typora/Extensions/<id> (a symlink per folder in advanced/). Typora caches detail-view
 # pages, so restart after changing slides/ files; other changes take Settings ▸ Extensions ▸ Reload.
 # Remove both with --remove.
 set -euo pipefail
@@ -27,4 +27,6 @@ if [[ "${REMOVE:-}" == 1 ]]; then
 else
   mkdir -p "${THEME:h}" && rm -rf "$THEME" && cp -R "$ROOT/theme/ignorance" "$THEME" && echo "copied theme to $THEME"
 fi
-link "$ROOT/advanced/ignorance.advanced" "$HOME/.config/Typora/Extensions/ignorance.advanced"
+for ext in "$ROOT"/advanced/*/; do
+  link "${ext%/}" "$HOME/.config/Typora/Extensions/${ext:t}"
+done

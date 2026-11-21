@@ -2,3 +2,4 @@ node_modules/
 .DS_Store
 # built by scripts/build-theme.sh
 theme/ignorance/
+/store/

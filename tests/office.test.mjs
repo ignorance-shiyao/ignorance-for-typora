@@ -1,6 +1,6 @@
 import test from "node:test";
 import assert from "node:assert/strict";
-import { columnIndex, columnName, parsePptx, parseXlsx, sharedStrings, unescapeXml } from "../advanced/ignorance.advanced/viewers/office/core.js";
+import { columnIndex, columnName, parsePptx, parseXlsx, sharedStrings, unescapeXml } from "../advanced/ignorance.file-viewers/viewers/office/core.js";
 
 test("列字母与序号互转", () => {
   assert.equal(columnIndex("A1"), 0);

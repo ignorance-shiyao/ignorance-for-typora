@@ -1,4 +1,6 @@
 // Data viewer page (L1, sandboxed): JSON, YAML, TOML and XML as a collapsible tree, or as source.
+import { parse as parseToml } from "./smol-toml/index.js";
+
 const view = window.typora.view;
 const $ = (id) => document.getElementById(id);
 const MAX_TREE_BYTES = 3 * 1024 * 1024;
@@ -31,7 +33,7 @@ function xmlNode(el) {
 function parse(ext, source) {
   if (ext === "json") return node(null, JSON.parse(source));
   if (ext === "yaml" || ext === "yml") return node(null, jsyaml.load(source));
-  if (ext === "toml") return node(null, SmolToml.parse(source));
+  if (ext === "toml") return node(null, parseToml(source));
   if (ext === "xml") {
     const doc = new DOMParser().parseFromString(source, "application/xml");
     const bad = doc.querySelector("parsererror");

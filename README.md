@@ -79,7 +79,7 @@
 zsh scripts/install.sh
 ```
 
-主题复制到 `~/.config/Typora/Themes/ignorance`，扩展以软链接放到 `~/.config/Typora/Extensions/ignorance.advanced`，装完重启 Typora。
+主题复制到 `~/.config/Typora/Themes/ignorance`，`advanced/` 下的两个扩展（`ignorance.advanced`、`ignorance.file-viewers`）以软链接放到 `~/.config/Typora/Extensions/`，装完重启 Typora。
 
 卸载：
 
@@ -94,15 +94,18 @@ npm install
 npm test
 node scripts/check-styles.mjs
 zsh scripts/build-theme.sh
+zsh scripts/build-store.sh
 ```
 
-`theme/ignorance/` 是构建产物，不进版本库。
+`theme/ignorance/` 和 `store/` 是构建产物，不进版本库。`build-store.sh` 按 Typora 扩展商店的目录结构组装主题包 `themes/ignorance-shiyao.ignorance/` 和扩展包 `extensions/ignorance.file-viewers/`，供提交到 [typora/typora-extensions](https://github.com/typora/typora-extensions) 使用；尚未提交。`ignorance.advanced` 里的 ECharts 单文件超过商店 1 MB 限制，整包超过 5 MB，且与官方 Mermaid、图表扩展功能重复，不在上架范围内。
 
 | 路径 | 内容 |
 |---|---|
 | `theme/src/` | 主题源码：`theme.css`、`base.toml`（颜色与元素）、`layout.toml`（阅读宽度、段落节奏、标题编号、十字高亮、墨水屏）、`mascot.toml`（双猫） |
 | `theme/assets/` | 构建时内联为 data URI 的图片 |
-| `advanced/ignorance.advanced/` | 扩展：演示面板、ECharts 与 Mermaid 渲染器、文件预览（`viewers/`）、格式化命令、片段、模板 |
+| `advanced/ignorance.advanced/` | 扩展：演示面板、ECharts 与 Mermaid 渲染器、格式化命令、片段、模板 |
+| `advanced/ignorance.file-viewers/` | 扩展：json、yaml、toml、代码、网页、Office 文档的预览（`viewers/`） |
+| `theme/store/` | 主题商店包的清单、说明和封面图 |
 | `scripts/` | 构建与安装脚本、八套配色生成器、样式检查 |
 | `tests/` | 单元测试（`node --test`） |
 
@@ -132,4 +135,4 @@ zsh scripts/build-theme.sh
 
 ## 许可
 
-本项目代码使用 MIT 许可，见 [LICENSE](LICENSE)。`advanced/ignorance.advanced/vendor/` 里的 ECharts、Mermaid、KaTeX、Lucide、js-yaml、smol-toml、jszip、mammoth 各自保留原许可文件。
+本项目代码使用 MIT 许可，见 [LICENSE](LICENSE)。`advanced/ignorance.advanced/vendor/` 里的 ECharts、Mermaid、KaTeX、Lucide，以及 `advanced/ignorance.file-viewers/viewers/` 里的 js-yaml、smol-toml、jszip、mammoth，各自保留原许可文件。
