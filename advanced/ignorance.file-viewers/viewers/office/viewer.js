@@ -101,6 +101,7 @@ async function showPptx(bytes) {
 view.onOpen(async ({ name, bytes, ext, size: n }) => {
   $("name").textContent = name;
   $("info").textContent = size(n);
+  $("icon").dataset.kind = ext;
   try {
     if (ext === "docx") await showDocx(bytes);
     else if (ext === "xlsx") await showXlsx(bytes);

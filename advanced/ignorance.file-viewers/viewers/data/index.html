@@ -2,6 +2,7 @@
 <html>
   <head>
     <meta charset="utf-8" />
+    <link rel="stylesheet" href="../shared.css" />
     <link rel="stylesheet" href="viewer.css" />
     <script src="../../__typora/view.js"></script>
     <script src="js-yaml.js"></script>
@@ -9,8 +10,8 @@
   </head>
   <body>
     <header>
-      <span id="name"></span>
-      <span id="info"></span>
+      <span class="ficon" id="icon" data-kind="data" aria-hidden="true"></span>
+      <div class="title"><span id="name"></span><span id="info"></span></div>
       <span class="spacer"></span>
       <button id="expand" type="button" aria-label="全部展开" title="全部展开"><svg class="i" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m7 15 5 5 5-5"/><path d="m7 9 5-5 5 5"/></svg></button>
       <button id="collapse" type="button" aria-label="全部折叠" title="全部折叠"><svg class="i" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m7 20 5-5 5 5"/><path d="m7 4 5 5 5-5"/></svg></button>

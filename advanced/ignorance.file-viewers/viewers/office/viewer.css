@@ -1,33 +1,17 @@
-:root {
-  color-scheme: light dark;
-  --fg: var(--typora-foreground, #1f2937);
-  --bg: var(--typora-background, #ffffff);
-  --line: var(--typora-border, color-mix(in srgb, var(--fg) 14%, var(--bg)));
-  --accent: var(--typora-accent, #356fd8);
-  --muted: color-mix(in srgb, var(--fg) 55%, var(--bg));
-}
-html, body { margin: 0; height: 100%; }
-[hidden] { display: none !important; }
-body { display: flex; flex-direction: column; background: var(--bg); color: var(--fg); font: 13px/1.5 var(--typora-font, system-ui, sans-serif); }
-header { display: flex; align-items: center; gap: 8px; padding: 8px 14px; border-bottom: 1px solid var(--line); }
-#name { font-weight: 600; }
-#info { color: var(--muted); }
-.spacer { flex: 1; }
-button { font: inherit; padding: 2px 12px; border: 1px solid var(--line); border-radius: 6px; background: transparent; color: inherit; cursor: pointer; }
-button:hover { background: color-mix(in srgb, var(--accent) 8%, transparent); }
-.seg { display: flex; max-width: 60%; overflow-x: auto; }
-.seg button { border-radius: 0; margin-inline-start: -1px; white-space: nowrap; }
-.seg button:first-child { border-radius: 6px 0 0 6px; margin: 0; }
-.seg button:last-child { border-radius: 0 6px 6px 0; }
-.seg button[aria-pressed="true"] { background: color-mix(in srgb, var(--accent) 14%, transparent); color: var(--accent); border-color: color-mix(in srgb, var(--accent) 40%, var(--line)); position: relative; }
 main { flex: 1; min-height: 0; overflow: auto; display: flex; flex-direction: column; }
 #doc { flex: 1; border: 0; background: var(--bg); }
-#sheet { overflow: auto; }
-table { border-collapse: collapse; font-size: 12.5px; width: max-content; }
-th, td { border: 1px solid var(--line); padding: 3px 10px; white-space: pre; max-width: 420px; overflow: hidden; text-overflow: ellipsis; }
-th { position: sticky; top: 0; background: color-mix(in srgb, var(--accent) 7%, var(--bg)); color: var(--muted); font-weight: 500; }
-th.rn { left: 0; z-index: 1; }
-td.rn { position: sticky; left: 0; background: color-mix(in srgb, var(--accent) 7%, var(--bg)); color: var(--muted); text-align: right; }
+#sheet { overflow: auto; padding: 8px 14px 20px; }
+table { border-collapse: separate; border-spacing: 0; font-size: 12.5px; width: max-content; border: 1px solid var(--line); border-radius: 10px; }
+th, td { border-inline-end: 1px solid var(--line); border-block-end: 1px solid var(--line); padding: 5px 12px; white-space: pre; max-width: 420px; overflow: hidden; text-overflow: ellipsis; }
+th:last-child, td:last-child { border-inline-end: 0; }
+tr:last-child > td { border-block-end: 0; }
+th { position: sticky; top: 0; background: color-mix(in srgb, var(--fg) 5%, var(--bg)); color: var(--muted); font-weight: 500; text-align: center; }
+th.rn { left: 0; z-index: 1; border-start-start-radius: 9px; }
+th:last-child { border-start-end-radius: 9px; }
+tr:last-child > td.rn { border-end-start-radius: 9px; }
+tr:last-child > td:last-child { border-end-end-radius: 9px; }
+td.rn { position: sticky; left: 0; background: color-mix(in srgb, var(--fg) 5%, var(--bg)); color: var(--muted); text-align: center; }
+tr:nth-child(2) > td:not(.rn) { font-weight: 600; }
 td.num { text-align: right; font-variant-numeric: tabular-nums; }
 #slides { padding: 18px; display: grid; gap: 16px; grid-template-columns: repeat(auto-fill, minmax(320px, 1fr)); align-content: start; }
 .slide { aspect-ratio: 16 / 9; border: 1px solid var(--line); border-radius: 12px; padding: 16px 20px; overflow: auto; background: color-mix(in srgb, var(--accent) 3%, var(--bg)); }
