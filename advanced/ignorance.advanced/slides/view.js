@@ -4,7 +4,7 @@
 import { slideKey, splitSlides, parseInline, headingText, safeUrl, slideLayout, kpiParts, footnoteDefinitions, listTag } from "./core.js";
 import { parseChart } from "./chart-source.js";
 import { renderChartSvg } from "./charts.js";
-import { renderFlowSvg } from "./flow.js";
+import { renderMermaidSvg } from "./mermaid.js";
 
 const view = window.typora.view;
 const SLIDE_W = 1280;
@@ -334,7 +334,7 @@ function svgFigure(className, svg) {
 function renderFence(node) {
   const lang = String(node.attrs?.lang || "").toLowerCase();
   const source = node.text || "";
-  const draw = { chart: () => svgFigure("chart", renderChartSvg(parseChart(source), state.theme, { width: 960, height: 460 })), mermaid: () => svgFigure("diagram", renderFlowSvg(source, state.theme)) }[lang];
+  const draw = { chart: () => svgFigure("chart", renderChartSvg(parseChart(source), state.theme, { width: 960, height: 460 })), mermaid: () => svgFigure("diagram", renderMermaidSvg(source, state.theme)) }[lang];
   let note = null;
   if (draw) {
     try {

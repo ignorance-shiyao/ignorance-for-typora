@@ -50,7 +50,7 @@
 |---|---|
 | 演示面板 | 按 `---` 或标题分页；支持版式注释、脚注、图标短码、KaTeX 公式；可全屏放映 |
 | 演示里的图表 | 内置绘制 ` ```chart ` 代码块（Typora 官方图表格式）的柱状、折线、饼图，配色跟随主题 |
-| 演示里的流程图 | 内置绘制 ` ```mermaid ` 的 `graph` / `flowchart`，配色跟随主题 |
+| 演示里的 Mermaid 图 | 内置绘制 ` ```mermaid ` 的流程图（`graph` / `flowchart`）、序列图、饼图、甘特图，配色跟随主题 |
 | 文件预览 | 在文件树里点开非 Markdown 文件，在编辑区预览，见下节 |
 | 格式化 | 命令「中英文之间加空格」 |
 | 片段与模板 | 徽章片段；汇报模板 |
@@ -117,7 +117,7 @@ zsh scripts/build-store.sh
 - 扩展不能改编辑器 DOM，编辑器里的交互只能靠主题 CSS 实现。
 - 行内徽章、悬停显示、注音、面包屑在编辑器里隐藏 `((类型:` 与 `))`，鼠标悬停该行时显示；悬停显示未在实机用真实鼠标验证。
 - 官方 Mermaid 扩展在编辑器里不能画节点文字里带 `<br>` 的图（报「The renderer did not return valid SVG」），这是官方扩展的限制，演示里可以画。
-- 演示里的图表只支持 bar、line、pie，不支持 bar 与 line 混画；流程图只支持 `graph` / `flowchart`（含嵌套 `subgraph`，不支持连到 subgraph 本身），超出范围时显示源码。
+- 演示里的图表只支持 bar、line、pie，不支持 bar 与 line 混画；Mermaid 只支持流程图（含嵌套 `subgraph`，不支持连到 subgraph 本身）、序列图、饼图、甘特图，类图、状态图、ER 图等显示源码；甘特图不支持 `excludes`、`axisFormat`、`todayMarker`（会被忽略）和 `YYYY-MM-DD` 以外的日期格式，序列图不支持 `box`、`create`、`destroy`、`link`；超出范围时显示源码。
 - 属性块默认以 YAML 源码显示，这是 Typora 渲染器写死的默认值，主题和扩展都改不了，需要在每篇文档里手动切到字段表单。
 - 属性字段表单里 `cssclasses` 等列表项前的「- 」是 YAML 数据本身，样式去不掉。
 - 侧栏和右侧面板的内部元素只能通过主题配色键调整。

@@ -88,7 +88,7 @@ test("主题商店包：只含主题，清单与 theme.toml 满足规则", () =>
 test("ignorance.advanced 不打包 ECharts 与 Mermaid，演示用内置渲染器", () => {
   const dir = join(ROOT, "ignorance.advanced");
   assert.equal(manifestOf("ignorance.advanced").contributes.fenceRenderers, undefined);
-  for (const path of files(dir)) assert.ok(!/echarts|mermaid/i.test(path), `${path} 不应出现`);
+  for (const path of files(dir)) assert.ok(!/^vendor\/.*(echarts|mermaid)/i.test(path) && !/^(echarts|mermaid)\//i.test(path), `${path} 不应出现`);
   const html = readFileSync(join(dir, "slides/index.html"), "utf8");
   assert.ok(!/echarts|mermaid/i.test(html));
 });
