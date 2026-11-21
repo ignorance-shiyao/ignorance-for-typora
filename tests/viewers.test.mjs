@@ -2,8 +2,9 @@ import test from "node:test";
 import assert from "node:assert/strict";
 import { existsSync, readFileSync } from "node:fs";
 import { join } from "node:path";
+import { fileURLToPath } from "node:url";
 
-const root = new URL("../advanced/ignorance.advanced/", import.meta.url).pathname;
+const root = fileURLToPath(new URL("../advanced/ignorance.advanced/", import.meta.url));
 const manifest = JSON.parse(readFileSync(join(root, "typora-extension.json"), "utf8"));
 const viewers = manifest.contributes.fileViewers ?? [];
 
