@@ -203,6 +203,17 @@
         ],
         "entry": "viewers/code/index.html",
         "editable": true
+      },
+      {
+        "id": "office",
+        "title": "Office 文档",
+        "extensions": [
+          "docx",
+          "xlsx",
+          "pptx"
+        ],
+        "entry": "viewers/office/index.html",
+        "editable": false
       }
     ]
   },
