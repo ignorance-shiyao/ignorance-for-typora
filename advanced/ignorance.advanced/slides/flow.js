@@ -26,6 +26,8 @@ export function parseFlow(source) {
     for (const [label, shape] of pairs) if (label !== undefined) Object.assign(node, { label: clean(label), shape });
     // Mermaid's database shape [(text)] is drawn as a rounded node.
     if (rect !== undefined && /^\(.*\)$/.test(rect)) Object.assign(node, { label: clean(rect.slice(1, -1)), shape: "round" });
+    // Listed inside a subgraph: it belongs there, even when an earlier line mentioned it outside.
+    if (node.group === undefined && stack.length) node.group = stack[stack.length - 1];
     nodes.set(id, node);
     return node;
   };

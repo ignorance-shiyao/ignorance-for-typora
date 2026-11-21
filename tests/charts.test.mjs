@@ -87,6 +87,11 @@ test("subgraphs parse with titles, nesting and members", () => {
   assert.equal(g.nodes[3].label, "库");
 });
 
+test("a node mentioned outside first still belongs to the subgraph that lists it", () => {
+  const g = parseFlow("graph TD\n X --> A\n subgraph s [组]\n  A --> B\n end");
+  assert.deepEqual(g.nodes.map((n) => [n.id, n.group]), [["X", undefined], ["A", "s"], ["B", "s"]]);
+});
+
 test("subgraph boxes enclose their members and keep other nodes outside", () => {
   const svg = renderFlowSvg("flowchart LR\n subgraph 前端\n  A --> B\n end\n subgraph 后端\n  C --> D\n end\n B --> C", light);
   assert.equal((svg.match(/rx="14"/g) || []).length, 2);
