@@ -1,4 +1,4 @@
-// Dispatches a ```mermaid fence to the built-in renderers: flowchart / graph,
+// Dispatches a ```mermaid fence to the built-in renderers (not the Mermaid library): flowchart / graph,
 // sequenceDiagram, pie and gantt. Any other diagram type throws a readable
 // error and the slide shows the source instead.
 import { renderFlowSvg } from "./flow.js";

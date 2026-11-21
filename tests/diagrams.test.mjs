@@ -2,7 +2,7 @@ import { test } from "node:test";
 import assert from "node:assert/strict";
 import { parseSequence, renderSequenceSvg } from "../advanced/ignorance.advanced/slides/sequence.js";
 import { parseGantt, renderGanttSvg } from "../advanced/ignorance.advanced/slides/gantt.js";
-import { parsePie, renderMermaidSvg } from "../advanced/ignorance.advanced/slides/mermaid.js";
+import { parsePie, renderMermaidSvg } from "../advanced/ignorance.advanced/slides/diagrams.js";
 
 const light = { dark: false, accent: "#123456", foreground: "#111111", background: "#ffffff", border: "#dddddd" };
 const iso = (ms) => new Date(ms).toISOString().slice(0, 10);

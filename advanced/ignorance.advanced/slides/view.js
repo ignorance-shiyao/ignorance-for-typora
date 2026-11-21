@@ -4,7 +4,7 @@
 import { slideKey, splitSlides, parseInline, headingText, safeUrl, slideLayout, kpiParts, footnoteDefinitions, listTag } from "./core.js";
 import { parseChart } from "./chart-source.js";
 import { renderChartSvg } from "./charts.js";
-import { renderMermaidSvg } from "./mermaid.js";
+import { renderMermaidSvg } from "./diagrams.js";
 
 const view = window.typora.view;
 const SLIDE_W = 1280;
