@@ -1,0 +1,32 @@
+<!doctype html>
+<html>
+  <head>
+    <meta charset="utf-8" />
+    <link rel="stylesheet" href="viewer.css" />
+    <script src="../../__typora/view.js"></script>
+    <script src="viewer.js" defer></script>
+  </head>
+  <body>
+    <header>
+      <span id="name"></span>
+      <span id="info"></span>
+      <span id="dirty" hidden>未保存</span>
+      <span class="spacer"></span>
+      <div class="seg" id="modes" role="group">
+        <button id="m-src" type="button" aria-pressed="true">源码</button>
+        <button id="m-view" type="button" aria-pressed="false">预览</button>
+      </div>
+      <button id="save" type="button" disabled>保存</button>
+    </header>
+    <main>
+      <div id="editor">
+        <div id="gutter" aria-hidden="true"></div>
+        <div id="stack">
+          <pre id="hl" aria-hidden="true"></pre>
+          <textarea id="ta" spellcheck="false" wrap="off" autocomplete="off" autocapitalize="off"></textarea>
+        </div>
+      </div>
+      <iframe id="preview" sandbox="allow-scripts" hidden></iframe>
+    </main>
+  </body>
+</html>

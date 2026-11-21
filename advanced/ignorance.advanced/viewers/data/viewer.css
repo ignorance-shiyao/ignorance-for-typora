@@ -8,6 +8,7 @@
   --mono: ui-monospace, "SF Mono", Menlo, Consolas, monospace;
 }
 html, body { margin: 0; height: 100%; }
+[hidden] { display: none !important; }
 body { display: flex; flex-direction: column; background: var(--bg); color: var(--fg); font: 13px/1.5 var(--typora-font, system-ui, sans-serif); }
 header { display: flex; align-items: center; gap: 8px; padding: 8px 14px; border-bottom: 1px solid var(--line); }
 #name { font-weight: 600; }

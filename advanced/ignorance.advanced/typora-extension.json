@@ -175,6 +175,34 @@
         ],
         "entry": "viewers/data/index.html",
         "editable": false
+      },
+      {
+        "id": "code",
+        "title": "代码与网页",
+        "extensions": [
+          "html",
+          "htm",
+          "css",
+          "js",
+          "mjs",
+          "cjs",
+          "ts",
+          "tsx",
+          "jsx",
+          "py",
+          "java",
+          "go",
+          "rs",
+          "c",
+          "cpp",
+          "h",
+          "sh",
+          "zsh",
+          "sql",
+          "ini"
+        ],
+        "entry": "viewers/code/index.html",
+        "editable": true
       }
     ]
   },
