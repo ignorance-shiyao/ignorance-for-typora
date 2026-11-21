@@ -1,0 +1,169 @@
+{
+  "id": "ignorance.advanced",
+  "name": "Ignorance Advanced",
+  "version": "0.1.0",
+  "description": "演示模式、ECharts 代码块、行内徽章与彩色高亮、图表索引侧栏、中英文空格格式化，以及周报与汇报模板。",
+  "author": "ignorance-shiyao",
+  "repository": "https://github.com/ignorance-shiyao/ignorance-for-typora",
+  "engines": {
+    "typora": ">=2.0.0"
+  },
+  "keywords": [
+    "echarts",
+    "chart",
+    "cjk",
+    "chinese",
+    "badge",
+    "template"
+  ],
+  "tags": [
+    "Markdown Extension",
+    "Diagram",
+    "Detail View",
+    "Writing"
+  ],
+  "main": "main.js",
+  "activationEvents": [
+    "onStartupFinished"
+  ],
+  "contributes": {
+    "fenceRenderers": [
+      {
+        "id": "echarts",
+        "lang": [
+          "echarts"
+        ],
+        "mode": "interactive",
+        "entry": "echarts/interactive.html"
+      },
+      {
+        "id": "mermaid",
+        "lang": [
+          "mermaid"
+        ],
+        "mode": "static",
+        "entry": "mermaid/renderer.html"
+      }
+    ],
+    "inlineRules": [
+      {
+        "id": "badge-blue",
+        "pattern": "\\(\\(blue:([^()|\\n]+)\\|([^()\\n]+)\\)\\)",
+        "class": "ib-badge ib-badge-blue",
+        "title": "$1 · $2"
+      },
+      {
+        "id": "badge-green",
+        "pattern": "\\(\\(green:([^()|\\n]+)\\|([^()\\n]+)\\)\\)",
+        "class": "ib-badge ib-badge-green",
+        "title": "$1 · $2"
+      },
+      {
+        "id": "badge-orange",
+        "pattern": "\\(\\(orange:([^()|\\n]+)\\|([^()\\n]+)\\)\\)",
+        "class": "ib-badge ib-badge-orange",
+        "title": "$1 · $2"
+      },
+      {
+        "id": "badge-red",
+        "pattern": "\\(\\(red:([^()|\\n]+)\\|([^()\\n]+)\\)\\)",
+        "class": "ib-badge ib-badge-red",
+        "title": "$1 · $2"
+      },
+      {
+        "id": "badge-purple",
+        "pattern": "\\(\\(purple:([^()|\\n]+)\\|([^()\\n]+)\\)\\)",
+        "class": "ib-badge ib-badge-purple",
+        "title": "$1 · $2"
+      },
+      {
+        "id": "spoiler",
+        "pattern": "\\(\\(spoiler:([^()\\n]+)\\)\\)",
+        "class": "ib-spoiler",
+        "title": "悬停查看"
+      },
+      {
+        "id": "ruby",
+        "pattern": "\\(\\(ruby:([^()|\\n]+)\\|([^()\\n]+)\\)\\)",
+        "class": "ib-ruby",
+        "title": "$2"
+      },
+      {
+        "id": "crumb",
+        "pattern": "\\(\\(crumb:([^()\\n]+)\\)\\)",
+        "class": "ib-crumb",
+        "title": "$1"
+      },
+      {
+        "id": "hl-red",
+        "pattern": "🔴[^=\\s，。、；：！？,.;:!?]+",
+        "class": "ib-hl-red"
+      },
+      {
+        "id": "hl-orange",
+        "pattern": "🟠[^=\\s，。、；：！？,.;:!?]+",
+        "class": "ib-hl-orange"
+      },
+      {
+        "id": "hl-green",
+        "pattern": "🟢[^=\\s，。、；：！？,.;:!?]+",
+        "class": "ib-hl-green"
+      },
+      {
+        "id": "hl-blue",
+        "pattern": "🔵[^=\\s，。、；：！？,.;:!?]+",
+        "class": "ib-hl-blue"
+      },
+      {
+        "id": "hl-purple",
+        "pattern": "🟣[^=\\s，。、；：！？,.;:!?]+",
+        "class": "ib-hl-purple"
+      }
+    ],
+    "detailViews": [
+      {
+        "id": "figures",
+        "title": "图表与图片",
+        "icon": "chart",
+        "sfSymbol": "chart.bar.doc.horizontal",
+        "query": {
+          "block": [
+            "fences",
+            "table",
+            "math_block"
+          ],
+          "inline": [
+            "image"
+          ]
+        },
+        "item": {
+          "label": "{type} {lang} {text}",
+          "groupBy": "heading"
+        }
+      },
+      {
+        "id": "slides",
+        "title": "演示",
+        "icon": "image-play",
+        "sfSymbol": "play.rectangle",
+        "entry": "slides/index.html"
+      }
+    ],
+    "templates": "templates",
+    "snippets": "snippets",
+    "configuration": {
+      "title": "Ignorance Advanced",
+      "properties": {
+        "showMascot": {
+          "type": "boolean",
+          "default": false,
+          "title": "在演示里显示双猫",
+          "description": "封面右下角和最后一页。主题里的双猫在 设置 ▸ 视图 ▸ 主题选项「双猫」单独开关，默认都关闭。"
+        }
+      }
+    }
+  },
+  "permissions": {
+    "document": "read"
+  }
+}
