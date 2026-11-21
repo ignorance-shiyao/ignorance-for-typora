@@ -42,14 +42,12 @@ function smoothPath(points) {
   return d;
 }
 
-// Bar with rounded outer end; (x, y) is the top-left of the box.
+// Bar with a rounded outer end; (x, y) is the top-left of the box.
 function barPath(x, y, w, h, r, end) {
   r = Math.max(0, Math.min(r, w / 2, h / 2));
   if (!r) return `M${f(x)},${f(y)}h${f(w)}v${f(h)}h${f(-w)}z`;
   if (end === "top") return `M${f(x)},${f(y + h)}V${f(y + r)}Q${f(x)},${f(y)} ${f(x + r)},${f(y)}H${f(x + w - r)}Q${f(x + w)},${f(y)} ${f(x + w)},${f(y + r)}V${f(y + h)}z`;
-  if (end === "bottom") return `M${f(x)},${f(y)}H${f(x + w)}V${f(y + h - r)}Q${f(x + w)},${f(y + h)} ${f(x + w - r)},${f(y + h)}H${f(x + r)}Q${f(x)},${f(y + h)} ${f(x)},${f(y + h - r)}z`;
-  if (end === "right") return `M${f(x)},${f(y)}H${f(x + w - r)}Q${f(x + w)},${f(y)} ${f(x + w)},${f(y + r)}V${f(y + h - r)}Q${f(x + w)},${f(y + h)} ${f(x + w - r)},${f(y + h)}H${f(x)}z`;
-  return `M${f(x + w)},${f(y)}H${f(x + r)}Q${f(x)},${f(y)} ${f(x)},${f(y + r)}V${f(y + h - r)}Q${f(x)},${f(y + h)} ${f(x + r)},${f(y + h)}H${f(x + w)}z`;
+  return `M${f(x)},${f(y)}H${f(x + w)}V${f(y + h - r)}Q${f(x + w)},${f(y + h)} ${f(x + w - r)},${f(y + h)}H${f(x + r)}Q${f(x)},${f(y + h)} ${f(x)},${f(y + h - r)}z`;
 }
 
 function arcPath(cx, cy, r0, r1, a0, a1) {
@@ -92,9 +90,8 @@ export function renderChartSvg(option, theme, size = {}) {
   const isPie = series.every((s) => s.type === "pie");
   if (!isPie && series.some((s) => s.type === "pie")) throw new Error("pie 不能与 bar、line 画在同一张图里。");
 
-  const horizontal = !isPie && one(option.yAxis).type === "category" && series.every((s) => s.type === "bar");
-  const catAxis = one(horizontal ? option.yAxis : option.xAxis);
-  const valAxis = one(horizontal ? option.xAxis : option.yAxis);
+  const catAxis = one(option.xAxis);
+  const valAxis = one(option.yAxis);
   const dataLen = Math.max(...series.map((s) => list(s.data).length));
   const categories = isPie ? [] : list(catAxis.data).length ? list(catAxis.data).map((d) => (d && typeof d === "object" ? d.value : d)) : Array.from({ length: dataLen }, (_, i) => String(i + 1));
 
@@ -144,75 +141,44 @@ export function renderChartSvg(option, theme, size = {}) {
     return wrap(out, width, height, c);
   }
 
-  // Cartesian geometry.
-  const stacks = new Map();
-  const stackOf = (s, i) => (s.stack ? `s:${s.stack}` : `i:${i}`);
-  const cumulative = series.map(() => new Array(categories.length).fill(0));
-  const base = series.map(() => new Array(categories.length).fill(0));
-  series.forEach((s, i) => {
-    const key = stackOf(s, i) + ":" + s.type;
-    const sums = stacks.get(key) || new Array(categories.length).fill(0);
-    stacks.set(key, sums);
-    categories.forEach((_, k) => {
-      const v = num(list(s.data)[k]);
-      base[i][k] = sums[k];
-      sums[k] += v;
-      cumulative[i][k] = sums[k];
-    });
-  });
-  let lo = 0;
-  let hi = 0;
-  series.forEach((_, i) => cumulative[i].forEach((v, k) => ((hi = Math.max(hi, v)), (lo = Math.min(lo, v, base[i][k])))));
-  if (series.some((s) => s.type === "line") && series.every((s) => s.type === "line")) lo = Math.min(lo, ...cumulative.flat());
+  // Cartesian geometry: categories along x, values along y.
+  const values = series.map((s) => categories.map((_, k) => num(list(s.data)[k])));
+  let lo = Math.min(0, ...values.flat());
+  let hi = Math.max(0, ...values.flat());
   if (Number.isFinite(valAxis.min)) lo = valAxis.min;
   if (Number.isFinite(valAxis.max)) hi = valAxis.max;
   const scale = niceScale(lo, hi === lo ? lo + 1 : hi);
   const tickLabels = scale.ticks.map(fmt);
-  const catW = horizontal ? Math.max(...categories.map((k) => textWidth(k, 18))) : 0;
-  const yLabelW = horizontal ? catW : Math.max(...tickLabels.map((t) => textWidth(t, 18)));
+  const yLabelW = Math.max(...tickLabels.map((t) => textWidth(t, 18)));
   const x0 = 8 + yLabelW + 16;
   const x1 = width - 24;
   const y0 = top + 12;
   const y1 = height - 44;
-  const band = (horizontal ? y1 - y0 : x1 - x0) / categories.length;
-  const along = (v) => (horizontal ? x0 + ((v - scale.lo) / (scale.hi - scale.lo)) * (x1 - x0) : y1 - ((v - scale.lo) / (scale.hi - scale.lo)) * (y1 - y0));
+  const band = (x1 - x0) / categories.length;
+  const along = (v) => y1 - ((v - scale.lo) / (scale.hi - scale.lo)) * (y1 - y0);
 
   scale.ticks.forEach((t, i) => {
     const p = along(t);
-    if (horizontal) {
-      out.push(`<line x1="${f(p)}" y1="${y0}" x2="${f(p)}" y2="${y1}" stroke="${c.grid}" stroke-width="1.5"/>`);
-      out.push(text(p, y1 + 28, tickLabels[i]));
-    } else {
-      out.push(`<line x1="${x0}" y1="${f(p)}" x2="${x1}" y2="${f(p)}" stroke="${c.grid}" stroke-width="1.5"/>`);
-      out.push(text(x0 - 14, p + 6, tickLabels[i], { anchor: "end" }));
-    }
+    out.push(`<line x1="${x0}" y1="${f(p)}" x2="${x1}" y2="${f(p)}" stroke="${c.grid}" stroke-width="1.5"/>`);
+    out.push(text(x0 - 14, p + 6, tickLabels[i], { anchor: "end" }));
   });
   const zero = along(0);
-  out.push(horizontal ? `<line x1="${f(zero)}" y1="${y0}" x2="${f(zero)}" y2="${y1}" stroke="${c.border}" stroke-width="1.5"/>` : `<line x1="${x0}" y1="${f(zero)}" x2="${x1}" y2="${f(zero)}" stroke="${c.border}" stroke-width="1.5"/>`);
-  categories.forEach((k, i) => {
-    const m = (horizontal ? y0 : x0) + band * (i + 0.5);
-    out.push(horizontal ? text(x0 - 16, m + 6, k, { anchor: "end" }) : text(m, y1 + 28, k));
-  });
+  out.push(`<line x1="${x0}" y1="${f(zero)}" x2="${x1}" y2="${f(zero)}" stroke="${c.border}" stroke-width="1.5"/>`);
+  categories.forEach((k, i) => out.push(text(x0 + band * (i + 0.5), y1 + 28, k)));
 
-  // Bars: one slot per stack group.
+  // Bars: one slot per bar series, side by side.
   const bars = series.map((s, i) => ({ s, i })).filter((e) => e.s.type === "bar");
-  const groups = [...new Set(bars.map((e) => stackOf(e.s, e.i)))];
-  const slot = Math.min(56, (band * 0.64) / Math.max(1, groups.length));
+  const slot = Math.min(56, (band * 0.64) / Math.max(1, bars.length));
   const gap = 6;
-  bars.forEach(({ s, i }) => {
-    const g = groups.indexOf(stackOf(s, i));
+  bars.forEach(({ i }, g) => {
     const color = colors[i % colors.length];
-    const lastOfStack = (k) => !bars.some((e) => e.i > i && stackOf(e.s, e.i) === stackOf(s, i) && num(list(e.s.data)[k]) !== 0);
     categories.forEach((_, k) => {
-      const v = num(list(s.data)[k]);
+      const v = values[i][k];
       if (!v) return;
-      const a = along(base[i][k]);
-      const b = along(cumulative[i][k]);
-      const m = (horizontal ? y0 : x0) + band * (k + 0.5) - (groups.length * (slot + gap) - gap) / 2 + g * (slot + gap);
-      const round = lastOfStack(k) ? 6 : 0;
-      if (horizontal) out.push(`<path d="${barPath(Math.min(a, b), m, Math.abs(b - a), slot, round, v >= 0 ? "right" : "left")}" fill="${color}"/>`);
-      else out.push(`<path d="${barPath(m, Math.min(a, b), slot, Math.abs(b - a), round, v >= 0 ? "top" : "bottom")}" fill="${color}"/>`);
-      if (s.label?.show) out.push(horizontal ? text(Math.max(a, b) + 8, m + slot / 2 + 6, fmt(v), { anchor: "start", fill: c.fg }) : text(m + slot / 2, Math.min(a, b) - 8, fmt(v), { fill: c.fg }));
+      const a = along(0);
+      const b = along(v);
+      const m = x0 + band * (k + 0.5) - (bars.length * (slot + gap) - gap) / 2 + g * (slot + gap);
+      out.push(`<path d="${barPath(m, Math.min(a, b), slot, Math.abs(b - a), 6, v >= 0 ? "top" : "bottom")}" fill="${color}"/>`);
     });
   });
 
@@ -220,13 +186,11 @@ export function renderChartSvg(option, theme, size = {}) {
   series.forEach((s, i) => {
     if (s.type !== "line") return;
     const color = colors[i % colors.length];
-    const pts = categories.map((_, k) => [x0 + band * (k + 0.5), along(cumulative[i][k])]);
+    const pts = categories.map((_, k) => [x0 + band * (k + 0.5), along(values[i][k])]);
     const d = s.smooth ? smoothPath(pts) : "M" + pts.map((p) => `${f(p[0])},${f(p[1])}`).join("L");
     if (s.areaStyle) out.push(`<path d="${d}L${f(pts[pts.length - 1][0])},${f(zero)}L${f(pts[0][0])},${f(zero)}z" fill="${color}" fill-opacity="0.14"/>`);
     out.push(`<path d="${d}" fill="none" stroke="${color}" stroke-width="3.5" stroke-linecap="round" stroke-linejoin="round"/>`);
-    if (s.showSymbol !== false && s.symbol !== "none")
-      pts.forEach((p) => out.push(`<circle cx="${f(p[0])}" cy="${f(p[1])}" r="5.5" fill="${c.bg}" stroke="${color}" stroke-width="3"/>`));
-    if (s.label?.show) pts.forEach((p, k) => out.push(text(p[0], p[1] - 14, fmt(num(list(s.data)[k])), { fill: c.fg })));
+    pts.forEach((p) => out.push(`<circle cx="${f(p[0])}" cy="${f(p[1])}" r="5.5" fill="${c.bg}" stroke="${color}" stroke-width="3"/>`));
   });
 
   return wrap(out, width, height, c);

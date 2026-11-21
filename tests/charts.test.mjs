@@ -44,8 +44,8 @@ test("pie draws one slice per item with percentage labels", () => {
   assert.match(svg, /乙 25%/);
 });
 
-test("horizontal stacked bars and escaping of titles", () => {
-  const svg = parse(renderChartSvg({ title: { text: "a<b&c" }, xAxis: { type: "value" }, yAxis: { type: "category", data: ["A", "B"] }, series: [{ type: "bar", stack: "t", data: [3, 5] }, { type: "bar", stack: "t", data: [2, 1] }] }, light));
+test("titles are escaped and each bar series gets its own slot", () => {
+  const svg = parse(renderChartSvg({ title: { text: "a<b&c" }, xAxis: { data: ["A", "B"] }, series: [{ type: "bar", data: [3, 5] }, { type: "bar", data: [2, 1] }] }, light));
   assert.match(svg, /a&lt;b&amp;c/);
   assert.equal((svg.match(/<path/g) || []).length, 4);
 });
