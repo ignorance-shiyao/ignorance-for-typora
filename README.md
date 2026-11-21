@@ -13,7 +13,7 @@
 
 <br>
 
-<img src="assets/palettes.svg" alt="八套配色" width="720">
+<img src="assets/demo/theme.gif" alt="浅色与深色主题下浏览示例文档" width="860">
 
 </div>
 
@@ -22,6 +22,17 @@
 ## 主题
 
 八套配色各有浅色和深色，导出 HTML 同样生效。
+
+<div align="center">
+<img src="assets/palettes.svg" alt="八套配色" width="680">
+</div>
+
+<table>
+<tr>
+<td width="50%"><img src="assets/shots/light.png" alt="浅色"></td>
+<td width="50%"><img src="assets/shots/dark.png" alt="深色"></td>
+</tr>
+</table>
 
 | 方面 | 内容 |
 |---|---|
@@ -53,6 +64,10 @@
 | 结构化数据 | json、yaml、yml、toml、xml | 可折叠的树，可切到源码；出错时显示错误并回到源码 |
 | 代码与网页 | html、htm、css、js、mjs、cjs、ts、tsx、jsx、py、java、go、rs、c、cpp、h、sh、zsh、sql、ini | 带行号和简易着色的源码，可编辑并保存（Tab 缩进、⌘S）；HTML 另有预览模式 |
 | Office 文档 | docx、xlsx、pptx | 只读：docx 转为文档，xlsx 按工作表显示，pptx 按页显示文字 |
+
+<div align="center">
+<img src="assets/demo/preview.gif" alt="文件树里依次预览 json、yaml、html、xlsx、pptx、docx" width="860">
+</div>
 
 图片、音频、视频和 PDF 使用 Typora 自带预览；csv、tsv 可用 Typora 官方的 CSV Viewer 扩展。
 
