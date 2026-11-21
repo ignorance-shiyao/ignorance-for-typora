@@ -28,52 +28,92 @@
   "contributes": {
     "inlineRules": [
       {
+        "id": "badge-open",
+        "pattern": "\\(\\((?:blue|green|orange|red|purple):(?=[^()|\\n]+\\|[^()\\n]+\\)\\))",
+        "class": "ib-syn"
+      },
+      {
         "id": "badge-blue",
-        "pattern": "\\(\\(blue:([^()|\\n]+)\\|([^()\\n]+)\\)\\)",
+        "pattern": "(?<=\\(\\(blue:)([^()|\\n]+?)\\s*\\|\\s*([^()\\n]*[^()\\s])(?=\\)\\))",
         "class": "ib-badge ib-badge-blue",
         "title": "$1 · $2"
       },
       {
         "id": "badge-green",
-        "pattern": "\\(\\(green:([^()|\\n]+)\\|([^()\\n]+)\\)\\)",
+        "pattern": "(?<=\\(\\(green:)([^()|\\n]+?)\\s*\\|\\s*([^()\\n]*[^()\\s])(?=\\)\\))",
         "class": "ib-badge ib-badge-green",
         "title": "$1 · $2"
       },
       {
         "id": "badge-orange",
-        "pattern": "\\(\\(orange:([^()|\\n]+)\\|([^()\\n]+)\\)\\)",
+        "pattern": "(?<=\\(\\(orange:)([^()|\\n]+?)\\s*\\|\\s*([^()\\n]*[^()\\s])(?=\\)\\))",
         "class": "ib-badge ib-badge-orange",
         "title": "$1 · $2"
       },
       {
         "id": "badge-red",
-        "pattern": "\\(\\(red:([^()|\\n]+)\\|([^()\\n]+)\\)\\)",
+        "pattern": "(?<=\\(\\(red:)([^()|\\n]+?)\\s*\\|\\s*([^()\\n]*[^()\\s])(?=\\)\\))",
         "class": "ib-badge ib-badge-red",
         "title": "$1 · $2"
       },
       {
         "id": "badge-purple",
-        "pattern": "\\(\\(purple:([^()|\\n]+)\\|([^()\\n]+)\\)\\)",
+        "pattern": "(?<=\\(\\(purple:)([^()|\\n]+?)\\s*\\|\\s*([^()\\n]*[^()\\s])(?=\\)\\))",
         "class": "ib-badge ib-badge-purple",
         "title": "$1 · $2"
       },
       {
+        "id": "badge-close",
+        "pattern": "(?<=\\(\\((?:blue|green|orange|red|purple):[^()|\\n]+\\|[^()\\n]+)\\)\\)",
+        "class": "ib-syn"
+      },
+      {
+        "id": "spoiler-open",
+        "pattern": "\\(\\(spoiler:(?=[^()\\n]+\\)\\))",
+        "class": "ib-syn"
+      },
+      {
         "id": "spoiler",
-        "pattern": "\\(\\(spoiler:([^()\\n]+)\\)\\)",
+        "pattern": "(?<=\\(\\(spoiler:)[^()\\n]+(?=\\)\\))",
         "class": "ib-spoiler",
         "title": "悬停查看"
       },
       {
+        "id": "spoiler-close",
+        "pattern": "(?<=\\(\\(spoiler:[^()\\n]+)\\)\\)",
+        "class": "ib-syn"
+      },
+      {
+        "id": "ruby-open",
+        "pattern": "\\(\\(ruby:(?=[^()|\\n]+\\|[^()\\n]+\\)\\))",
+        "class": "ib-syn"
+      },
+      {
         "id": "ruby",
-        "pattern": "\\(\\(ruby:([^()|\\n]+)\\|([^()\\n]+)\\)\\)",
+        "pattern": "(?<=\\(\\(ruby:)[^()|\\n]+?(?=\\s*\\|\\s*([^()\\n]+)\\)\\))",
         "class": "ib-ruby",
-        "title": "$2"
+        "title": "$1"
+      },
+      {
+        "id": "ruby-close",
+        "pattern": "(?<=\\(\\(ruby:[^()|\\n]+?)\\s*\\|[^()\\n]+\\)\\)",
+        "class": "ib-syn"
+      },
+      {
+        "id": "crumb-open",
+        "pattern": "\\(\\(crumb:(?=[^()\\n]+\\)\\))",
+        "class": "ib-syn"
       },
       {
         "id": "crumb",
-        "pattern": "\\(\\(crumb:([^()\\n]+)\\)\\)",
+        "pattern": "(?<=\\(\\(crumb:)([^()\\n]+)(?=\\)\\))",
         "class": "ib-crumb",
         "title": "$1"
+      },
+      {
+        "id": "crumb-close",
+        "pattern": "(?<=\\(\\(crumb:[^()\\n]+)\\)\\)",
+        "class": "ib-syn"
       },
       {
         "id": "hl-red",

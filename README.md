@@ -115,6 +115,8 @@ zsh scripts/build-store.sh
 <summary>主题与编辑器</summary>
 
 - 扩展不能改编辑器 DOM，编辑器里的交互只能靠主题 CSS 实现。
+- 行内徽章、悬停显示、注音、面包屑在编辑器里隐藏 `((类型:` 与 `))`，鼠标悬停该行时显示；悬停显示未在实机用真实鼠标验证。
+- 官方 Mermaid 扩展在编辑器里不能画节点文字里带 `<br>` 的图（报「The renderer did not return valid SVG」），这是官方扩展的限制，演示里可以画。
 - 演示里的图表只支持 bar、line、pie，不支持 bar 与 line 混画；流程图只支持 `graph` / `flowchart`（含嵌套 `subgraph`，不支持连到 subgraph 本身），超出范围时显示源码。
 - 属性块默认以 YAML 源码显示，这是 Typora 渲染器写死的默认值，主题和扩展都改不了，需要在每篇文档里手动切到字段表单。
 - 属性字段表单里 `cssclasses` 等列表项前的「- 」是 YAML 数据本身，样式去不掉。

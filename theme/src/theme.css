@@ -452,6 +452,13 @@
   color: var(--color-muted);
   font-size: 0.9em;
 }
+/* The ((kind: ... )) wrapper of a badge, spoiler, ruby or crumb is hidden; hovering the line shows it for editing. */
+.ty-document .ib-syn { font-size: 0; }
+.ty-document :is(p, li, td, th, h1, h2, h3, h4, h5, h6):is(:hover, .md-focus) .ib-syn {
+  font-size: inherit;
+  color: var(--color-muted);
+  opacity: 0.6;
+}
 
 @media print {
   :is(.ty-document, .typora-export) :is(.md-blockquote, .md-alert, .md-custom-container) {
