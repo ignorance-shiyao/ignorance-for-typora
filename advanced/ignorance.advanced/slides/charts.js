@@ -1,5 +1,5 @@
-// Built-in chart renderer for slides: reads an ECharts-style option (bar, line
-// and pie, the common keys only) and draws an SVG string. No chart library is
+// Built-in chart renderer for slides: draws an option object (bar, line and
+// pie; see chart-source.js for the fence format) as an SVG string. No chart library is
 // bundled; anything outside this subset throws a readable error and the slide
 // shows the source instead.
 import { palette, esc, textWidth } from "./colors.js";

@@ -1,33 +1,28 @@
 import { test } from "node:test";
 import assert from "node:assert/strict";
-import { parseOption } from "../advanced/ignorance.advanced/slides/option.js";
+import { parseChart } from "../advanced/ignorance.advanced/slides/chart-source.js";
 import { renderChartSvg } from "../advanced/ignorance.advanced/slides/charts.js";
 import { renderFlowSvg, parseFlow } from "../advanced/ignorance.advanced/slides/flow.js";
 
 const light = { dark: false, accent: "#123456", foreground: "#111111", background: "#ffffff", border: "#dddddd" };
 
-test("strict JSON passes through", () => {
-  assert.deepEqual(parseOption('{"xAxis":{"type":"category"}}'), { xAxis: { type: "category" } });
+test("chart fence in the official format becomes an option", () => {
+  const o = parseChart("# note\ntype: line\ntitle: 周活\nseries: 本周, 上周\n周一, 1, 2\n周二, 3, 4");
+  assert.deepEqual(o.title, { text: "周活" });
+  assert.deepEqual(o.xAxis.data, ["周一", "周二"]);
+  assert.deepEqual(o.series.map((s) => [s.type, s.name, s.data]), [["line", "本周", [1, 3]], ["line", "上周", [2, 4]]]);
+  assert.ok(o.legend);
 });
 
-test("JS object style from the examples site", () => {
-  const src = `option = {
-    // comment
-    title: { text: 'It\\'s "ok"' },
-    xAxis: { data: ['一', '二',], },
-    series: [{ type: 'bar', data: [1, 2], smooth: true, extra: undefined }], /* end */
-  };`;
-  assert.deepEqual(parseOption(src), {
-    title: { text: `It's "ok"` },
-    xAxis: { data: ["一", "二"] },
-    series: [{ type: "bar", data: [1, 2], smooth: true, extra: null }],
-  });
+test("pie rows become named slices", () => {
+  const o = parseChart("type: pie\n甲, 3\n乙, 1");
+  assert.deepEqual(o.series[0].data, [{ name: "甲", value: 3 }, { name: "乙", value: 1 }]);
 });
 
-test("functions and non-objects are rejected with a readable error", () => {
-  assert.throws(() => parseOption("{ formatter: function (p) { return p } }"), /not supported/);
-  assert.throws(() => parseOption("[1,2]"), /one ECharts option object/);
-  assert.throws(() => parseOption("  "), /Empty/);
+test("bad rows, empty fences and unknown types fail with a readable message", () => {
+  assert.throws(() => parseChart("type: bar\nQ1, abc"), /无法读取/);
+  assert.throws(() => parseChart("type: bar"), /没有数据行/);
+  assert.throws(() => parseChart("type: radar\nA, 1"), /不支持图表类型 radar/);
 });
 
 const parse = (svg) => {
@@ -36,21 +31,21 @@ const parse = (svg) => {
 };
 
 test("bar and line draw one shape per data point, coloured from the theme accent", () => {
-  const svg = parse(renderChartSvg(parseOption("{ xAxis: { data: ['A','B','C'] }, series: [{ type: 'bar', data: [3, 5, 2] }, { type: 'line', data: [1, 2, 3] }] }"), light));
+  const svg = parse(renderChartSvg({ xAxis: { data: ["A", "B", "C"] }, series: [{ type: "bar", data: [3, 5, 2] }, { type: "line", data: [1, 2, 3] }] }, light));
   assert.equal((svg.match(/<path d="[^"]*" fill="#123456"\/>/g) || []).length, 3);
   assert.match(svg, /stroke="#[0-9a-f]{6}" stroke-width="3.5"/i);
   assert.match(svg, /<text[^>]*>A<\/text>/);
 });
 
 test("pie draws one slice per item with percentage labels", () => {
-  const svg = parse(renderChartSvg(parseOption("{ series: [{ type: 'pie', radius: ['40%','70%'], data: [{name:'甲',value:3},{name:'乙',value:1}] }] }"), light));
+  const svg = parse(renderChartSvg({ series: [{ type: "pie", radius: ["40%", "70%"], data: [{ name: "甲", value: 3 }, { name: "乙", value: 1 }] }] }, light));
   assert.equal((svg.match(/<path/g) || []).length, 2);
   assert.match(svg, /甲 75%/);
   assert.match(svg, /乙 25%/);
 });
 
 test("horizontal stacked bars and escaping of titles", () => {
-  const svg = parse(renderChartSvg(parseOption("{ title: { text: 'a<b&c' }, xAxis: { type: 'value' }, yAxis: { type: 'category', data: ['A','B'] }, series: [{ type: 'bar', stack: 't', data: [3, 5] }, { type: 'bar', stack: 't', data: [2, 1] }] }"), light));
+  const svg = parse(renderChartSvg({ title: { text: "a<b&c" }, xAxis: { type: "value" }, yAxis: { type: "category", data: ["A", "B"] }, series: [{ type: "bar", stack: "t", data: [3, 5] }, { type: "bar", stack: "t", data: [2, 1] }] }, light));
   assert.match(svg, /a&lt;b&amp;c/);
   assert.equal((svg.match(/<path/g) || []).length, 4);
 });

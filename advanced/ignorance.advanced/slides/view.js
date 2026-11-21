@@ -2,7 +2,7 @@
 // on `---` (or before each h1/h2 when the note has no rule). In the panel it
 // shows the current slide and a list; in fullsize it is the presentation.
 import { slideKey, splitSlides, parseInline, headingText, safeUrl, slideLayout, kpiParts, footnoteDefinitions } from "./core.js";
-import { parseOption } from "./option.js";
+import { parseChart } from "./chart-source.js";
 import { renderChartSvg } from "./charts.js";
 import { renderFlowSvg } from "./flow.js";
 
@@ -335,7 +335,7 @@ function svgFigure(className, svg) {
 function renderFence(node) {
   const lang = String(node.attrs?.lang || "").toLowerCase();
   const source = node.text || "";
-  const draw = { echarts: () => svgFigure("chart", renderChartSvg(parseOption(source), state.theme, { width: 960, height: 460 })), mermaid: () => svgFigure("diagram", renderFlowSvg(source, state.theme)) }[lang];
+  const draw = { chart: () => svgFigure("chart", renderChartSvg(parseChart(source), state.theme, { width: 960, height: 460 })), mermaid: () => svgFigure("diagram", renderFlowSvg(source, state.theme)) }[lang];
   let note = null;
   if (draw) {
     try {

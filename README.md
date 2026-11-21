@@ -49,7 +49,7 @@
 | 功能 | 说明 |
 |---|---|
 | 演示面板 | 按 `---` 或标题分页；支持版式注释、脚注、图标短码、KaTeX 公式；可全屏放映 |
-| 演示里的图表 | 内置绘制 ` ```echarts ` 代码块的柱状、折线、饼图，配色跟随主题 |
+| 演示里的图表 | 内置绘制 ` ```chart ` 代码块（Typora 官方图表格式）的柱状、折线、饼图，配色跟随主题 |
 | 演示里的流程图 | 内置绘制 ` ```mermaid ` 的 `graph` / `flowchart`，配色跟随主题 |
 | 文件预览 | 在文件树里点开非 Markdown 文件，在编辑区预览，见下节 |
 | 格式化 | 命令「中英文之间加空格」 |
@@ -97,7 +97,7 @@ zsh scripts/build-theme.sh
 zsh scripts/build-store.sh
 ```
 
-`theme/ignorance/` 和 `store/` 是构建产物，不进版本库。`build-store.sh` 按 Typora 扩展商店的目录结构组装主题包 `themes/ignorance-shiyao.ignorance/` 和扩展包 `extensions/ignorance.file-viewers/`、`extensions/ignorance.advanced/`，供提交到 [typora/typora-extensions](https://github.com/typora/typora-extensions) 使用；尚未提交。`ignorance.advanced` 已去掉 ECharts 与 Mermaid（演示里的图表和流程图改为内置绘制），整包约 1.2 MB，也在构建范围内。
+`theme/ignorance/` 和 `store/` 是构建产物，不进版本库。`build-store.sh` 按 Typora 扩展商店的目录结构组装主题包 `themes/ignorance-shiyao.ignorance/` 和扩展包 `extensions/ignorance.file-viewers/`、`extensions/ignorance.advanced/`，供提交到 [typora/typora-extensions](https://github.com/typora/typora-extensions) 使用；尚未提交。`ignorance.advanced` 不打包图表库（演示里的图表和流程图为内置绘制），整包约 1.2 MB，也在构建范围内。
 
 | 路径 | 内容 |
 |---|---|
@@ -115,7 +115,7 @@ zsh scripts/build-store.sh
 <summary>主题与编辑器</summary>
 
 - 扩展不能改编辑器 DOM，编辑器里的交互只能靠主题 CSS 实现。
-- ` ```echarts ` 代码块只在演示里出图，编辑器里显示为代码；演示里只支持 bar、line、pie，流程图只支持 `graph` / `flowchart` 且不含 `subgraph`，超出范围时显示源码。
+- 演示里的图表只支持 bar、line、pie，不支持 bar 与 line 混画；流程图只支持 `graph` / `flowchart` 且不含 `subgraph`，超出范围时显示源码。
 - 属性块默认以 YAML 源码显示，这是 Typora 渲染器写死的默认值，主题和扩展都改不了，需要在每篇文档里手动切到字段表单。
 - 属性字段表单里 `cssclasses` 等列表项前的「- 」是 YAML 数据本身，样式去不掉。
 - 侧栏和右侧面板的内部元素只能通过主题配色键调整。
