@@ -15,7 +15,7 @@ const TAGS = ["Language Pack", "Markdown Extension", "Diagram", "Math", "Theme",
 
 // Extensions that are meant for the store. ignorance.advanced is local only: its vendored
 // ECharts is over the 1 MB file limit and the package is over 5 MB.
-const STORE_READY = ["ignorance.file-viewers"];
+const STORE_READY = ["ignorance.file-viewers", "ignorance.advanced"];
 const all = readdirSync(ROOT, { withFileTypes: true }).filter((e) => e.isDirectory()).map((e) => e.name);
 const manifestOf = (id) => JSON.parse(readFileSync(join(ROOT, id, "typora-extension.json"), "utf8"));
 
@@ -83,4 +83,12 @@ test("主题商店包：只含主题，清单与 theme.toml 满足规则", () =>
   assert.match(head, /^name\s*=\s*"Ignorance"/m);
   assert.match(head, /^color-scheme\s*=\s*"auto"/m);
   assert.match(m.contributes.themes[0], /^themes\/[a-z0-9-]+$/, "主题文件夹名只能用 a-z、0-9、-");
+});
+
+test("ignorance.advanced 不打包 ECharts 与 Mermaid，演示用内置渲染器", () => {
+  const dir = join(ROOT, "ignorance.advanced");
+  assert.equal(manifestOf("ignorance.advanced").contributes.fenceRenderers, undefined);
+  for (const path of files(dir)) assert.ok(!/echarts|mermaid/i.test(path), `${path} 不应出现`);
+  const html = readFileSync(join(dir, "slides/index.html"), "utf8");
+  assert.ok(!/echarts|mermaid/i.test(html));
 });

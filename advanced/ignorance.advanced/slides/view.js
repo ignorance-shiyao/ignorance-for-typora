@@ -2,9 +2,9 @@
 // on `---` (or before each h1/h2 when the note has no rule). In the panel it
 // shows the current slide and a list; in fullsize it is the presentation.
 import { slideKey, splitSlides, parseInline, headingText, safeUrl, slideLayout, kpiParts, footnoteDefinitions } from "./core.js";
-import { parseOption } from "../echarts/option.js";
-import { renderChartSvg } from "../echarts/theme.js";
-import { mermaidConfig } from "./diagram-theme.js";
+import { parseOption } from "./option.js";
+import { renderChartSvg } from "./charts.js";
+import { renderFlowSvg } from "./flow.js";
 
 const view = window.typora.view;
 const SLIDE_W = 1280;
@@ -30,46 +30,6 @@ function renderMath(tex, display) {
     box.textContent = tex;
   }
   return box;
-}
-
-let mermaidLib = null;
-let mermaidId = 0;
-function loadMermaid() {
-  // Absolute URL: a relative import() has no base inside the sandboxed page.
-  mermaidLib ??= import(new URL("../vendor/mermaid.esm.min.mjs", document.baseURI).href).then((m) => m.default);
-  mermaidLib.catch(() => (mermaidLib = null));
-  return mermaidLib;
-}
-
-// Mermaid renders asynchronously; the slide shows a placeholder until it is ready.
-function renderMermaid(source) {
-  const figure = el("div", "diagram");
-  const token = ++mermaidId;
-  figure.dataset.token = String(token);
-  (async () => {
-    const id = "ib-mermaid-" + token;
-    try {
-      const mermaid = await loadMermaid();
-      mermaid.initialize(mermaidConfig(state.theme));
-      const { svg } = await mermaid.render(id, source).finally(() => {
-        // Mermaid's scratch nodes; the rendered <svg> reuses `id`, so clean up before inserting it.
-        document.getElementById("d" + id)?.remove();
-        document.getElementById(id)?.remove();
-      });
-      // HTML parsing tolerates the <br> that Mermaid labels contain.
-      const parsed = new DOMParser().parseFromString(svg, "text/html").querySelector("svg");
-      if (!parsed) throw new Error("Diagram did not render.");
-      parsed.removeAttribute("height");
-      parsed.style.maxWidth = "100%";
-      figure.replaceChildren(document.importNode(parsed, true));
-    } catch (error) {
-      figure.replaceChildren(el("div", "chart-error", String(error?.message || error).split("\n")[0]));
-    } finally {
-      const page = figure.closest(".slide");
-      if (page) fitContent(page);
-    }
-  })();
-  return figure;
 }
 
 // ---------- icons (Lucide, loaded on first use) ----------
@@ -358,30 +318,40 @@ function renderContainer(node) {
   }
 }
 
+// Charts and flowcharts are drawn by the built-in renderers; anything they
+// cannot draw falls back to the source with a one-line reason.
+function svgFigure(className, svg) {
+  const root = new DOMParser().parseFromString(svg, "image/svg+xml").documentElement;
+  if (root.nodeName.toLowerCase() !== "svg") throw new Error("图形没有画出来。");
+  const figure = el("div", className);
+  const svgNode = document.importNode(root, true);
+  const box = svgNode.getAttribute("viewBox")?.split(/\s+/).map(Number);
+  // Small diagrams stay small instead of stretching to the slide width.
+  if (className === "diagram" && box?.[2]) svgNode.style.maxWidth = Math.round(box[2] * 1.3) + "px";
+  figure.append(svgNode);
+  return figure;
+}
+
 function renderFence(node) {
   const lang = String(node.attrs?.lang || "").toLowerCase();
-  if (lang === "echarts") {
-    const figure = el("div", "chart");
+  const source = node.text || "";
+  const draw = { echarts: () => svgFigure("chart", renderChartSvg(parseOption(source), state.theme, { width: 960, height: 460 })), mermaid: () => svgFigure("diagram", renderFlowSvg(source, state.theme)) }[lang];
+  let note = null;
+  if (draw) {
     try {
-      const svg = renderChartSvg(window.echarts, parseOption(node.text || ""), state.theme, { width: 960, height: 460 });
-      const doc = new DOMParser().parseFromString(svg, "image/svg+xml");
-      const root = doc.documentElement;
-      if (root.nodeName.toLowerCase() !== "svg") throw new Error("Chart did not render.");
-      root.removeAttribute("width");
-      root.removeAttribute("height");
-      root.setAttribute("viewBox", "0 0 960 460");
-      figure.append(document.importNode(root, true));
+      return draw();
     } catch (error) {
-      figure.append(el("div", "chart-error", String(error?.message || error)));
+      note = el("div", "chart-error", String(error?.message || error).split("\n")[0]);
     }
-    return figure;
   }
-  if (lang === "mermaid") return renderMermaid(node.text || "");
   const pre = el("pre");
-  const code = el("code", undefined, node.text || "");
+  const code = el("code", undefined, source);
   if (lang) pre.dataset.lang = lang;
   pre.append(code);
-  return pre;
+  if (!note) return pre;
+  const box = el("div", "fallback");
+  box.append(note, pre);
+  return box;
 }
 
 function renderTable(node) {

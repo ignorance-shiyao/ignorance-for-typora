@@ -198,7 +198,8 @@ body.is-fullsize .slide { transform-origin: center center; position: relative; f
 
 /* Diagrams and math */
 .slide .diagram { display: flex; justify-content: center; margin: 0 0 0.6em; min-height: 2em; }
-.slide .diagram svg { max-height: 470px; height: auto; }
+.slide .diagram svg { width: 100%; max-height: 470px; height: auto; }
+.slide .fallback .chart-error { margin-bottom: 0.4em; }
 .slide .math-block { margin: 0 0 0.6em; text-align: center; font-size: 1.05em; }
 .slide .katex { font-size: 1.05em; }
 

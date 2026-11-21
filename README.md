@@ -48,9 +48,9 @@
 
 | 功能 | 说明 |
 |---|---|
-| 演示面板 | 按 `---` 或标题分页；支持版式注释、脚注、图标短码、KaTeX 公式、ECharts、Mermaid；可全屏放映 |
-| ECharts 代码块 | 单击图例、悬停提示可用 |
-| Mermaid 代码块 | 配色跟随主题的强调色和明暗 |
+| 演示面板 | 按 `---` 或标题分页；支持版式注释、脚注、图标短码、KaTeX 公式；可全屏放映 |
+| 演示里的图表 | 内置绘制 ` ```echarts ` 代码块的柱状、折线、饼图，配色跟随主题 |
+| 演示里的流程图 | 内置绘制 ` ```mermaid ` 的 `graph` / `flowchart`，配色跟随主题 |
 | 文件预览 | 在文件树里点开非 Markdown 文件，在编辑区预览，见下节 |
 | 格式化 | 命令「中英文之间加空格」 |
 | 片段与模板 | 周报、汇报等 |
@@ -97,13 +97,13 @@ zsh scripts/build-theme.sh
 zsh scripts/build-store.sh
 ```
 
-`theme/ignorance/` 和 `store/` 是构建产物，不进版本库。`build-store.sh` 按 Typora 扩展商店的目录结构组装主题包 `themes/ignorance-shiyao.ignorance/` 和扩展包 `extensions/ignorance.file-viewers/`，供提交到 [typora/typora-extensions](https://github.com/typora/typora-extensions) 使用；尚未提交。`ignorance.advanced` 里的 ECharts 单文件超过商店 1 MB 限制，整包超过 5 MB，且与官方 Mermaid、图表扩展功能重复，不在上架范围内。
+`theme/ignorance/` 和 `store/` 是构建产物，不进版本库。`build-store.sh` 按 Typora 扩展商店的目录结构组装主题包 `themes/ignorance-shiyao.ignorance/` 和扩展包 `extensions/ignorance.file-viewers/`、`extensions/ignorance.advanced/`，供提交到 [typora/typora-extensions](https://github.com/typora/typora-extensions) 使用；尚未提交。`ignorance.advanced` 已去掉 ECharts 与 Mermaid（演示里的图表和流程图改为内置绘制），整包约 1.2 MB，也在构建范围内。
 
 | 路径 | 内容 |
 |---|---|
 | `theme/src/` | 主题源码：`theme.css`、`base.toml`（颜色与元素）、`layout.toml`（阅读宽度、段落节奏、标题编号、十字高亮、墨水屏）、`mascot.toml`（双猫） |
 | `theme/assets/` | 构建时内联为 data URI 的图片 |
-| `advanced/ignorance.advanced/` | 扩展：演示面板、ECharts 与 Mermaid 渲染器、格式化命令、片段、模板 |
+| `advanced/ignorance.advanced/` | 扩展：演示面板（内置图表与流程图）、行内徽章、格式化命令、片段、模板 |
 | `advanced/ignorance.file-viewers/` | 扩展：json、yaml、toml、代码、网页、Office 文档的预览（`viewers/`） |
 | `theme/store/` | 主题商店包的清单、说明和封面图 |
 | `scripts/` | 构建与安装脚本、八套配色生成器、样式检查 |
@@ -115,6 +115,7 @@ zsh scripts/build-store.sh
 <summary>主题与编辑器</summary>
 
 - 扩展不能改编辑器 DOM，编辑器里的交互只能靠主题 CSS 实现。
+- ` ```echarts ` 代码块只在演示里出图，编辑器里显示为代码；演示里只支持 bar、line、pie，流程图只支持 `graph` / `flowchart` 且不含 `subgraph`，超出范围时显示源码。
 - 属性块默认以 YAML 源码显示，这是 Typora 渲染器写死的默认值，主题和扩展都改不了，需要在每篇文档里手动切到字段表单。
 - 属性字段表单里 `cssclasses` 等列表项前的「- 」是 YAML 数据本身，样式去不掉。
 - 侧栏和右侧面板的内部元素只能通过主题配色键调整。
@@ -135,4 +136,4 @@ zsh scripts/build-store.sh
 
 ## 许可
 
-本项目代码使用 MIT 许可，见 [LICENSE](LICENSE)。`advanced/ignorance.advanced/vendor/` 里的 ECharts、Mermaid、KaTeX、Lucide，以及 `advanced/ignorance.file-viewers/viewers/` 里的 js-yaml、smol-toml、jszip、mammoth，各自保留原许可文件。
+本项目代码使用 MIT 许可，见 [LICENSE](LICENSE)。`advanced/ignorance.advanced/vendor/` 里的 KaTeX、Lucide，以及 `advanced/ignorance.file-viewers/viewers/` 里的 js-yaml、smol-toml、jszip、mammoth，各自保留原许可文件。

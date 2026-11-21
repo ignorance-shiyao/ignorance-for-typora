@@ -15,7 +15,7 @@ cp "$ROOT/theme/store/typora-extension.json" "$ROOT/theme/store/README.md" "$T/"
 cp "$ROOT/LICENSE" "$T/LICENSE"
 cp "$ROOT/theme/ignorance/theme.toml" "$ROOT/theme/ignorance/theme.css" "$T/themes/ignorance/"
 for img in cover.webp screenshot.webp; do [[ -f "$ROOT/theme/store/$img" ]] && cp "$ROOT/theme/store/$img" "$T/$img"; done
-for ext in ignorance.file-viewers; do
+for ext in ignorance.file-viewers ignorance.advanced; do
   cp -R "$ROOT/advanced/$ext" "$OUT/extensions/$ext"
 done
 echo "assembled $OUT"

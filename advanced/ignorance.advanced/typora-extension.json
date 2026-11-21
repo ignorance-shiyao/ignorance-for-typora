@@ -2,15 +2,15 @@
   "id": "ignorance.advanced",
   "name": "Ignorance Advanced",
   "version": "0.1.0",
-  "description": "演示模式、ECharts 代码块、行内徽章与彩色高亮、图表索引侧栏、中英文空格格式化，以及周报与汇报模板。",
+  "description": "演示模式（内置图表与流程图）、行内徽章与彩色高亮、图表索引侧栏、中英文空格格式化，以及周报与汇报模板。",
   "author": "ignorance-shiyao",
   "repository": "https://github.com/ignorance-shiyao/ignorance-for-typora",
   "engines": {
     "typora": ">=2.0.0"
   },
   "keywords": [
-    "echarts",
-    "chart",
+    "slides",
+    "presentation",
     "cjk",
     "chinese",
     "badge",
@@ -18,7 +18,6 @@
   ],
   "tags": [
     "Markdown Extension",
-    "Diagram",
     "Detail View",
     "Writing"
   ],
@@ -27,24 +26,6 @@
     "onStartupFinished"
   ],
   "contributes": {
-    "fenceRenderers": [
-      {
-        "id": "echarts",
-        "lang": [
-          "echarts"
-        ],
-        "mode": "interactive",
-        "entry": "echarts/interactive.html"
-      },
-      {
-        "id": "mermaid",
-        "lang": [
-          "mermaid"
-        ],
-        "mode": "static",
-        "entry": "mermaid/renderer.html"
-      }
-    ],
     "inlineRules": [
       {
         "id": "badge-blue",

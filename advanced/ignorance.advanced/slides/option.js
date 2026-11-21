@@ -1,4 +1,4 @@
-// Reads an ```echarts fence into an ECharts option without eval (the view
+// Reads an ```echarts fence into an option object without eval (the view
 // sandbox forbids it). Accepts strict JSON and the JS object style people
 // paste from the ECharts examples: unquoted keys, single quotes, trailing
 // commas, // and /* */ comments. Functions are not supported.
@@ -80,11 +80,4 @@ export function parseOption(source) {
   const value = JSON.parse(toJson(text));
   if (!value || typeof value !== "object" || Array.isArray(value)) throw new Error("The fence must contain one ECharts option object.");
   return value;
-}
-
-// Info string options: ```echarts {height=420} {width=720}
-export function parseInfo(info) {
-  const size = {};
-  for (const m of String(info || "").matchAll(/\{\s*(width|height)\s*=\s*(\d{2,4})\s*\}/g)) size[m[1]] = Number(m[2]);
-  return size;
 }
