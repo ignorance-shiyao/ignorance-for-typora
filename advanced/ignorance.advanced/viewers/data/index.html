@@ -1,0 +1,25 @@
+<!doctype html>
+<html>
+  <head>
+    <meta charset="utf-8" />
+    <link rel="stylesheet" href="viewer.css" />
+    <script src="../../__typora/view.js"></script>
+    <script src="js-yaml.min.js"></script>
+    <script src="smol-toml.min.js"></script>
+    <script src="viewer.js" defer></script>
+  </head>
+  <body>
+    <header>
+      <span id="name"></span>
+      <span id="info"></span>
+      <span class="spacer"></span>
+      <button id="expand" type="button">展开</button>
+      <button id="collapse" type="button">折叠</button>
+      <div class="seg" role="group">
+        <button id="m-tree" type="button" aria-pressed="true">树</button>
+        <button id="m-src" type="button" aria-pressed="false">源码</button>
+      </div>
+    </header>
+    <main><div id="tree"></div><pre id="src" hidden></pre><div id="err" hidden></div></main>
+  </body>
+</html>

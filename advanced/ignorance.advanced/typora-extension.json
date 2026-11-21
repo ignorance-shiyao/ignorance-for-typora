@@ -161,7 +161,22 @@
           "description": "封面右下角和最后一页。主题里的双猫在 设置 ▸ 视图 ▸ 主题选项「双猫」单独开关，默认都关闭。"
         }
       }
-    }
+    },
+    "fileViewers": [
+      {
+        "id": "data",
+        "title": "结构化数据",
+        "extensions": [
+          "json",
+          "yaml",
+          "yml",
+          "toml",
+          "xml"
+        ],
+        "entry": "viewers/data/index.html",
+        "editable": false
+      }
+    ]
   },
   "permissions": {
     "document": "read"
