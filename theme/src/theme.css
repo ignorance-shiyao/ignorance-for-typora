@@ -52,7 +52,7 @@
   --ib-q-ink: 55%;
   --ib-q-text: 100%;
   margin-inline: 0;
-  padding-inline: calc(var(--ib-q-size) + 28px) 18px;
+  padding-inline: 46px 18px;
   color: color-mix(in srgb, var(--color-text) var(--ib-q-text), var(--color-bg));
 }
 :is(.ty-document, .typora-export) .md-blockquote::before {
@@ -73,6 +73,11 @@
   color: color-mix(in srgb, var(--color-text) var(--ib-q-text), var(--color-bg));
 }
 :is(.ty-document, .typora-export) .md-blockquote .md-blockquote {
+  margin-inline: -46px -18px;
+  width: calc(100% + 64px);
+  max-width: none;
+  box-sizing: border-box;
+  margin-block: 0.6em 0.2em;
   --ib-q-size: 15px;
   --ib-q-ink: 40%;
   --ib-q-text: 78%;
@@ -84,6 +89,7 @@
   --ib-q-ink: 28%;
   --ib-q-text: 62%;
   font-size: 0.94em;
+  background: color-mix(in srgb, var(--color-accent) calc(5% * (1 - var(--theme-eink, 0))), transparent);
 }
 :is(.ty-document, .typora-export) .md-blockquote .md-blockquote::before { top: calc(12px + 0.25em); inset-inline-start: 14px; }
 :is(.ty-document, .typora-export) .md-html-block-preview blockquote::before { content: none; }
@@ -367,6 +373,18 @@
 :is(.ty-document, .typora-export) .md-toc-h4 { font-size: 0.9em; font-weight: 400; opacity: 0.84; }
 :is(.ty-document, .typora-export) .md-toc-h5 { font-size: 0.86em; font-weight: 400; opacity: 0.8; }
 :is(.ty-document, .typora-export) .md-toc-h6 { font-size: 0.82em; font-weight: 400; opacity: 0.7; }
+
+/* ---------- nested lists: narrow step, depth shown by size, weight and marker tint ---------- */
+:is(.ty-document, .typora-export) :is(.md-list, ul, ol) :is(.md-list, ul, ol) {
+  padding-inline-start: 1.3em;
+}
+:is(.ty-document, .typora-export) .md-list-item::marker { color: var(--color-accent); }
+:is(.ty-document, .typora-export) .md-list .md-list { font-size: 0.97em; }
+:is(.ty-document, .typora-export) .md-list .md-list .md-list { font-size: 0.94em; }
+:is(.ty-document, .typora-export) .md-list .md-list .md-list-item::marker { color: color-mix(in srgb, var(--color-accent) 70%, var(--color-bg)); }
+:is(.ty-document, .typora-export) .md-list .md-list .md-list .md-list-item::marker { color: color-mix(in srgb, var(--color-accent) 45%, var(--color-bg)); }
+:is(.ty-document, .typora-export) .md-list > .md-list-item > .md-list-item-content > :first-child,
+:is(.ty-document, .typora-export) .md-list > .md-list-item > :first-child { font-weight: 500; }
 
 /* ---------- images ---------- */
 /* Exported HTML repeats the alt text beside the image; hide it. */
