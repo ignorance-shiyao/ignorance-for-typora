@@ -18,16 +18,16 @@
 
 ## 第三方库
 
-以下库原样取自各自的发布包，未做任何修改，许可文本放在使用它的文件夹里。
+以下库取自各自的发布包，除 js-yaml 删去末尾的 sourceMappingURL 注释外未做修改，许可文本放在使用它的文件夹里。
 
 | 库 | 版本 | 许可 | 用途 | 文件 |
 |---|---|---|---|---|
-| js-yaml | 4.3.2 | MIT | 解析 YAML | `viewers/data/js-yaml.min.js`（发布包的 `dist/js-yaml.min.js`） |
+| js-yaml | 4.3.2 | MIT | 解析 YAML | `viewers/data/js-yaml.js`（发布包的 `dist/js-yaml.js`） |
 | smol-toml | 1.9.1 | BSD-3-Clause | 解析 TOML | `viewers/data/smol-toml/`（发布包的 `dist/*.js`） |
-| JSZip | 3.10.2 | MIT | 解压 xlsx、pptx | `viewers/office/jszip.min.js`（发布包的 `dist/jszip.min.js`） |
+| JSZip | 3.10.2 | MIT | 解压 xlsx、pptx | `viewers/office/jszip.js`（发布包的 `dist/jszip.js`） |
 | mammoth | 1.13.0 | BSD-2-Clause | docx 转 HTML | `viewers/office/mammoth.browser.min.js`（发布包的 `mammoth.browser.min.js`） |
 
-压缩文件是上游发布的压缩版本；本扩展自己的代码都是可读源码。
+`mammoth.browser.min.js` 是上游发布的压缩版本；其余库和本扩展自己的代码都是可读源码。
 
 ## 许可
 
