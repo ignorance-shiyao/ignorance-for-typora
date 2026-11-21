@@ -75,8 +75,30 @@ test("flowchart draws a shape per node, an arrow per edge, and keeps back edges 
   assert.ok(Math.max(...xs) <= w, "all path x coordinates fit in the viewBox");
 });
 
-test("other Mermaid diagrams and subgraphs are rejected with a readable message", () => {
+test("other Mermaid diagrams are rejected with a readable message", () => {
   assert.throws(() => renderFlowSvg("sequenceDiagram\n A->>B: hi", light), /只能画流程图/);
-  assert.throws(() => renderFlowSvg("graph TD\n subgraph x\n A-->B\n end", light), /subgraph/);
   assert.throws(() => renderFlowSvg("graph TD\n A ??? B", light), /无法解析/);
+});
+
+test("subgraphs parse with titles, nesting and members", () => {
+  const g = parseFlow("graph TD\n subgraph s1 [外层]\n  subgraph s2 [内层]\n   A --> B\n  end\n  C\n end\n subgraph 单独\n  D[(库)]\n end");
+  assert.deepEqual(g.groups.map((x) => [x.id, x.title, x.parent]), [["s1", "外层", undefined], ["s2", "内层", "s1"], ["单独", "单独", undefined]]);
+  assert.deepEqual(g.nodes.map((n) => [n.id, n.group]), [["A", "s2"], ["B", "s2"], ["C", "s1"], ["D", "单独"]]);
+  assert.equal(g.nodes[3].label, "库");
+});
+
+test("subgraph boxes enclose their members and keep other nodes outside", () => {
+  const svg = renderFlowSvg("flowchart LR\n subgraph 前端\n  A --> B\n end\n subgraph 后端\n  C --> D\n end\n B --> C", light);
+  assert.equal((svg.match(/rx="14"/g) || []).length, 2);
+  assert.match(svg, />前端</);
+  const [w] = /viewBox="0 0 (\d+)/.exec(svg).slice(1).map(Number);
+  assert.ok(w > 400);
+});
+
+test("unbalanced subgraphs, edges to a subgraph and overlapping layouts fail readably", () => {
+  assert.throws(() => renderFlowSvg("graph TD\n subgraph a\n A --> B", light), /缺少 end/);
+  assert.throws(() => renderFlowSvg("graph TD\n A --> B\n end", light), /多出一个 end/);
+  assert.throws(() => renderFlowSvg("graph TD\n subgraph a\n A\n end\n B --> a", light), /不支持连到 subgraph/);
+  // X sits on the path between two members of one subgraph, in a middle layer.
+  assert.throws(() => renderFlowSvg("graph LR\n subgraph g\n  A\n  C\n end\n A --> X --> Y\n X --> C\n Z --> C", light), /夹进了其他节点/);
 });
