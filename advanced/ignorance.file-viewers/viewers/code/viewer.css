@@ -15,7 +15,7 @@ header { display: flex; align-items: center; gap: 8px; padding: 8px 14px; border
 #info { color: var(--muted); }
 #dirty { color: var(--accent); }
 .spacer { flex: 1; }
-button { font: inherit; padding: 2px 12px; border: 1px solid var(--line); border-radius: 6px; background: transparent; color: inherit; cursor: pointer; }
+button { display: inline-flex; align-items: center; justify-content: center; font: inherit; padding: 4px 9px; border: 1px solid var(--line); border-radius: 6px; background: transparent; color: inherit; cursor: pointer; }
 button:hover:not(:disabled) { background: color-mix(in srgb, var(--accent) 8%, transparent); }
 button:disabled { opacity: 0.4; cursor: default; }
 #save:not(:disabled) { background: var(--accent); border-color: var(--accent); color: #fff; }
@@ -41,3 +41,6 @@ main { flex: 1; min-height: 0; display: flex; }
 .c-tag { color: var(--accent); }
 .c-attr { color: color-mix(in srgb, var(--accent) 50%, #b45309); }
 @media (prefers-color-scheme: dark) { .c-str { color: #86efac; } }
+
+.i { width: 16px; height: 16px; display: block; }
+#dirty { display: inline-flex; }
