@@ -479,7 +479,7 @@
   padding: 0 18px;
   gap: 10px;
   color: var(--color-text);
-  background: color-mix(in srgb, var(--color-accent) calc(9% * (1 - var(--theme-eink, 0))), var(--color-bg));
+  background: transparent;
   border-bottom: 1px solid color-mix(in srgb, var(--color-accent) 14%, var(--ib-line));
 }
 :is(.ty-document, .typora-export) .md-meta-title {
@@ -514,7 +514,7 @@
   -webkit-mask: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='black' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='M15 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V7Z'/%3E%3Cpath d='M14 2v4a2 2 0 0 0 2 2h4'/%3E%3Cpath d='M10 9H8'/%3E%3Cpath d='M16 13H8'/%3E%3Cpath d='M16 17H8'/%3E%3C/svg%3E") center / 18px 18px no-repeat;
   mask: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='black' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='M15 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V7Z'/%3E%3Cpath d='M14 2v4a2 2 0 0 0 2 2h4'/%3E%3Cpath d='M10 9H8'/%3E%3Cpath d='M16 13H8'/%3E%3Cpath d='M16 17H8'/%3E%3C/svg%3E") center / 18px 18px no-repeat;
 }
-:is(.ty-document, .typora-export) .md-meta-summary { color: var(--color-muted); }
+:is(.ty-document, .typora-export) .md-meta-summary { display: none; }
 :is(.ty-document, .typora-export) .md-meta-mode { background: var(--ib-tint-strong); }
 /* YAML source: body font instead of monospace, roomier. */
 :is(.ty-document, .typora-export) .md-meta-block-inner {
@@ -525,7 +525,10 @@
   line-height: 1.8;
 }
 /* Field form. */
-:is(.ty-document, .typora-export) .md-meta-fields { padding: 8px 12px 12px; }
+:is(.ty-document, .typora-export) .md-meta-fields { padding: 6px 14px 14px; }
+:is(.ty-document, .typora-export) .md-meta-row { border-bottom: 1px solid color-mix(in srgb, var(--ib-line) 55%, transparent); }
+:is(.ty-document, .typora-export) .md-meta-row:last-child { border-bottom: 0; }
+:is(.ty-document, .typora-export) .md-meta-key-input { font-size: 0.86em; letter-spacing: 0.02em; }
 :is(.ty-document, .typora-export) .md-meta-row:hover,
 :is(.ty-document, .typora-export) .md-meta-row:focus-within { background: var(--ib-tint-strong); border-radius: var(--ib-radius-md); }
 :is(.ty-document, .typora-export) .md-meta-key-icon { color: var(--color-accent); }
