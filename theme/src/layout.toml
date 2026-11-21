@@ -1,0 +1,92 @@
+
+[variants.width]
+label = "阅读宽度"
+default = "normal"
+
+[variants.width.choices.narrow]
+label = "窄"
+
+[variants.width.choices.narrow.vars]
+content-width = "720px"
+
+[variants.width.choices.normal]
+label = "标准"
+
+[variants.width.choices.normal.vars]
+content-width = "820px"
+
+[variants.width.choices.wide]
+label = "宽"
+
+[variants.width.choices.wide.vars]
+content-width = "1100px"
+
+[variants.rhythm]
+label = "段落节奏"
+default = "normal"
+
+[variants.rhythm.choices.compact]
+label = "紧凑"
+
+[variants.rhythm.choices.compact.vars]
+paragraph-spacing = "0.4em"
+line-height = 1.6
+
+[variants.rhythm.choices.normal]
+label = "标准"
+
+[variants.rhythm.choices.normal.vars]
+paragraph-spacing = "0.9em"
+line-height = 1.8
+
+[variants.numbering]
+label = "标题编号"
+default = "off"
+
+[variants.numbering.choices.off]
+label = "关闭"
+
+[variants.numbering.choices.off.vars]
+h2-num = '""'
+h3-num = '""'
+
+[variants.numbering.choices.on]
+label = "开启"
+
+[variants.numbering.choices.on.vars]
+h2-num = 'counter(ib-h2) ". "'
+h3-num = 'counter(ib-h2) "." counter(ib-h3) " "'
+
+[variants.crosshair]
+label = "表格十字高亮"
+default = "off"
+
+[variants.crosshair.choices.off]
+label = "关闭"
+
+[variants.crosshair.choices.off.vars]
+cross-tint = "transparent"
+
+[variants.crosshair.choices.on]
+label = "开启"
+
+[variants.crosshair.choices.on.vars]
+cross-tint = "color-mix(in srgb, var(--color-accent) 12%, transparent)"
+
+[variants.eink]
+label = "墨水屏"
+default = "off"
+
+[variants.eink.choices.off]
+label = "关闭"
+
+[variants.eink.choices.off.vars]
+eink = "0"
+eink-mark = "none"
+
+[variants.eink.choices.on]
+label = "开启"
+
+[variants.eink.choices.on.vars]
+eink = "1"
+eink-mark = "underline double"

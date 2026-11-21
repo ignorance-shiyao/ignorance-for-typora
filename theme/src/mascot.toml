@@ -1,0 +1,15 @@
+[variants.mascot]
+label = "双猫"
+default = "off"
+
+[variants.mascot.choices.off]
+label = "关闭"
+
+[variants.mascot.choices.off.vars]
+ib-cats = 0
+
+[variants.mascot.choices.on]
+label = "显示"
+
+[variants.mascot.choices.on.vars]
+ib-cats = 1

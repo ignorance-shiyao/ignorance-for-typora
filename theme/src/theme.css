@@ -1,0 +1,591 @@
+/*
+ * Ignorance for Typora 2.0
+ * Sizes, fonts and colours live in theme.toml; this file adds what the TOML
+ * tables cannot express. Colours always come from Typora's --color-*
+ * variables so the palette variants recolour everything here too.
+ *
+ * Every rule is scoped to both the editor (.ty-document) and exported HTML
+ * (.typora-export), which wraps the document in a different root.
+ * Rules: class and attribute selectors only, no sibling/position selectors
+ * across blocks (long documents only render the visible blocks).
+ * No one-sided accent bars anywhere: Typora's own defaults for alerts,
+ * containers and quotes use border-inline-start and are overridden here.
+ */
+
+:is(.ty-document, .typora-export) {
+  --ib-radius-sm: 4px;
+  --ib-radius-md: 8px;
+  --ib-radius-lg: 12px;
+  --ib-tint: color-mix(in srgb, var(--color-accent) calc(6% * (1 - var(--theme-eink, 0))), var(--color-bg));
+  --ib-tint-strong: color-mix(in srgb, var(--color-accent) calc(12% * (1 - var(--theme-eink, 0))), var(--color-bg));
+  --ib-line: color-mix(in srgb, var(--color-text) calc(12% + 48% * var(--theme-eink, 0)), var(--color-bg));
+  --ib-serif: Georgia, "Noto Serif SC", "Source Han Serif SC", "Songti SC", STSong, serif;
+  font-variant-numeric: tabular-nums;
+  text-rendering: optimizeLegibility;
+}
+
+:is(.ty-document, .typora-export) .md-h1 {
+  letter-spacing: -0.01em;
+}
+/* h1 to h3 use the serif heading font; h4 to h6 are small sans headings. */
+:is(.ty-document, .typora-export) :is(.md-h4, .md-h5, .md-h6) {
+  font-family: var(--ty-body-font);
+}
+
+/* ---------- quotes: tinted card, serif quote mark, no side bar ---------- */
+:is(.ty-document, .typora-export) :is(.md-blockquote, .md-html-block-preview blockquote) {
+  position: relative;
+  border: 0;
+  border-inline-start: 0;
+  border-radius: var(--ib-radius-lg);
+  background: var(--ib-tint);
+  color: var(--color-text);
+  font-family: var(--ib-serif);
+}
+/* Typora's own quote icon (Boxicons, MIT: github.com/box-icons/boxicons-core),
+   tinted with the accent. Typora only draws it in the editor, so the theme draws
+   it too and export gets the same mark. Only the outermost quote carries it. */
+/* Each level carries the mark; deeper levels step down in text size, mark size
+   and colour (--ib-q-*). */
+:is(.ty-document, .typora-export) .md-blockquote {
+  --ib-q-size: 18px;
+  --ib-q-ink: 55%;
+  --ib-q-text: 100%;
+  margin-inline: 0;
+  padding-inline: calc(var(--ib-q-size) + 28px) 18px;
+  color: color-mix(in srgb, var(--color-text) var(--ib-q-text), var(--color-bg));
+}
+:is(.ty-document, .typora-export) .md-blockquote::before {
+  content: "";
+  display: block;
+  position: absolute;
+  top: calc(12px + 0.22em);
+  inset-inline-start: 16px;
+  width: var(--ib-q-size);
+  height: var(--ib-q-size);
+  background: color-mix(in srgb, var(--color-accent) var(--ib-q-ink), var(--ib-tint));
+  -webkit-mask: url("data:image/svg+xml,%3csvg%20xmlns='http://www.w3.org/2000/svg'%20viewBox='0%200%2024%2024'%3e%3cpath%20d='M21.01%2010h-2.85c.27-1.02%201.01-2.51%203.09-3.03l.76-.19V4h-1c-2.78%200-4.91.77-6.31%202.29c-1.89%202.05-1.7%204.68-1.69%204.71v7c0%201.1.9%202%202%202h6c1.1%200%202-.9%202-2v-6c0-1.1-.9-2-2-2m-12%200H6.16c.27-1.02%201.01-2.51%203.09-3.03l.76-.19V4h-1C6.23%204%204.1%204.77%202.7%206.29C.81%208.34%201%2010.97%201.01%2011v7c0%201.1.9%202%202%202h6c1.1%200%202-.9%202-2v-6c0-1.1-.9-2-2-2'/%3e%3c/svg%3e") 50% / contain no-repeat;
+  mask: url("data:image/svg+xml,%3csvg%20xmlns='http://www.w3.org/2000/svg'%20viewBox='0%200%2024%2024'%3e%3cpath%20d='M21.01%2010h-2.85c.27-1.02%201.01-2.51%203.09-3.03l.76-.19V4h-1c-2.78%200-4.91.77-6.31%202.29c-1.89%202.05-1.7%204.68-1.69%204.71v7c0%201.1.9%202%202%202h6c1.1%200%202-.9%202-2v-6c0-1.1-.9-2-2-2m-12%200H6.16c.27-1.02%201.01-2.51%203.09-3.03l.76-.19V4h-1C6.23%204%204.1%204.77%202.7%206.29C.81%208.34%201%2010.97%201.01%2011v7c0%201.1.9%202%202%202h6c1.1%200%202-.9%202-2v-6c0-1.1-.9-2-2-2'/%3e%3c/svg%3e") 50% / contain no-repeat;
+  pointer-events: none;
+}
+:is(.ty-document, .typora-export) .md-blockquote::after { content: none; }
+:is(.ty-document, .typora-export) .md-blockquote > :not(.md-blockquote) {
+  color: color-mix(in srgb, var(--color-text) var(--ib-q-text), var(--color-bg));
+}
+:is(.ty-document, .typora-export) .md-blockquote .md-blockquote {
+  --ib-q-size: 15px;
+  --ib-q-ink: 40%;
+  --ib-q-text: 78%;
+  font-size: 0.94em;
+  background: color-mix(in srgb, var(--color-accent) calc(5% * (1 - var(--theme-eink, 0))), transparent);
+}
+:is(.ty-document, .typora-export) .md-blockquote .md-blockquote .md-blockquote {
+  --ib-q-size: 13px;
+  --ib-q-ink: 28%;
+  --ib-q-text: 62%;
+  font-size: 0.94em;
+}
+:is(.ty-document, .typora-export) .md-blockquote .md-blockquote::before { top: calc(12px + 0.25em); inset-inline-start: 14px; }
+:is(.ty-document, .typora-export) .md-html-block-preview blockquote::before { content: none; }
+
+/* ---------- GitHub alerts: full tinted card ---------- */
+:is(.ty-document, .typora-export) .md-alert {
+  --ib-alert: var(--color-alert-note);
+  border: 1px solid color-mix(in srgb, var(--ib-alert) calc(28% + 52% * var(--theme-eink, 0)), transparent);
+  border-inline-start: 1px solid color-mix(in srgb, var(--ib-alert) calc(28% + 52% * var(--theme-eink, 0)), transparent);
+  border-radius: var(--ib-radius-md);
+  background: color-mix(in srgb, var(--ib-alert) calc(10% * (1 - var(--theme-eink, 0))), var(--color-bg));
+  box-shadow: none;
+}
+:is(.ty-document, .typora-export) .md-alert::after { content: none; }
+/* Alert title icons (Lucide, ISC): Typora's own svg is hidden and these are drawn instead. */
+:is(.ty-document, .typora-export) .md-alert-text svg { display: none; }
+:is(.ty-document, .typora-export) .md-alert-text-container::before {
+  content: "";
+  flex: none;
+  width: 15px;
+  height: 15px;
+  background: currentColor;
+  -webkit-mask: var(--ib-alert-icon) center / contain no-repeat;
+  mask: var(--ib-alert-icon) center / contain no-repeat;
+}
+:is(.ty-document, .typora-export) .md-alert-note { --ib-alert-icon: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='black' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Ccircle cx='12' cy='12' r='10'/%3E%3Cpath d='M12 16v-4'/%3E%3Cpath d='M12 8h.01'/%3E%3C/svg%3E"); }
+:is(.ty-document, .typora-export) .md-alert-tip { --ib-alert-icon: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='black' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='M15 14c.2-1 .7-1.7 1.5-2.5 1-.9 1.5-2.2 1.5-3.5A6 6 0 0 0 6 8c0 1 .2 2.2 1.5 3.5.7.7 1.3 1.5 1.5 2.5'/%3E%3Cpath d='M9 18h6'/%3E%3Cpath d='M10 22h4'/%3E%3C/svg%3E"); }
+:is(.ty-document, .typora-export) .md-alert-important { --ib-alert-icon: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='black' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='M4 15s1-1 4-1 5 2 8 2 4-1 4-1V3s-1 1-4 1-5-2-8-2-4 1-4 1z'/%3E%3Cpath d='M4 22v-7'/%3E%3C/svg%3E"); }
+:is(.ty-document, .typora-export) .md-alert-warning { --ib-alert-icon: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='black' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='m21.73 18-8-14a2 2 0 0 0-3.48 0l-8 14A2 2 0 0 0 4 21h16a2 2 0 0 0 1.73-3'/%3E%3Cpath d='M12 9v4'/%3E%3Cpath d='M12 17h.01'/%3E%3C/svg%3E"); }
+:is(.ty-document, .typora-export) .md-alert-caution { --ib-alert-icon: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='black' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='M2.586 16.726A2 2 0 0 1 2 15.312V8.688a2 2 0 0 1 .586-1.414l4.688-4.688A2 2 0 0 1 8.688 2h6.624a2 2 0 0 1 1.414.586l4.688 4.688A2 2 0 0 1 22 8.688v6.624a2 2 0 0 1-.586 1.414l-4.688 4.688a2 2 0 0 1-1.414.586H8.688a2 2 0 0 1-1.414-.586z'/%3E%3Cpath d='m15 9-6 6'/%3E%3Cpath d='m9 9 6 6'/%3E%3C/svg%3E"); }
+:is(.ty-document, .typora-export) .md-alert-tip { --ib-alert: var(--color-alert-tip); }
+:is(.ty-document, .typora-export) .md-alert-important { --ib-alert: var(--color-alert-important); }
+:is(.ty-document, .typora-export) .md-alert-warning { --ib-alert: var(--color-alert-warning); }
+:is(.ty-document, .typora-export) .md-alert-caution { --ib-alert: var(--color-alert-caution); }
+:is(.ty-document, .typora-export) .md-alert :is(.md-alert-text, .md-alert-title) {
+  color: var(--ib-alert);
+  font-weight: 600;
+}
+
+/* ---------- ::: containers (Settings ▸ Markdown ▸ Custom Containers) ---------- */
+:is(.ty-document, .typora-export) .md-custom-container {
+  --md-custom-container-color: var(--color-accent);
+  margin: 1em 0;
+  padding: 0.4em 1em 0.5em;
+  border: 1px solid var(--ib-line);
+  border-inline-start-width: 1px;
+  border-radius: var(--ib-radius-lg);
+  background: color-mix(in srgb, var(--color-text) calc(2% * (1 - var(--theme-eink, 0))), var(--color-bg));
+}
+:is(.ty-document, .typora-export) .md-custom-container-title {
+  margin: 0.4em 0 0.2em;
+  color: var(--md-custom-container-color);
+  font-size: 0.85em;
+  font-weight: 600;
+}
+
+/* Semantic callouts get the tinted card of the alert with the same meaning. */
+:is(.ty-document, .typora-export) :is(.md-custom-container--note, .md-custom-container--info, .md-custom-container--tip,
+  .md-custom-container--success, .md-custom-container--warning, .md-custom-container--danger, .md-custom-container--caution,
+  .md-custom-container--question, .md-custom-container--important) {
+  border-color: color-mix(in srgb, var(--md-custom-container-color) calc(28% + 52% * var(--theme-eink, 0)), transparent);
+  background: color-mix(in srgb, var(--md-custom-container-color) calc(7% * (1 - var(--theme-eink, 0))), var(--color-bg));
+}
+:is(.ty-document, .typora-export) :is(.md-custom-container--note, .md-custom-container--info) { --md-custom-container-color: var(--color-alert-note); }
+:is(.ty-document, .typora-export) :is(.md-custom-container--tip, .md-custom-container--success) { --md-custom-container-color: var(--color-alert-tip); }
+:is(.ty-document, .typora-export) .md-custom-container--warning { --md-custom-container-color: var(--color-alert-warning); }
+:is(.ty-document, .typora-export) :is(.md-custom-container--danger, .md-custom-container--caution) { --md-custom-container-color: var(--color-alert-caution); }
+:is(.ty-document, .typora-export) :is(.md-custom-container--question, .md-custom-container--important) { --md-custom-container-color: var(--color-alert-important); }
+
+/* Callout containers: the host draws an svg only for some types, which leaves an uneven gap before the title.
+   Hide it and draw one icon per type, same set and size as the alerts. */
+:is(.ty-document, .typora-export) .md-custom-container-title svg { display: none; }
+:is(.ty-document, .typora-export) :is(.md-custom-container--note, .md-custom-container--info, .md-custom-container--tip,
+  .md-custom-container--success, .md-custom-container--warning, .md-custom-container--danger, .md-custom-container--caution,
+  .md-custom-container--question, .md-custom-container--important) .md-custom-container-title::before {
+  content: "";
+  flex: none;
+  width: 15px;
+  height: 15px;
+  background: currentColor;
+  -webkit-mask: var(--ib-ci) center / contain no-repeat;
+  mask: var(--ib-ci) center / contain no-repeat;
+}
+:is(.ty-document, .typora-export) :is(.md-custom-container--note, .md-custom-container--info) { --ib-ci: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='black' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Ccircle cx='12' cy='12' r='10'/%3E%3Cpath d='M12 16v-4'/%3E%3Cpath d='M12 8h.01'/%3E%3C/svg%3E"); }
+:is(.ty-document, .typora-export) :is(.md-custom-container--tip) { --ib-ci: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='black' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='M15 14c.2-1 .7-1.7 1.5-2.5 1-.9 1.5-2.2 1.5-3.5A6 6 0 0 0 6 8c0 1 .2 2.2 1.5 3.5.7.7 1.3 1.5 1.5 2.5'/%3E%3Cpath d='M9 18h6'/%3E%3Cpath d='M10 22h4'/%3E%3C/svg%3E"); }
+:is(.ty-document, .typora-export) :is(.md-custom-container--success) { --ib-ci: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='black' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Ccircle cx='12' cy='12' r='10'/%3E%3Cpath d='m9 12 2 2 4-4'/%3E%3C/svg%3E"); }
+:is(.ty-document, .typora-export) :is(.md-custom-container--warning) { --ib-ci: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='black' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='m21.73 18-8-14a2 2 0 0 0-3.48 0l-8 14A2 2 0 0 0 4 21h16a2 2 0 0 0 1.73-3'/%3E%3Cpath d='M12 9v4'/%3E%3Cpath d='M12 17h.01'/%3E%3C/svg%3E"); }
+:is(.ty-document, .typora-export) :is(.md-custom-container--danger, .md-custom-container--caution) { --ib-ci: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='black' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='M2.586 16.726A2 2 0 0 1 2 15.312V8.688a2 2 0 0 1 .586-1.414l4.688-4.688A2 2 0 0 1 8.688 2h6.624a2 2 0 0 1 1.414.586l4.688 4.688A2 2 0 0 1 22 8.688v6.624a2 2 0 0 1-.586 1.414l-4.688 4.688a2 2 0 0 1-1.414.586H8.688a2 2 0 0 1-1.414-.586z'/%3E%3Cpath d='m15 9-6 6'/%3E%3Cpath d='m9 9 6 6'/%3E%3C/svg%3E"); }
+:is(.ty-document, .typora-export) :is(.md-custom-container--question) { --ib-ci: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='black' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Ccircle cx='12' cy='12' r='10'/%3E%3Cpath d='M9.1 9a3 3 0 0 1 5.8 1c0 2-3 3-3 3'/%3E%3Cpath d='M12 17h.01'/%3E%3C/svg%3E"); }
+:is(.ty-document, .typora-export) :is(.md-custom-container--important) { --ib-ci: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='black' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='M4 15s1-1 4-1 5 2 8 2 4-1 4-1V3s-1 1-4 1-5-2-8-2-4 1-4 1z'/%3E%3Cpath d='M4 22v-7'/%3E%3C/svg%3E"); }
+
+/* Exported HTML has no title element; show the type name instead. */
+.typora-export :is(.md-custom-container--note, .md-custom-container--info, .md-custom-container--tip, .md-custom-container--success,
+  .md-custom-container--warning, .md-custom-container--danger, .md-custom-container--caution, .md-custom-container--question,
+  .md-custom-container--important)::before {
+  display: block;
+  margin: 0.4em 0 0.2em;
+  color: var(--md-custom-container-color);
+  font-size: 0.85em;
+  font-weight: 600;
+}
+.typora-export .md-custom-container--note::before { content: "说明"; }
+.typora-export .md-custom-container--info::before { content: "信息"; }
+.typora-export .md-custom-container--tip::before { content: "提示"; }
+.typora-export .md-custom-container--success::before { content: "完成"; }
+.typora-export .md-custom-container--warning::before { content: "注意"; }
+.typora-export :is(.md-custom-container--danger, .md-custom-container--caution)::before { content: "危险"; }
+.typora-export .md-custom-container--question::before { content: "问题"; }
+.typora-export .md-custom-container--important::before { content: "重要"; }
+
+/* Layout containers: columns, cards, panels. */
+:is(.ty-document, .typora-export) :is(.md-custom-container--cols, .md-custom-container--compare, .md-custom-container--tabs, .md-custom-container--kpi) {
+  padding: 0;
+  border: 0;
+  background: none;
+}
+:is(.ty-document, .typora-export) .md-custom-container--cols {
+  display: grid;
+  grid-auto-flow: column;
+  grid-auto-columns: minmax(0, 1fr);
+  gap: 16px;
+}
+:is(.ty-document, .typora-export) .md-custom-container--cols > .md-custom-container-title { display: none; }
+:is(.ty-document, .typora-export) .md-custom-container--cols > .md-custom-container { margin: 0; }
+:is(.ty-document, .typora-export) .md-custom-container--col {
+  border-color: transparent;
+  background: none;
+  padding-inline: 0;
+}
+:is(.ty-document, .typora-export) .md-custom-container--compare .md-p {
+  display: flex;
+  box-sizing: border-box;
+  width: 100%;
+  align-items: flex-start;
+  gap: 12px;
+}
+:is(.ty-document, .typora-export) .md-custom-container--compare .md-p br { display: none; }
+:is(.ty-document, .typora-export) .md-custom-container--compare .md-p .md-image { flex: 1 1 0; min-width: 0; margin: 0; }
+:is(.ty-document, .typora-export) .md-custom-container--compare .md-p img { display: block; width: 100%; height: auto; }
+:is(.ty-document, .typora-export) .md-custom-container--tabs {
+  display: grid;
+  gap: 10px;
+}
+
+/* KPI cards: each list item becomes a number card. */
+:is(.ty-document, .typora-export) .md-custom-container--kpi .md-list {
+  display: grid;
+  grid-auto-flow: column;
+  grid-auto-columns: minmax(0, 1fr);
+  gap: 12px;
+  padding: 0;
+  list-style: none;
+}
+:is(.ty-document, .typora-export) .md-custom-container--kpi .md-list-item {
+  padding: 0.6em 0.9em;
+  border-radius: var(--ib-radius-lg);
+  background: var(--ib-tint);
+  color: var(--color-muted);
+  font-size: 0.9em;
+}
+:is(.ty-document, .typora-export) .md-custom-container--kpi .md-list-item::marker { content: none; }
+/* Typora draws the bullet with ::after, not ::marker. */
+:is(.ty-document, .typora-export) .md-custom-container--kpi .md-list-item::after { content: none; }
+:is(.ty-document, .typora-export) .md-custom-container--kpi strong {
+  display: block;
+  color: var(--color-accent);
+  font-size: 1.8em;
+  font-weight: 600;
+  line-height: 1.2;
+}
+
+/* Timeline / steps / process: numbered dots at the start of each item, no side rule.
+   The dot is positioned in the item's own padding, so it never overlaps the text. */
+:is(.ty-document, .typora-export) :is(.md-custom-container--timeline, .md-custom-container--steps, .md-custom-container--process, .md-custom-container--roadmap) .md-list {
+  counter-reset: ib-step;
+  margin: 0.4em 0 0.2em;
+  padding: 0;
+  list-style: none;
+}
+:is(.ty-document, .typora-export) :is(.md-custom-container--timeline, .md-custom-container--steps, .md-custom-container--process, .md-custom-container--roadmap) .md-list-item {
+  counter-increment: ib-step;
+  position: relative;
+  display: block;
+  margin: 0 0 0.9em;
+  padding-inline-start: 2.8em;
+  min-height: 1.9em;
+  line-height: 1.7;
+}
+:is(.ty-document, .typora-export) :is(.md-custom-container--timeline, .md-custom-container--steps, .md-custom-container--process, .md-custom-container--roadmap) .md-list-item::marker { content: none; }
+:is(.ty-document, .typora-export) :is(.md-custom-container--timeline, .md-custom-container--steps, .md-custom-container--process, .md-custom-container--roadmap) .md-list-item::after {
+  content: counter(ib-step);
+  position: absolute;
+  inset-inline-start: 0.2em;
+  top: 0.45em;
+  width: 1.9em;
+  height: 1.9em;
+  border-radius: 50%;
+  background: var(--ib-tint-strong);
+  color: var(--color-accent);
+  font-size: 0.85em;
+  font-weight: 600;
+  line-height: 1.9em;
+  text-align: center;
+}
+
+/* ---------- tables ---------- */
+:is(.ty-document, .typora-export) .md-table th {
+  background: color-mix(in srgb, var(--color-accent) calc(6% * (1 - var(--theme-eink, 0))), var(--color-bg));
+  font-weight: 600;
+}
+
+/* ---------- inline ---------- */
+:is(.ty-document, .typora-export) mark {
+  padding: 0 2px;
+  border-radius: var(--ib-radius-sm);
+  background: color-mix(in srgb, var(--color-highlight-bg) calc(100% * (1 - var(--theme-eink, 0))), transparent);
+  color: inherit;
+  text-decoration: var(--theme-eink-mark, none);
+}
+:is(.ty-document, .typora-export) kbd {
+  display: inline-block;
+  padding: 1px 8px;
+  border: 1px solid var(--ib-line);
+  border-radius: 999px;
+  background: var(--color-muted-bg);
+  color: var(--color-text);
+  font-size: 0.8em;
+  font-weight: 600;
+  line-height: 1.5;
+  vertical-align: 0.08em;
+}
+:is(.ty-document, .typora-export) del {
+  color: var(--color-del);
+}
+
+/* ---------- task lists ---------- */
+:is(.ty-document, .typora-export) .md-task-list-control {
+  border-radius: 50%;
+  accent-color: var(--color-accent);
+}
+/* Exported HTML ships no task-list layout: box and text on one line. */
+.typora-export .md-list-task {
+  padding-inline-start: 0.2em;
+  list-style: none;
+}
+.typora-export .md-task-list-item {
+  display: flex;
+  gap: 0.55em;
+  align-items: baseline;
+}
+.typora-export .md-task-list-item > .md-task-list-control {
+  flex: none;
+  margin: 0;
+  transform: translateY(0.12em);
+}
+.typora-export .md-task-list-item > .md-p { margin: 0; }
+
+/* ---------- [toc] in exported HTML: one entry per line ---------- */
+.typora-export .md-toc {
+  margin: 1em 0;
+  padding: 0.8em 1em;
+  border: 1px solid var(--ib-line);
+  border-radius: var(--ib-radius-lg);
+}
+.typora-export .md-toc-item {
+  display: block;
+  padding-inline-start: calc(var(--md-toc-depth, 0) * 1.2em);
+  line-height: 1.9;
+}
+.typora-export .md-toc-inner { color: var(--color-text); text-decoration: none; }
+.typora-export .md-toc-h1 .md-toc-inner { font-weight: 600; }
+
+/* ---------- images ---------- */
+/* Exported HTML repeats the alt text beside the image; hide it. */
+.typora-export .md-image > .md-plain { display: none; }
+:is(.ty-document, .typora-export) .md-image img { border-radius: var(--ib-radius-md); }
+/* Ignorance alt keywords: ![gray|240](a.png), ![right|300](b.png) */
+:is(.ty-document, .typora-export) img:is([alt="gray"], [alt^="gray|"], [alt*="|gray"]) { filter: grayscale(1); }
+:is(.ty-document, .typora-export) img:is([alt="sepia"], [alt^="sepia|"], [alt*="|sepia"]) { filter: sepia(0.8); }
+:is(.ty-document, .typora-export) img:is([alt="invert"], [alt^="invert|"], [alt*="|invert"]) { filter: invert(1) hue-rotate(180deg); }
+:is(.ty-document, .typora-export) img:is([alt="blur"], [alt^="blur|"], [alt*="|blur"]) { filter: blur(6px); transition: filter 0.2s; }
+:is(.ty-document, .typora-export) img:is([alt="blur"], [alt^="blur|"], [alt*="|blur"]):hover { filter: none; }
+:root[data-appearance="dark"] :is(.ty-document, .typora-export) img:is([alt="dark-invert"], [alt^="dark-invert|"], [alt*="|dark-invert"]) { filter: invert(1) hue-rotate(180deg); }
+:is(.ty-document, .typora-export) .md-image:has(> img:is([alt^="right|"], [alt="right"])) { float: right; margin: 0 0 0.6em 1em; }
+:is(.ty-document, .typora-export) .md-image:has(> img:is([alt^="left|"], [alt="left"])) { float: left; margin: 0 1em 0.6em 0; }
+
+/* ---------- Ignorance Advanced inline rules (editor only) ---------- */
+.ty-document .ib-badge {
+  padding: 1px 8px;
+  border-radius: 999px;
+  background: var(--ib-tint-strong);
+  color: var(--color-accent);
+  font-size: 0.85em;
+  font-weight: 500;
+  white-space: nowrap;
+}
+.ty-document .ib-badge-green { background: color-mix(in srgb, var(--color-alert-tip) calc(14% * (1 - var(--theme-eink, 0))), var(--color-bg)); color: var(--color-alert-tip); }
+.ty-document .ib-badge-red { background: color-mix(in srgb, var(--color-alert-caution) calc(14% * (1 - var(--theme-eink, 0))), var(--color-bg)); color: var(--color-alert-caution); }
+.ty-document .ib-badge-orange { background: color-mix(in srgb, var(--color-alert-warning) calc(14% * (1 - var(--theme-eink, 0))), var(--color-bg)); color: var(--color-alert-warning); }
+.ty-document .ib-badge-purple { background: color-mix(in srgb, var(--color-alert-important) calc(14% * (1 - var(--theme-eink, 0))), var(--color-bg)); color: var(--color-alert-important); }
+.ty-document .ib-spoiler {
+  border-radius: var(--ib-radius-sm);
+  background: color-mix(in srgb, var(--color-text) calc(55% * (1 - var(--theme-eink, 0))), var(--color-bg));
+  color: transparent;
+  transition: color 0.15s, background 0.15s;
+}
+.ty-document .ib-spoiler:hover {
+  background: var(--color-muted-bg);
+  color: var(--color-text);
+}
+.ty-document .ib-ruby {
+  border-bottom: 1px dotted var(--color-accent);
+  cursor: help;
+}
+.ty-document .ib-hl-red { background: color-mix(in srgb, var(--color-alert-caution) calc(18% * (1 - var(--theme-eink, 0))), transparent); border-radius: var(--ib-radius-sm); }
+.ty-document .ib-hl-orange { background: color-mix(in srgb, var(--color-alert-warning) calc(20% * (1 - var(--theme-eink, 0))), transparent); border-radius: var(--ib-radius-sm); }
+.ty-document .ib-hl-green { background: color-mix(in srgb, var(--color-alert-tip) calc(18% * (1 - var(--theme-eink, 0))), transparent); border-radius: var(--ib-radius-sm); }
+.ty-document .ib-hl-blue { background: color-mix(in srgb, var(--color-alert-note) calc(18% * (1 - var(--theme-eink, 0))), transparent); border-radius: var(--ib-radius-sm); }
+.ty-document .ib-hl-purple { background: color-mix(in srgb, var(--color-alert-important) calc(18% * (1 - var(--theme-eink, 0))), transparent); border-radius: var(--ib-radius-sm); }
+.ty-document .ib-crumb {
+  color: var(--color-muted);
+  font-size: 0.9em;
+}
+
+@media print {
+  :is(.ty-document, .typora-export) :is(.md-blockquote, .md-alert, .md-custom-container) {
+    break-inside: avoid;
+  }
+}
+
+/* ---------- the two cats (Ignorance brand) ---------- */
+/* Inlined as data: URIs by scripts/build-theme.sh; Typora drops any other external resource reference. */
+:is(.ty-document, .typora-export) {
+  --ib-cats: url("assets/cats.webp");
+  --ib-cats-sm: url("assets/cats-sm.webp");
+}
+/* Off by default: the "双猫" option in Settings ▸ View (variant `mascot`) sets
+   --theme-ib-cats to 1. Everything below scales with it, so "off" takes no space. */
+/* Quietly at the end of every document. */
+.ty-document::after,
+.typora-export-content::after {
+  content: "";
+  display: block;
+  width: calc(var(--theme-ib-cats, 0) * 64px);
+  height: calc(var(--theme-ib-cats, 0) * 45px);
+  margin: calc(var(--theme-ib-cats, 0) * 56px) auto calc(var(--theme-ib-cats, 0) * 8px);
+  background: var(--ib-cats-sm) center / contain no-repeat;
+  opacity: 0.5;
+  pointer-events: none;
+}
+/* ---------- properties (front matter) card ---------- */
+/* A tinted card with a heading band: icon tile + bold title, fields below. Both
+   Typora modes are styled: the YAML source and the field form. */
+:is(.ty-document, .typora-export) .md-meta-block:not(.md-meta-block--fields),
+:is(.ty-document, .typora-export) .md-meta-block--fields:not(.md-meta-block--collapsed) .md-meta-properties-card {
+  border: 1px solid color-mix(in srgb, var(--color-accent) 20%, var(--ib-line));
+  border-radius: 16px;
+  background: color-mix(in srgb, var(--color-accent) calc(5% * (1 - var(--theme-eink, 0))), var(--color-bg));
+  overflow: hidden;
+}
+:is(.ty-document, .typora-export) .md-meta-header {
+  height: 52px;
+  padding: 0 18px;
+  gap: 10px;
+  color: var(--color-text);
+  background: color-mix(in srgb, var(--color-accent) calc(9% * (1 - var(--theme-eink, 0))), var(--color-bg));
+  border-bottom: 1px solid color-mix(in srgb, var(--color-accent) 14%, var(--ib-line));
+}
+:is(.ty-document, .typora-export) .md-meta-title {
+  position: relative;
+  padding-inline-start: 40px;
+  color: var(--color-text);
+  font-size: 15px;
+  font-weight: 600;
+  letter-spacing: 0;
+  line-height: 30px;
+}
+:is(.ty-document, .typora-export) .md-meta-title::before {
+  content: "";
+  position: absolute;
+  inset-inline-start: 0;
+  top: 50%;
+  width: 30px;
+  height: 30px;
+  margin-top: -15px;
+  border-radius: 9px;
+  background: var(--ib-tint-strong);
+}
+:is(.ty-document, .typora-export) .md-meta-title::after {
+  content: "";
+  position: absolute;
+  inset-inline-start: 6px;
+  top: 50%;
+  width: 18px;
+  height: 18px;
+  margin-top: -9px;
+  background: var(--color-accent);
+  -webkit-mask: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='black' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='M15 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V7Z'/%3E%3Cpath d='M14 2v4a2 2 0 0 0 2 2h4'/%3E%3Cpath d='M10 9H8'/%3E%3Cpath d='M16 13H8'/%3E%3Cpath d='M16 17H8'/%3E%3C/svg%3E") center / 18px 18px no-repeat;
+  mask: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='black' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='M15 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V7Z'/%3E%3Cpath d='M14 2v4a2 2 0 0 0 2 2h4'/%3E%3Cpath d='M10 9H8'/%3E%3Cpath d='M16 13H8'/%3E%3Cpath d='M16 17H8'/%3E%3C/svg%3E") center / 18px 18px no-repeat;
+}
+:is(.ty-document, .typora-export) .md-meta-summary { color: var(--color-muted); }
+:is(.ty-document, .typora-export) .md-meta-mode { background: var(--ib-tint-strong); }
+/* YAML source: body font instead of monospace, roomier. */
+:is(.ty-document, .typora-export) .md-meta-block-inner {
+  padding: 12px 22px 18px;
+  color: var(--color-text);
+  font-family: var(--ty-body-font, inherit);
+  font-size: 0.95em;
+  line-height: 1.8;
+}
+/* Field form. */
+:is(.ty-document, .typora-export) .md-meta-fields { padding: 8px 12px 12px; }
+:is(.ty-document, .typora-export) .md-meta-row:hover,
+:is(.ty-document, .typora-export) .md-meta-row:focus-within { background: var(--ib-tint-strong); border-radius: var(--ib-radius-md); }
+:is(.ty-document, .typora-export) .md-meta-key-icon { color: var(--color-accent); }
+:is(.ty-document, .typora-export) .md-meta-key-input { color: var(--color-muted); }
+:is(.ty-document, .typora-export) .md-meta-key-input:focus,
+:is(.ty-document, .typora-export) .md-meta-value-input:focus { background: var(--color-bg); }
+:is(.ty-document, .typora-export) .md-meta-tag { color: var(--color-accent); background: var(--ib-tint-strong); }
+
+/* On the corner of the front-matter card. */
+:is(.ty-document, .typora-export) .md-meta-block {
+  position: relative;
+}
+:is(.ty-document, .typora-export) .md-meta-block::after {
+  content: "";
+  position: absolute;
+  /* Bottom-right: the top-right corner holds Typora's fold / field / YAML toggles. */
+  bottom: 8px;
+  right: 12px;
+  width: calc(var(--theme-ib-cats, 0) * 72px);
+  height: calc(var(--theme-ib-cats, 0) * 50px);
+  background: var(--ib-cats-sm) center / contain no-repeat;
+  opacity: 0.9;
+  pointer-events: none;
+}
+@media print {
+  .ty-document::after,
+  .typora-export-content::after { content: none; }
+}
+
+/* ---------- export: HTML blocks show their rendered preview only, not the source ---------- */
+.typora-export .md-html-block-preview ~ .md-html-block-inner {
+  display: none;
+}
+
+/* ---------- HTML comments (e.g. `<!-- layout: cover | tag -->`) ---------- */
+/* A comment has nothing to preview, so Typora shows its source. Style that as a
+   small muted label instead of a stray monospace block; it stays editable. */
+.ty-document .md-html-block:has(> .md-html-block-preview[data-empty="true"]) {
+  width: fit-content;
+  max-width: 100%;
+  margin: 0.5em 0;
+  padding: 3px 12px;
+  border: 1px dashed var(--ib-line);
+  border-radius: 10px;
+  background: transparent;
+}
+.ty-document .md-html-block:has(> .md-html-block-preview[data-empty="true"]) .md-html-block-inner {
+  color: var(--color-muted);
+  font-family: var(--font-sans, inherit);
+  font-size: 0.78em;
+  line-height: 1.6;
+}
+.ty-document .md-html-block:has(> .md-html-block-preview[data-empty="true"]) .md-html-block-inner .md-hl {
+  color: inherit;
+}
+
+/* Diagrams (Mermaid, drawn by Typora's pele): the renderer reads these two variables from the computed
+   style when it draws, so node fills and borders are a neutral mix of paper and ink: it sits quietly under every palette.
+   The renderer rejects color-mix(), hence precomputed hex values from the palette generator. */
+:root:not(#_a):not(#_b), body:not(#_a):not(#_b), .ty-document:not(#_a):not(#_b) {
+  --color-muted-bg: var(--theme-diagram-fill);
+  --color-code-border: var(--theme-diagram-border);
+}
+
+/* Heading numbers. The editor wraps heading text in a block div.ty-inlines, so the number goes on
+   that div's ::before to stay on the same line; exported HTML has plain h2/h3. The variant sets
+   --theme-h2-num / --theme-h3-num to a counter() expression or "". */
+:is(.ty-document, .typora-export) :is(.md-h1, h1) { counter-reset: ib-h2 ib-h3; }
+:is(.ty-document, .typora-export) :is(.md-h2, h2) { counter-increment: ib-h2; counter-reset: ib-h3; }
+:is(.ty-document, .typora-export) :is(.md-h3, h3) { counter-increment: ib-h3; }
+.ty-document .md-h2 > .ty-inlines::before,
+.typora-export h2::before { content: var(--theme-h2-num); color: var(--color-accent); margin-inline-end: 0.15em; }
+.ty-document .md-h3 > .ty-inlines::before,
+.typora-export h3::before { content: var(--theme-h3-num); color: var(--color-accent); margin-inline-end: 0.15em; }
+
+/* Table crosshair: the hovered cell's row and column get an overlay. It is a background-image,
+   so the header and zebra background colours stay; the variant sets --theme-cross-tint
+   (transparent when off). Columns are matched by index, up to 12. */
+:is(.ty-document, .typora-export) .md-table tr:hover > :is(td, th),
+:is(.ty-document, .typora-export) .md-table:has(:is(td, th):nth-child(1):hover) :is(td, th):nth-child(1),
+:is(.ty-document, .typora-export) .md-table:has(:is(td, th):nth-child(2):hover) :is(td, th):nth-child(2),
+:is(.ty-document, .typora-export) .md-table:has(:is(td, th):nth-child(3):hover) :is(td, th):nth-child(3),
+:is(.ty-document, .typora-export) .md-table:has(:is(td, th):nth-child(4):hover) :is(td, th):nth-child(4),
+:is(.ty-document, .typora-export) .md-table:has(:is(td, th):nth-child(5):hover) :is(td, th):nth-child(5),
+:is(.ty-document, .typora-export) .md-table:has(:is(td, th):nth-child(6):hover) :is(td, th):nth-child(6),
+:is(.ty-document, .typora-export) .md-table:has(:is(td, th):nth-child(7):hover) :is(td, th):nth-child(7),
+:is(.ty-document, .typora-export) .md-table:has(:is(td, th):nth-child(8):hover) :is(td, th):nth-child(8),
+:is(.ty-document, .typora-export) .md-table:has(:is(td, th):nth-child(9):hover) :is(td, th):nth-child(9),
+:is(.ty-document, .typora-export) .md-table:has(:is(td, th):nth-child(10):hover) :is(td, th):nth-child(10),
+:is(.ty-document, .typora-export) .md-table:has(:is(td, th):nth-child(11):hover) :is(td, th):nth-child(11),
+:is(.ty-document, .typora-export) .md-table:has(:is(td, th):nth-child(12):hover) :is(td, th):nth-child(12) {
+  background-image: linear-gradient(var(--theme-cross-tint), var(--theme-cross-tint));
+}
