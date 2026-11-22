@@ -30,3 +30,5 @@
 | Lucide（`@iconify-json/lucide`） | 1.2.136 | ISC | 演示里的图标短码 | `vendor/lucide-icons.js`（发布包的 `icons.json`，前面加了 `export default` 以便按模块加载，数据与发布包逐项一致） |
 
 两者是上游发布的压缩版本；本扩展自己的代码都是可读源码。
+
+注音请用 `((ruby:道 | dào))`。VLOOK 的 `_^dào^_` 在 Typora 里按 CommonMark 解析，中间的下划线会被配成斜体，扩展无法改变这一解析，因此不支持。
