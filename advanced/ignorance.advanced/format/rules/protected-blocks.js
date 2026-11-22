@@ -1,6 +1,6 @@
 const FENCE = /^\s*(`{3,}|~{3,})(.*)$/;
 const DIVIDER = /^\s*\|?\s*:?-+:?\s*(?:\|\s*:?-+:?\s*)*\|?\s*$/;
-const REFERENCE = /^\s{0,3}\[(?!\^)[^\]]+\]:/;
+const REFERENCE = /^\s{0,3}\[[^\]]+\]:/;
 const HTML_TAG = /^\s*<([a-z][\w-]*)(?:\s|\/?>)/i;
 const VOID_TAG = /^(?:area|base|br|col|embed|hr|img|input|link|meta|param|source|track|wbr)$/i;
 const LIST_PREFIX = /^\s*(?:[-+*]|\d{1,9}[.)])[ \t]+/;

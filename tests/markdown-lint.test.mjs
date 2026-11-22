@@ -4,7 +4,7 @@ import { lintMarkdown } from "../advanced/ignorance.advanced/format/lint.js";
 
 test("formats headings, lists, prose and whitespace in one idempotent pass", () => {
   const input = "#标题\n正文Typora, 版本2!\n\n\n####跳级\n* 项目\n+ _次项_\n#第二标题\n9. 甲\n4. 乙  \n\n";
-  const expected = "# 标题\n\n正文 Typora，版本 2！\n\n## 跳级\n\n- 项目\n- *次项*\n\n## 第二标题\n\n1. 甲\n2. 乙  \n";
+  const expected = "# 标题\n\n正文 Typora, 版本 2!\n\n## 跳级\n\n- 项目\n- *次项*\n\n## 第二标题\n\n1. 甲\n2. 乙  \n";
   assert.equal(lintMarkdown(input), expected);
   assert.equal(lintMarkdown(expected), expected);
 });
@@ -30,7 +30,7 @@ test("supports independent settings and preserves nested list levels", () => {
 });
 
 test("keeps inline literals, decimals and reference destinations while styling prose", () => {
-  assert.equal(lintMarkdown("中文(版本2.5),继续\n[引用]: ./文档abc.md\n中文 `a_b中c`"), "中文（版本 2.5），继续\n[引用]: ./文档abc.md\n中文 `a_b中c`\n");
+  assert.equal(lintMarkdown("中文(版本2.5),继续\n[引用]: ./文档abc.md\n中文 `a_b中c`"), "中文（版本 2.5)，继续\n[引用]: ./文档abc.md\n中文 `a_b中c`\n");
 });
 
 test("keeps fenced code that starts on a list item and preserves ordered nesting", () => {
@@ -40,7 +40,7 @@ test("keeps fenced code that starts on a list item and preserves ordered nesting
 });
 
 test("preserves multi-line inline code and keeps blockquotes as blockquotes", () => {
-  assert.equal(lintMarkdown("正文 ``a中文\nb中文``。\n> 中文abc, 继续"), "正文 ``a中文\nb中文``。\n> 中文 abc，继续\n");
+  assert.equal(lintMarkdown("正文 ``a中文\nb中文``。\n> 中文abc, 继续"), "正文 ``a中文\nb中文``。\n> 中文 abc, 继续\n");
 });
 
 test("normalizing list indent keeps wrapped continuations in their item", () => {
@@ -72,4 +72,19 @@ test("registered formatter reads current settings and preserves the spacing comm
   assert.equal(formatters.get("cjk-spacing").format("+ 中文abc"), "+ 中文 abc");
   subscriptions.forEach((subscription) => subscription.dispose());
   assert.equal(formatters.size, 0);
+});
+
+test("preserves footnote references and definitions", () => {
+  const input = "正文[^1]\n\n[^1]: 脚注内容\n";
+  assert.equal(lintMarkdown(input), input);
+  assert.equal(lintMarkdown("正文[^note-a]继续abc。\n\n[^note-a]: 说明,test\n"), "正文[^note-a]继续 abc。\n\n[^note-a]: 说明,test\n");
+});
+
+test("preserves English punctuation inside a mixed-language line", () => {
+  const input = "He said: hello, world. 这是中文。\n";
+  assert.equal(lintMarkdown(input), input);
+});
+
+test("converts punctuation adjacent to Han characters only", () => {
+  assert.equal(lintMarkdown("The cat sat. 然后它走了."), "The cat sat. 然后它走了。\n");
 });

@@ -35,6 +35,6 @@
 
 ## Markdown 规则整理
 
-在命令面板手动执行「Format Document: 整理 Markdown」。扩展设置可单独关闭各项规则，并选择列表缩进宽度。整理涵盖标题、列表、空白、中文标点、中英文空格与斜体标记。`#标题` 会按标题处理。围栏代码、数学块、表格、Front Matter、行内代码和链接地址保留原样。可用「中英文之间加空格」单独处理间距。
+在命令面板手动执行「Format Document: 整理 Markdown」。扩展设置可单独关闭各项规则，并选择列表缩进宽度。整理涵盖标题、列表、空白、中文标点、中英文空格与斜体标记。半角标点仅在紧邻汉字时转为全角。`#标题` 会按标题处理。围栏代码、数学块、表格、Front Matter、行内代码和链接地址保留原样。可用「中英文之间加空格」单独处理间距。
 
 按 [Typora Worker API](https://docs.typora.io/extensions/worker-api#formatters) 的约定，整篇替换记为一次撤销。可用仓库 `samples/功能总览.md` 中的「Markdown 规则整理」示例验收。
