@@ -24,6 +24,8 @@
   "main": "main.js",
   "activationEvents": [
     "onStartupFinished",
+    "onCommand:date-insert",
+    "onCommand:date-convert",
     "onCommand:outline-up",
     "onCommand:outline-down",
     "onCommand:outline-promote",
@@ -41,6 +43,8 @@
   ],
   "contributes": {
     "commands": [
+      {"id": "date-insert", "title": "插入自然语言日期", "category": "日期"},
+      {"id": "date-convert", "title": "将选中文字转换为日期", "category": "日期"},
       {"id": "outline-up", "title": "上移列表项", "category": "列表"},
       {"id": "outline-down", "title": "下移列表项", "category": "列表"},
       {"id": "outline-promote", "title": "提升列表层级", "category": "列表"},
@@ -88,6 +92,7 @@
     ],
     "menus": {
       "editor/context": [
+        {"command": "date-convert", "when": "editorHasSelection"},
         {
           "command": "table-sort-asc",
           "when": "blockType == 'table_cell'"
@@ -110,6 +115,7 @@
         }
       ],
       "inlinePalette": [
+        {"command": "date-insert"},
         {
           "command": "table-sort-asc",
           "when": "blockType == 'table_cell'"
@@ -554,6 +560,20 @@
     "configuration": {
       "title": "Ignorance Advanced",
       "properties": {
+        "dateFormat": {
+          "type": "string",
+          "title": "插入日期格式",
+          "enum": ["iso", "weekday", "wiki"],
+          "enumLabels": ["日期", "日期和星期", "Wiki 链接"],
+          "default": "iso"
+        },
+        "dateWeekStart": {
+          "type": "number",
+          "title": "每周起始日",
+          "enum": [1, 0],
+          "enumLabels": ["周一", "周日"],
+          "default": 1
+        },
         "showMascot": {
           "type": "boolean",
           "default": false,
