@@ -18,7 +18,7 @@
 
 ## 权限
 
-只声明 `document: read`，用于演示面板和侧栏读取当前文档，不联网，不写文件。
+只声明 `document: write`。演示面板和侧栏读取当前文档，整理命令由 Typora 应用格式化结果。
 
 ## 第三方库
 
@@ -32,3 +32,9 @@
 两者是上游发布的压缩版本；本扩展自己的代码都是可读源码。
 
 注音请用 `((ruby:道 | dào))`。VLOOK 的 `_^dào^_` 在 Typora 里按 CommonMark 解析，中间的下划线会被配成斜体，扩展无法改变这一解析，因此不支持。
+
+## Markdown 规则整理
+
+在命令面板手动执行「Format Document: 整理 Markdown」。扩展设置可单独关闭各项规则，并选择列表缩进宽度。整理涵盖标题、列表、空白、中文标点、中英文空格与斜体标记。`#标题` 会按标题处理。围栏代码、数学块、表格、Front Matter、行内代码和链接地址保留原样。可用「中英文之间加空格」单独处理间距。
+
+按 [Typora Worker API](https://docs.typora.io/extensions/worker-api#formatters) 的约定，整篇替换记为一次撤销。可用仓库 `samples/功能总览.md` 中的「Markdown 规则整理」示例验收。
