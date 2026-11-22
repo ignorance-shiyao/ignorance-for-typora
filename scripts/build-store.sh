@@ -25,5 +25,10 @@ if [[ -f "$VAULT/typora-extension.json" ]]; then
     [[ "${entry:t}" == experiments ]] || cp -R "$entry" "$OUT/extensions/ignorance.vault/"
   done
 fi
+GRAPHS="$ROOT/advanced/ignorance.knowledge-graphs"
+if [[ -f "$GRAPHS/typora-extension.json" ]]; then
+  mkdir -p "$OUT/extensions/ignorance.knowledge-graphs"
+  for entry in "$GRAPHS"/*; do cp -R "$entry" "$OUT/extensions/ignorance.knowledge-graphs/"; done
+fi
 echo "assembled $OUT"
 find "$OUT" -type f | sed "s#$OUT/##" | sort | head -60
