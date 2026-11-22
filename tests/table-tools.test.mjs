@@ -98,3 +98,29 @@ test("locates a table without block text and uses the selected cell's sibling in
   await commands.get("table-sort-asc")();
   assert.equal(markdown, code + "| 名称 | 数量 |\n| --- | ---: |\n| 乙 | 2 |\n| 甲 | 10 |");
 });
+
+test("table commands leave the document untouched when the caret is outside a table", async () => {
+  const { registerTableCommands } = await import("../advanced/ignorance.advanced/format/table-commands.js");
+  const commands = new Map();
+  const messages = [];
+  const original = "说明\n\n| 名称 | 值 |\n| --- | --- |\n| 甲 | 2 |";
+  let markdown = original;
+  registerTableCommands({
+    commands: { register: (id, command) => commands.set(id, command) },
+    document: { getBlocks: () => [
+      { id: "paragraph", type: "paragraph", text: "说明" },
+      { id: "table", type: "table" },
+    ] },
+    editor: {
+      getSelection: () => ({ anchor: { blockId: "paragraph" } }),
+      getMarkdown: () => markdown,
+      replaceDocument: (next) => { markdown = next; },
+    },
+    ui: { toast: (message) => messages.push(message) },
+  }, []);
+  for (const id of ["table-sort-asc", "table-sort-desc", "table-recalculate", "table-total", "table-transpose"]) {
+    await commands.get(id)();
+    assert.equal(markdown, original);
+    assert.equal(messages.at(-1), "请将光标放在表格内");
+  }
+});
