@@ -475,6 +475,8 @@
 .ty-document .ib-badge-red { background: color-mix(in srgb, var(--color-alert-caution) calc(14% * (1 - var(--theme-eink, 0))), var(--color-bg)); color: var(--color-alert-caution); }
 .ty-document .ib-badge-orange { background: color-mix(in srgb, var(--color-alert-warning) calc(14% * (1 - var(--theme-eink, 0))), var(--color-bg)); color: var(--color-alert-warning); }
 .ty-document .ib-badge-purple { background: color-mix(in srgb, var(--color-alert-important) calc(14% * (1 - var(--theme-eink, 0))), var(--color-bg)); color: var(--color-alert-important); }
+.ty-document .ib-badge-amber { background: color-mix(in srgb, #b7791f calc(14% * (1 - var(--theme-eink, 0))), var(--color-bg)); color: #9a6410; }
+.ty-document .ib-badge-gray { background: color-mix(in srgb, var(--color-muted) calc(14% * (1 - var(--theme-eink, 0))), var(--color-bg)); color: var(--color-muted); }
 .ty-document .ib-spoiler {
   border-radius: var(--ib-radius-sm);
   background: color-mix(in srgb, var(--color-text) calc(55% * (1 - var(--theme-eink, 0))), var(--color-bg));

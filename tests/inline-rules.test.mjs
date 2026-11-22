@@ -45,3 +45,15 @@ test("two badges on one line do not swallow each other", () => {
   assert.deepEqual(hidden(list), ["((green:", "))", "((red:", "))"]);
   assert.deepEqual(list.filter((s) => s.class.startsWith("ib-badge")).map((s) => s.text), ["构建 | 通过", "测试 | 失败"]);
 });
+
+test("a badge with a single value and the amber and gray colors are supported", () => {
+  const one = spans("((green:完成))");
+  assert.deepEqual(hidden(one), ["((green:", "))"]);
+  assert.equal(one.find((s) => s.class.startsWith("ib-badge")).text, "完成");
+  for (const c of ["amber", "gray"]) {
+    const list = spans(`((${c}:进行中)) ((${c}:版本 | 2))`);
+    assert.deepEqual(list.filter((s) => s.class.startsWith("ib-badge")).map((s) => s.text), ["进行中", "版本 | 2"]);
+    assert.equal(hidden(list).length, 4);
+  }
+  assert.deepEqual(spans("((green:完成"), []);
+});

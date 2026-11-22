@@ -29,7 +29,7 @@
     "inlineRules": [
       {
         "id": "badge-open",
-        "pattern": "\\(\\((?:blue|green|orange|red|purple):(?=[^()|\\n]+\\|[^()\\n]+\\)\\))",
+        "pattern": "\\(\\((?:blue|green|orange|red|purple|amber|gray):(?=[^()\\n]+\\)\\))",
         "class": "ib-syn"
       },
       {
@@ -63,8 +63,55 @@
         "title": "$1 · $2"
       },
       {
+        "id": "badge-amber",
+        "pattern": "(?<=\\(\\(amber:)([^()|\\n]+?)\\s*\\|\\s*([^()\\n]*[^()\\s])(?=\\)\\))",
+        "class": "ib-badge ib-badge-amber",
+        "title": "$1 · $2"
+      },
+      {
+        "id": "badge-gray",
+        "pattern": "(?<=\\(\\(gray:)([^()|\\n]+?)\\s*\\|\\s*([^()\\n]*[^()\\s])(?=\\)\\))",
+        "class": "ib-badge ib-badge-gray",
+        "title": "$1 · $2"
+      },
+      {
+        "id": "badge1-blue",
+        "pattern": "(?<=\\(\\(blue:)[^()|\\n]*[^()|\\s](?=\\)\\))",
+        "class": "ib-badge ib-badge-blue"
+      },
+      {
+        "id": "badge1-green",
+        "pattern": "(?<=\\(\\(green:)[^()|\\n]*[^()|\\s](?=\\)\\))",
+        "class": "ib-badge ib-badge-green"
+      },
+      {
+        "id": "badge1-orange",
+        "pattern": "(?<=\\(\\(orange:)[^()|\\n]*[^()|\\s](?=\\)\\))",
+        "class": "ib-badge ib-badge-orange"
+      },
+      {
+        "id": "badge1-red",
+        "pattern": "(?<=\\(\\(red:)[^()|\\n]*[^()|\\s](?=\\)\\))",
+        "class": "ib-badge ib-badge-red"
+      },
+      {
+        "id": "badge1-purple",
+        "pattern": "(?<=\\(\\(purple:)[^()|\\n]*[^()|\\s](?=\\)\\))",
+        "class": "ib-badge ib-badge-purple"
+      },
+      {
+        "id": "badge1-amber",
+        "pattern": "(?<=\\(\\(amber:)[^()|\\n]*[^()|\\s](?=\\)\\))",
+        "class": "ib-badge ib-badge-amber"
+      },
+      {
+        "id": "badge1-gray",
+        "pattern": "(?<=\\(\\(gray:)[^()|\\n]*[^()|\\s](?=\\)\\))",
+        "class": "ib-badge ib-badge-gray"
+      },
+      {
         "id": "badge-close",
-        "pattern": "(?<=\\(\\((?:blue|green|orange|red|purple):[^()|\\n]+\\|[^()\\n]+)\\)\\)",
+        "pattern": "(?<=\\(\\((?:blue|green|orange|red|purple|amber|gray):[^()\\n]+)\\)\\)",
         "class": "ib-syn"
       },
       {
