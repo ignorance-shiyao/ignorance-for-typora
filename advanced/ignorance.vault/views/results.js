@@ -23,7 +23,7 @@ function pathValue(text, path) {
   button.addEventListener("click", () => {
     value.hidden = !value.hidden;
     button.setAttribute("aria-expanded", String(!value.hidden));
-    sdk.autoHeight();
+    if (sdk.kind === "fence") sdk.autoHeight();
   });
   display.append(button, value);
   return display;
@@ -85,7 +85,7 @@ function render(model) {
       output.append(group);
     }
   }
-  sdk.autoHeight();
+  if (sdk.kind === "fence") sdk.autoHeight();
 }
 
 function snapshotRows(model) {
@@ -135,21 +135,23 @@ function svgSnapshot(model) {
   return { svg: new XMLSerializer().serializeToString(svg) };
 }
 
-sdk.onMessage((model) => {
-  latest = model;
-  render(model);
-  if (model.message !== "正在建立索引") resolveFirst();
-});
-sdk.onOpen(({ source }) => { rawSource = source; });
-sdk.onSnapshot(async () => {
-  if (!latest || latest.message === "正在建立索引") {
-    let timeout;
-    try {
-      await Promise.race([firstResult, new Promise((resolve) => { timeout = setTimeout(resolve, 1500); })]);
-    } finally {
-      clearTimeout(timeout);
+if (sdk.kind === "fence") {
+  sdk.onMessage((model) => {
+    latest = model;
+    render(model);
+    if (model.message !== "正在建立索引") resolveFirst();
+  });
+  sdk.onOpen(({ source }) => { rawSource = source; });
+  sdk.onSnapshot(async () => {
+    if (!latest || latest.message === "正在建立索引") {
+      let timeout;
+      try {
+        await Promise.race([firstResult, new Promise((resolve) => { timeout = setTimeout(resolve, 1500); })]);
+      } finally {
+        clearTimeout(timeout);
+      }
     }
-  }
-  return svgSnapshot(latest);
-});
-sdk.postMessage("ready");
+    return svgSnapshot(latest);
+  });
+  sdk.postMessage("ready");
+}

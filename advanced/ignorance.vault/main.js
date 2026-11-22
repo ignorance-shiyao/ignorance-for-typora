@@ -1,3 +1,5 @@
+import { registerDetailSnapshots } from "./index/details.js";
+import { parseTaskQuery, runTasks, weekTasks } from "./index/tasks.js";
 import { registerIndexFence } from "./index/fences.js";
 import { parseQuery, runQuery } from "./index/query.js";
 import { createIndex } from "./index/controller.js";
@@ -5,6 +7,8 @@ import { createIndex } from "./index/controller.js";
 export function activate(ctx) {
   const index = createIndex(typora);
   registerIndexFence(typora, index, ctx.subscriptions, "query", parseQuery, runQuery);
+  registerIndexFence(typora, index, ctx.subscriptions, "tasks", parseTaskQuery, runTasks);
+  registerDetailSnapshots(typora, index, ctx.subscriptions, (records) => ({ week: weekTasks(records) }));
   const report = (error) => typora.ui.toast(`工作区索引失败：${error.message}`);
   ctx.subscriptions.push(
     typora.commands.register("rebuild-index", () => index.rebuild({ announce: true }).catch(report)),
