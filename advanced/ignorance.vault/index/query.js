@@ -135,7 +135,7 @@ function expressionMatches(node, predicate) {
 
 export function sourceIncludes(source, record) {
   return expressionMatches(source, ({ tag, folder }) => tag === undefined
-    ? record.path.startsWith(folder + "/")
+    ? !folder || record.path.startsWith(folder + "/")
     : (record.tags ?? []).includes(tag));
 }
 
@@ -182,6 +182,7 @@ function matchesCondition(record, node, today) {
     right = dayOffset(today, right.days);
     if (!left || !right) return false;
   }
+  if (["<", ">", "<=", ">="].includes(operator) && calendarDate(right) && !calendarDate(left)) return false;
   if (operator === "contains") return Array.isArray(left) ? left.some((value) => String(value) === String(right)) : String(left).includes(String(right));
   if (Array.isArray(left) || typeof left === "object") return false;
   const order = compareValue(left, right);

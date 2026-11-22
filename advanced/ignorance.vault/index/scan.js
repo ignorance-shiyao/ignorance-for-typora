@@ -46,7 +46,7 @@ export async function scanNotes(workspace, root, previous, options = {}) {
         const digest = await hash(contents);
         const saved = cached.get(path);
         if (saved?.hash === digest) {
-          return { hash: digest, note: saved.note, live: saved.live, reused: true };
+          return { hash: digest, note: saved.note, live: saved.live, liveHash: saved.liveHash, reused: true };
         }
         return { hash: digest, note: parseVaultNote(path, contents) };
       } catch {

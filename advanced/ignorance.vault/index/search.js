@@ -1,6 +1,6 @@
 const HAN = /\p{Script=Han}/u;
 const LATIN = /^[a-z]{3,}$/;
-const TOKEN = /\p{Script=Han}|[\p{L}\p{N}]+/gu;
+const TOKEN = /\p{Script=Han}|(?:(?!\p{Script=Han})[\p{L}\p{N}])+/gu;
 const normalize = (value) => value.normalize("NFKC").toLowerCase();
 const collator = new Intl.Collator("zh-CN", { numeric: true });
 

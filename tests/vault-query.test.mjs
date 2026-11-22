@@ -30,3 +30,8 @@ test("reports invalid keywords and conditions with source locations", () => {
   assert.throws(() => parseQuery("from: 项目/\nwhere: due <"), /第 2 行.*需要/);
   assert.throws(() => parseQuery("view: chart"), /第 1 行/);
 });
+
+test("does not compare invalid date strings as dates and supports the root source", () => {
+  const query = parseQuery("from: ./\nwhere: due > 2026-11-22");
+  assert.equal(runQuery(query, rows, "2026-11-22").count, 2);
+});

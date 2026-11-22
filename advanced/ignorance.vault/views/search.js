@@ -57,16 +57,14 @@ function enqueue() {
   pending = request.id;
   changeTimer = setTimeout(() => {
     updates = updates.catch(() => {}).then(async () => {
-      const previous = await sdk.storage.get("search-requests") ?? {};
-      const active = Object.entries(previous).filter(([id, saved]) => id !== key && Date.now() - saved.at < 20_000).slice(-3);
-      await sdk.storage.set("search-requests", Object.fromEntries([...active, [key, request]]));
+      await sdk.storage.set("search-request-" + key, request);
     }).catch((error) => { matches.textContent = "无法提交搜索"; sdk.log(error.message); });
   }, 45);
 }
 
 async function poll() {
   if (!context || !pending) return;
-  const result = (await sdk.storage.get("search-responses"))?.[context];
+  const result = await sdk.storage.get("search-response-" + context);
   if (result?.id !== pending) return;
   const signature = JSON.stringify(result);
   if (signature !== showing) {

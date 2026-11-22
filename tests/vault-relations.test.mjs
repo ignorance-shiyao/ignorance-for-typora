@@ -31,3 +31,8 @@ test("ignores external and attachment links and follows decoded relative paths",
   const actual = noteRelations(createRelations([...notes, from]), from.path);
   assert.deepEqual(actual.outgoing.map(({ path }) => path), ["项目/云岭.md"]);
 });
+
+test("resolves an unquoted wiki parent parsed by YAML as nested flow arrays", () => {
+  const note = parseVaultNote("项目/子项.md", "---\nparent: [[总计划]]\n---\n");
+  assert.deepEqual(noteRelations(createRelations([...notes, note]), note.path).parents.map(({ path }) => path), ["项目/总计划.md"]);
+});

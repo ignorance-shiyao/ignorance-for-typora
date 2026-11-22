@@ -46,24 +46,37 @@ export function registerSearch(api, index, subscriptions) {
         context = path && (await api.document.getBlocks())[0]?.id;
       }
       if (!context) return;
-      const request = (await api.storage.get("search-requests"))?.[context];
-      if (!request || request.id === handled || Date.now() - request.at > EXPIRY) return;
+      const request = await api.storage.get("search-request-" + context);
+      if (!request || request.id === handled) return;
+      if (Date.now() - request.at > EXPIRY) {
+        await api.storage.remove("search-request-" + context);
+        await api.storage.remove("search-response-" + context);
+        return;
+      }
       const response = await run(request.query);
       if (response.message !== "正在建立索引") handled = request.id;
-      const key = context;
-      await api.storage.update("search-responses", (previous) => {
-        const kept = Object.entries(previous ?? {}).filter(([id, value]) => id !== key && Date.now() - value.at <= EXPIRY).slice(-3);
-        return Object.fromEntries([...kept, [key, { ...response, id: request.id, at: Date.now() }]]);
-      });
+      const key = "search-response-" + context;
+      const previous = await api.storage.get(key);
+      if (previous?.id !== request.id || previous.message !== response.message) {
+        await api.storage.set(key, { ...response, id: request.id, at: Date.now() });
+      }
     } finally {
       polling = false;
     }
   }
 
+  async function purgeExpired() {
+    const keys = (await api.storage.keys()).filter((key) => /^search-(?:request|response)-/.test(key));
+    await Promise.all(keys.map(async (key) => {
+      const entry = await api.storage.get(key);
+      if (entry && Date.now() - entry.at > EXPIRY) await api.storage.remove(key);
+    }));
+  }
   const timer = setInterval(() => { void poll().catch(() => {}); }, 90);
+  const cleanup = setInterval(() => { void purgeExpired().catch(() => {}); }, 60_000);
   subscriptions.push(
     index.onChange(() => { invalidated = true; context = undefined; }),
-    { dispose() { disposed = true; clearInterval(timer); } },
+    { dispose() { disposed = true; clearInterval(timer); clearInterval(cleanup); } },
     api.commands.register("search-workspace", async () => {
       const query = await api.ui.input({ prompt: "搜索工作区", placeholder: "关键词" });
       if (query == null || !query.trim()) return;

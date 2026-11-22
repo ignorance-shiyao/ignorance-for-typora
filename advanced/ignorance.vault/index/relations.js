@@ -57,7 +57,7 @@ function parentValues(note) {
   const result = [];
   for (const key of ["parent", "up"]) {
     const values = Object.hasOwn(properties, key) ? properties[key] : undefined;
-    for (const value of Array.isArray(values) ? values : [values]) {
+    for (const value of Array.isArray(values) ? values.flat(2) : [values]) {
       if (typeof value !== "string") continue;
       result.push(value.trim().replace(/^\[\[|\]\]$/g, "").split(/[|#]/, 1)[0]);
     }

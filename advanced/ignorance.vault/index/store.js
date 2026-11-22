@@ -8,7 +8,13 @@ export async function cacheFile(root) {
 }
 
 export async function loadIndex(storage, key) {
-  const source = await storage.files.readText(key);
+  let source;
+  try {
+    source = await storage.files.readText(key);
+  } catch (error) {
+    if (storage.files.list && !(await storage.files.list()).includes(key)) return undefined;
+    throw error;
+  }
   if (!source) return undefined;
   try {
     const data = JSON.parse(source);

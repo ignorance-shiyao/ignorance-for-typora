@@ -35,6 +35,7 @@ test("reports host file and depth ceilings without reading filtered paths", asyn
 test("shares current note edits across controllers using the same cache", async () => {
   const storage = new Map();
   const locks = new Map();
+  const metadata = new Map();
   const file = "/workspace/a.md";
   let editorMarkdown = "---\nstatus: 初始\n---\n";
   let diskMarkdown = editorMarkdown;
@@ -43,7 +44,7 @@ test("shares current note edits across controllers using the same cache", async 
     workspace: { folders: () => ["/workspace"], listFiles: () => [file], readFile: () => diskMarkdown },
     document: { info: () => ({ path: file }) },
     editor: { getMarkdown: () => editorMarkdown },
-    storage: { files: { readText: (key) => storage.get(key), write: (key, value) => storage.set(key, value) } },
+    storage: { get: (key) => metadata.get(key), set: (key, value) => metadata.set(key, value), files: { readText: (key) => storage.get(key), write: (key, value) => storage.set(key, value) } },
     runtime: { lock: (key, operation) => {
       const result = (locks.get(key) ?? Promise.resolve()).then(operation);
       locks.set(key, result.catch(() => {}));
