@@ -36,9 +36,24 @@ function valueNode(model, row, index) {
     : document.createTextNode(text);
 }
 
+function chartNode(markup) {
+  const chart = new DOMParser().parseFromString(markup, "image/svg+xml").documentElement;
+  if (chart.localName !== "svg" || chart.namespaceURI !== SVG) throw new Error("无法绘制图表");
+  const palette = sdk.theme.vars;
+  for (const node of chart.querySelectorAll("[fill], [stroke]")) {
+    for (const name of ["fill", "stroke"]) {
+      const token = /^var\(--typora-(foreground|background|border|accent)\)$/.exec(node.getAttribute(name) ?? "");
+      if (token && palette[token[1]]) node.setAttribute(name, palette[token[1]]);
+    }
+  }
+  return document.importNode(chart, true);
+}
+
 function render(model) {
   output.replaceChildren();
-  if (model.message) {
+  if (model.chart) {
+    output.append(chartNode(model.chart), element("p", model.summary));
+  } else if (model.message) {
     output.append(element("p", model.message));
   } else if (model.view === "count") {
     output.append(element("p", `${model.count} 条`));
@@ -102,6 +117,22 @@ function snapshotRows(model) {
 }
 
 function svgSnapshot(model) {
+  if (model?.chart) {
+    const chart = chartNode(model.chart);
+    const height = Number(chart.getAttribute("height"));
+    const width = Math.max(Number(chart.getAttribute("width")), [...model.summary].length * 13 + 16);
+    chart.setAttribute("height", String(height + 24));
+    chart.setAttribute("width", String(width));
+    chart.setAttribute("viewBox", `0 0 ${width} ${height + 24}`);
+    const summary = document.createElementNS(SVG, "text");
+    summary.setAttribute("x", "8");
+    summary.setAttribute("y", String(height + 18));
+    summary.setAttribute("fill", sdk.theme.vars.foreground);
+    summary.setAttribute("font-size", "13");
+    summary.textContent = model.summary;
+    chart.append(summary);
+    return { svg: new XMLSerializer().serializeToString(chart) };
+  }
   const rows = snapshotRows(model);
   if (!rows.length) rows.push(["没有匹配的文件"]);
   const colWidths = [];
@@ -142,6 +173,7 @@ if (sdk.kind === "fence") {
     if (model.message !== "正在建立索引") resolveFirst();
   });
   sdk.onOpen(({ source }) => { rawSource = source; });
+  sdk.onTheme(() => { if (latest?.chart) render(latest); });
   sdk.onSnapshot(async () => {
     if (!latest || latest.message === "正在建立索引") {
       let timeout;

@@ -7,7 +7,7 @@
   "tags": ["Markdown Extension", "Productivity"],
   "engines": { "typora": ">=2.0.0" },
   "main": "main.js",
-  "activationEvents": ["onStartupFinished", "onCommand:rebuild-index", "onFence:query", "onFence:tasks"],
+  "activationEvents": ["onStartupFinished", "onCommand:rebuild-index", "onFence:query", "onFence:tasks", "onFence:track"],
   "permissions": { "workspace": "read", "document": "read" },
   "contributes": {
     "commands": [
@@ -15,7 +15,8 @@
     ],
     "fenceRenderers": [
       { "id": "query", "lang": ["query"], "mode": "interactive", "resolver": true },
-      { "id": "tasks", "lang": ["tasks"], "mode": "interactive", "resolver": true }
+      { "id": "tasks", "lang": ["tasks"], "mode": "interactive", "resolver": true },
+      { "id": "track", "lang": ["track"], "mode": "interactive", "resolver": true }
     ],
     "detailViews": [
       { "id": "week", "title": "本周任务", "icon": "list-checks", "entry": "views/week.html" }

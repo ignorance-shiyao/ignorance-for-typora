@@ -1,3 +1,4 @@
+import { parseTrack, runTrack } from "./index/track.js";
 import { registerDetailSnapshots } from "./index/details.js";
 import { parseTaskQuery, runTasks, weekTasks } from "./index/tasks.js";
 import { registerIndexFence } from "./index/fences.js";
@@ -8,6 +9,7 @@ export function activate(ctx) {
   const index = createIndex(typora);
   registerIndexFence(typora, index, ctx.subscriptions, "query", parseQuery, runQuery);
   registerIndexFence(typora, index, ctx.subscriptions, "tasks", parseTaskQuery, runTasks);
+  registerIndexFence(typora, index, ctx.subscriptions, "track", parseTrack, runTrack);
   registerDetailSnapshots(typora, index, ctx.subscriptions, (records) => ({ week: weekTasks(records) }));
   const report = (error) => typora.ui.toast(`工作区索引失败：${error.message}`);
   ctx.subscriptions.push(
