@@ -25,6 +25,7 @@ export function activate(ctx) {
     const path = relativePath(state.root, currentPath);
     return { week: weekTasks(records), review: await review.model(state), relations: path ? noteRelations(relationshipIndex, path) : undefined };
   });
+  for (const key of ["graph-workspaces", "graph-refresh-done", "graph-ai-done", "graph-global", "graph-info", "graph-debug"]) void typora.storage.remove(key).catch(() => {});
   registerSearch(typora, index, ctx.subscriptions);
   const report = (error) => typora.ui.toast(`工作区索引失败：${error.message}`);
   ctx.subscriptions.push(
