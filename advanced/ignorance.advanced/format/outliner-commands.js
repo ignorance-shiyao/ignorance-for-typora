@@ -32,7 +32,8 @@ async function activeList(api) {
     await api.ui.toast("请将光标放在列表内");
     return undefined;
   }
-  const context = currentListItem(await api.document.getBlocks(), selection.anchor);
+  const blocks = await api.document.getBlocks();
+  const context = currentListItem(blocks, selection.anchor);
   if (!context) {
     await api.ui.toast("请将光标放在列表内");
     return undefined;
@@ -42,14 +43,19 @@ async function activeList(api) {
     await api.ui.toast("无法核对当前列表结构");
     return undefined;
   }
-  return { markdown, index: context.index };
+  return { markdown, index: context.index, blockId: blocks[0]?.id };
 }
 
-function previewRows(markdown) {
-  return markdown.split(/\r\n|\r|\n/).map((line, index) => ({
-    label: line.replace(/^ +/, (spaces) => "\u00a0".repeat(spaces.length)) || "\u00a0",
-    value: index,
-  }));
+async function showInOutline(api, context, markdown) {
+  if (!context.blockId) return;
+  const stamp = Date.now();
+  if (new TextEncoder().encode(markdown).length > 200_000) return api.ui.toast("列表太长，无法预览");
+  await api.storage.update("outline-preview", (previous) => {
+    const recent = Object.entries(previous ?? {}).filter(([id, data]) => id !== context.blockId && stamp - data.stamp < 300_000)
+      .sort((a, b) => b[1].stamp - a[1].stamp).slice(0, 3);
+    return Object.fromEntries([[context.blockId, { markdown, stamp }], ...recent]);
+  });
+  return api.ui.toast("在「列表大纲」侧栏查看");
 }
 
 export function registerOutlinerCommands(api, subscriptions) {
@@ -66,7 +72,7 @@ export function registerOutlinerCommands(api, subscriptions) {
   subscriptions.push(api.commands.register("outline-branch", async () => {
     const context = await activeList(api);
     if (!context) return;
-    await api.ui.quickPick(previewRows(listBranch(context.markdown, context.index)), { placeholder: "列表分支" });
+    await showInOutline(api, context, listBranch(context.markdown, context.index));
   }));
   subscriptions.push(api.commands.register("outline-depth", async () => {
     const context = await activeList(api);
@@ -75,7 +81,7 @@ export function registerOutlinerCommands(api, subscriptions) {
     if (levels == null) return;
     if (!/^[1-9]\d?$/.test(levels.trim())) return api.ui.toast("请输入 1 至 99");
     const outline = listOutline(context.markdown, context.index, Number(levels));
-    await api.ui.quickPick(previewRows(outline), { placeholder: "列表大纲" });
+    await showInOutline(api, context, outline);
   }));
   for (const [id, convert] of [["outline-to-list", textToList], ["outline-to-headings", listToHeadings]]) {
     subscriptions.push(api.commands.register(id, async () => {

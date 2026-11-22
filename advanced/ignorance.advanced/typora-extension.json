@@ -526,7 +526,7 @@
       }
     ],
     "detailViews": [
-      {"id": "outline-list", "title": "列表大纲", "icon": "list", "query": {"block": ["list_item"]}, "item": {"label": "{text}", "groupBy": "heading"}},
+      {"id": "outline-list", "title": "列表大纲", "icon": "list", "entry": "outline/index.html"},
       {
         "id": "figures",
         "title": "图表与图片",

@@ -12,7 +12,8 @@ async function scan() {
   if (!phase) return;
   const key = `cache-${root.split(/[\\/]/).at(-1)}.json`;
   const start = performance.now();
-  const previous = phase === "再次扫描" ? JSON.parse(await typora.storage.files.readText(key) ?? "{}") : {};
+  const saved = await typora.storage.files.list();
+  const previous = phase === "再次扫描" && saved.includes(key) ? JSON.parse(await typora.storage.files.readText(key)) : {};
   const paths = (await typora.workspace.listFiles(root)).filter((path) => /\.md$/i.test(path));
   const hashes = {};
   let changed = 0;
@@ -29,7 +30,8 @@ async function scan() {
   await typora.storage.files.write(key, JSON.stringify(hashes));
   const result = { phase, files: paths.length, changed, milliseconds: Math.round(performance.now() - start) };
   await typora.runtime.lock("vault-probe-report", async () => {
-    const previousReport = JSON.parse(await typora.storage.files.readText(REPORT) ?? "[]");
+    const files = await typora.storage.files.list();
+    const previousReport = files.includes(REPORT) ? JSON.parse(await typora.storage.files.readText(REPORT)) : [];
     await typora.storage.files.write(REPORT, JSON.stringify([...previousReport, result]));
   });
   await typora.ui.toast(`${phase}：${result.files} 个文件，${result.changed} 个变更，${result.milliseconds} 毫秒`);

@@ -1,3 +1,5 @@
+const view = window.typora.view;
+
 const ready = new Promise((resolve) => view.onMessage(resolve));
 view.onRender(async () => {
   view.postMessage("ready");

@@ -1,3 +1,5 @@
+const view = window.typora.view;
+
 const status = document.querySelector("#result");
 view.onMessage((message) => { status.textContent = String(message); });
 document.querySelector("#open").addEventListener("click", () => view.postMessage("open"));
