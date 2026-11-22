@@ -29,6 +29,7 @@ export function createIndex(api) {
       const old = memory.get(key) ?? await loadIndex(api.storage, key);
       const result = await scanNotes(api.workspace, root, old, { exclude: excluded });
       result.excluded = excluded;
+      result.revision = globalThis.crypto.randomUUID();
       memory.set(key, result);
       let cacheError;
       try {
@@ -63,7 +64,7 @@ export function createIndex(api) {
       void rebuild().catch((error) => api.ui.toast(`无法建立索引：${error.message}`));
       return { status: "indexing", records: [] };
     }
-    return { status: "ready", records: existing.entries.map(({ note, live }) => live ?? note) };
+    return { status: "ready", root, scope: key, revision: existing.revision, records: existing.entries.map(({ note, live }) => live ?? note) };
   }
 
   async function updateCurrent() {
@@ -86,6 +87,7 @@ export function createIndex(api) {
       } else {
         entry.live = parseVaultNote(path, markdown);
       }
+      existing.revision = globalThis.crypto.randomUUID();
       try {
         await saveIndex(api.storage, key, existing);
         memory.delete(key);

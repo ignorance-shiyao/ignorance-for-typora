@@ -1,3 +1,5 @@
+import { createRelations, noteRelations } from "./index/relations.js";
+import { relativePath } from "./index/scan.js";
 import { registerSearch } from "./index/search-controller.js";
 import { parseTrack, runTrack } from "./index/track.js";
 import { registerDetailSnapshots } from "./index/details.js";
@@ -11,7 +13,16 @@ export function activate(ctx) {
   registerIndexFence(typora, index, ctx.subscriptions, "query", parseQuery, runQuery);
   registerIndexFence(typora, index, ctx.subscriptions, "tasks", parseTaskQuery, runTasks);
   registerIndexFence(typora, index, ctx.subscriptions, "track", parseTrack, runTrack);
-  registerDetailSnapshots(typora, index, ctx.subscriptions, (records) => ({ week: weekTasks(records) }));
+  let relationshipIndex;
+  let revision;
+  registerDetailSnapshots(typora, index, ctx.subscriptions, (records, currentPath, state) => {
+    if (revision !== state.revision || !relationshipIndex) {
+      relationshipIndex = createRelations(records);
+      revision = state.revision;
+    }
+    const path = relativePath(state.root, currentPath);
+    return { week: weekTasks(records), relations: path ? noteRelations(relationshipIndex, path) : undefined };
+  });
   registerSearch(typora, index, ctx.subscriptions);
   const report = (error) => typora.ui.toast(`工作区索引失败：${error.message}`);
   ctx.subscriptions.push(

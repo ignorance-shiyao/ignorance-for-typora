@@ -61,12 +61,12 @@ export function parseVaultTask(line, heading, number) {
   };
 }
 
-function readLink(match, line) {
+function readLink(match, line, context) {
   const [, wiki, label, angle, markdown] = match;
   const [destination, alias] = wiki ? wiki.split("|", 2) : [angle ?? markdown, label];
   const hash = destination.indexOf("#");
   const target = (hash < 0 ? destination : destination.slice(0, hash)).trim();
-  return { target, heading: hash < 0 ? "" : destination.slice(hash + 1), label: alias ?? destination, line, wiki: wiki !== undefined };
+  return { target, heading: hash < 0 ? "" : destination.slice(hash + 1), label: alias ?? destination, line, context, source: match[0], wiki: wiki !== undefined };
 }
 
 function plainBody(lines) {
@@ -116,7 +116,7 @@ export function parseVaultNote(path, markdown) {
       headings.push({ level: title[1].length, text: heading, line: lineNumber });
     }
     for (const tag of tagsIn(line)) tags.add(tag);
-    for (const match of line.matchAll(LINK)) links.push(readLink(match, lineNumber));
+    for (const match of line.matchAll(LINK)) links.push(readLink(match, lineNumber, line));
     const task = parseVaultTask(line, heading, lineNumber);
     if (task) tasks.push(task);
     const field = INLINE_FIELD.exec(line);

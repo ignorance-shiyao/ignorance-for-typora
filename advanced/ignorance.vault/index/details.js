@@ -26,7 +26,7 @@ export function registerDetailSnapshots(api, index, subscriptions, compute) {
       invalidated = false;
       const state = await index.state();
       const detail = state.status === "ready"
-        ? await compute(state.records, info.path)
+        ? await compute(state.records, info.path, state)
         : { status: state.status };
       const now = Date.now();
       const serialized = JSON.stringify(detail);

@@ -1,6 +1,6 @@
 import { contentHash } from "./scan.js";
 
-const VERSION = 1;
+const VERSION = 2;
 const MAX_CACHE_BYTES = 100 * 1024 * 1024;
 
 export async function cacheFile(root) {
