@@ -3,8 +3,8 @@ import { tmpdir } from "node:os";
 import { join } from "node:path";
 
 const total = Number(process.argv[2]);
-if (![1000, 3000, 5000].includes(total)) {
-  console.error("用法：node scripts/generate-vault-probe.mjs 1000|3000|5000");
+if (![1000, 3000, 5000, 5001].includes(total)) {
+  console.error("用法：node scripts/generate-vault-probe.mjs 1000|3000|5000|5001");
   process.exitCode = 1;
 } else {
   const sandbox = await mkdtemp(join(tmpdir(), "typora-vault-probe-"));
