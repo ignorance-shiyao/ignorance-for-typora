@@ -22,12 +22,14 @@
     "detailViews": [
       { "id": "week", "title": "本周任务", "icon": "list-checks", "entry": "views/week.html" },
       { "id": "search", "title": "工作区搜索", "icon": "search", "entry": "views/search.html" },
-      { "id": "relations", "title": "关系", "icon": "network", "entry": "views/relations.html" }
+      { "id": "relations", "title": "关系", "icon": "network", "entry": "views/relations.html" },
+      { "id": "review", "title": "复习", "icon": "layers", "entry": "views/review.html" }
     ],
     "configuration": {
       "title": "Ignorance Vault",
       "properties": {
-        "excludeFolders": { "type": "string", "title": "排除目录", "default": "templates/, archive/" }
+        "excludeFolders": { "type": "string", "title": "排除目录", "default": "templates/, archive/" },
+        "reviewReminders": { "type": "boolean", "title": "提醒复习到期卡片", "default": true }
       }
     }
   }

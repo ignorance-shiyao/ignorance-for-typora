@@ -1,3 +1,4 @@
+import { createReview } from "./index/review-controller.js";
 import { createRelations, noteRelations } from "./index/relations.js";
 import { relativePath } from "./index/scan.js";
 import { registerSearch } from "./index/search-controller.js";
@@ -13,20 +14,28 @@ export function activate(ctx) {
   registerIndexFence(typora, index, ctx.subscriptions, "query", parseQuery, runQuery);
   registerIndexFence(typora, index, ctx.subscriptions, "tasks", parseTaskQuery, runTasks);
   registerIndexFence(typora, index, ctx.subscriptions, "track", parseTrack, runTrack);
+  const review = createReview(typora, index, ctx.subscriptions);
   let relationshipIndex;
   let revision;
-  registerDetailSnapshots(typora, index, ctx.subscriptions, (records, currentPath, state) => {
+  registerDetailSnapshots(typora, index, ctx.subscriptions, async (records, currentPath, state) => {
     if (revision !== state.revision || !relationshipIndex) {
       relationshipIndex = createRelations(records);
       revision = state.revision;
     }
     const path = relativePath(state.root, currentPath);
-    return { week: weekTasks(records), relations: path ? noteRelations(relationshipIndex, path) : undefined };
+    return { week: weekTasks(records), review: await review.model(state), relations: path ? noteRelations(relationshipIndex, path) : undefined };
   });
   registerSearch(typora, index, ctx.subscriptions);
   const report = (error) => typora.ui.toast(`工作区索引失败：${error.message}`);
   ctx.subscriptions.push(
-    typora.commands.register("rebuild-index", () => index.rebuild({ announce: true }).catch(report)),
+    typora.commands.register("rebuild-index", async () => {
+      try {
+        await index.rebuild({ announce: true });
+        await review.prune(await index.state());
+      } catch (error) {
+        await report(error);
+      }
+    }),
     typora.document.onDidChange(() => index.updateCurrent().catch(report)),
     typora.settings.onDidChange(() => index.rebuild().catch(report)),
   );

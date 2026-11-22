@@ -36,3 +36,6 @@ input[type="search"] {
   font: inherit;
 }
 mark { background: var(--typora-panel); color: var(--typora-accent); }
+.review-text { white-space: pre-wrap; overflow-wrap: anywhere; margin: 8px 0; }
+.review-actions { display: flex; flex-wrap: wrap; gap: 12px; margin: 8px 0; }
+button:disabled { opacity: .55; cursor: default; }
