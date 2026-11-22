@@ -7,11 +7,14 @@
   "tags": ["Markdown Extension", "Productivity"],
   "engines": { "typora": ">=2.0.0" },
   "main": "main.js",
-  "activationEvents": ["onStartupFinished", "onCommand:rebuild-index"],
+  "activationEvents": ["onStartupFinished", "onCommand:rebuild-index", "onFence:query"],
   "permissions": { "workspace": "read", "document": "read" },
   "contributes": {
     "commands": [
       { "id": "rebuild-index", "title": "重建索引", "category": "工作区" }
+    ],
+    "fenceRenderers": [
+      { "id": "query", "lang": ["query"], "mode": "interactive", "resolver": true }
     ],
     "configuration": {
       "title": "Ignorance Vault",

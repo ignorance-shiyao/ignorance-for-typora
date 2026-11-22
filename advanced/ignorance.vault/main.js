@@ -1,7 +1,10 @@
+import { registerIndexFence } from "./index/fences.js";
+import { parseQuery, runQuery } from "./index/query.js";
 import { createIndex } from "./index/controller.js";
 
 export function activate(ctx) {
   const index = createIndex(typora);
+  registerIndexFence(typora, index, ctx.subscriptions, "query", parseQuery, runQuery);
   const report = (error) => typora.ui.toast(`工作区索引失败：${error.message}`);
   ctx.subscriptions.push(
     typora.commands.register("rebuild-index", () => index.rebuild({ announce: true }).catch(report)),
