@@ -18,5 +18,12 @@ for img in cover.webp screenshot.webp; do [[ -f "$ROOT/theme/store/$img" ]] && c
 for ext in ignorance.file-viewers ignorance.advanced; do
   cp -R "$ROOT/advanced/$ext" "$OUT/extensions/$ext"
 done
+VAULT="$ROOT/advanced/ignorance.vault"
+if [[ -f "$VAULT/typora-extension.json" ]]; then
+  mkdir -p "$OUT/extensions/ignorance.vault"
+  for entry in "$VAULT"/*; do
+    [[ "${entry:t}" == experiments ]] || cp -R "$entry" "$OUT/extensions/ignorance.vault/"
+  done
+fi
 echo "assembled $OUT"
 find "$OUT" -type f | sed "s#$OUT/##" | sort | head -60

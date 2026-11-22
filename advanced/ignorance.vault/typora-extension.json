@@ -1,0 +1,23 @@
+{
+  "id": "ignorance.vault",
+  "name": "Ignorance Vault",
+  "version": "0.1.0",
+  "description": "工作区笔记索引、属性查询和导航。",
+  "author": "Ignorance",
+  "tags": ["Markdown Extension", "Productivity"],
+  "engines": { "typora": ">=2.0.0" },
+  "main": "main.js",
+  "activationEvents": ["onStartupFinished", "onCommand:rebuild-index"],
+  "permissions": { "workspace": "read", "document": "read" },
+  "contributes": {
+    "commands": [
+      { "id": "rebuild-index", "title": "重建索引", "category": "工作区" }
+    ],
+    "configuration": {
+      "title": "Ignorance Vault",
+      "properties": {
+        "excludeFolders": { "type": "string", "title": "排除目录", "default": "templates/, archive/" }
+      }
+    }
+  }
+}
