@@ -4,7 +4,7 @@ import { lintMarkdown } from "../advanced/ignorance.advanced/format/lint.js";
 
 test("formats headings, lists, prose and whitespace in one idempotent pass", () => {
   const input = "#标题\n正文Typora, 版本2!\n\n\n####跳级\n* 项目\n+ _次项_\n#第二标题\n9. 甲\n4. 乙  \n\n";
-  const expected = "# 标题\n\n正文 Typora, 版本 2!\n\n## 跳级\n\n- 项目\n- *次项*\n\n## 第二标题\n\n1. 甲\n2. 乙  \n";
+  const expected = "# 标题\n\n正文 Typora，版本 2！\n\n## 跳级\n\n- 项目\n- *次项*\n\n## 第二标题\n\n1. 甲\n2. 乙  \n";
   assert.equal(lintMarkdown(input), expected);
   assert.equal(lintMarkdown(expected), expected);
 });
@@ -30,7 +30,7 @@ test("supports independent settings and preserves nested list levels", () => {
 });
 
 test("keeps inline literals, decimals and reference destinations while styling prose", () => {
-  assert.equal(lintMarkdown("中文(版本2.5),继续\n[引用]: ./文档abc.md\n中文 `a_b中c`"), "中文（版本 2.5)，继续\n[引用]: ./文档abc.md\n中文 `a_b中c`\n");
+  assert.equal(lintMarkdown("中文(版本2.5),继续\n[引用]: ./文档abc.md\n中文 `a_b中c`"), "中文（版本 2.5），继续\n[引用]: ./文档abc.md\n中文 `a_b中c`\n");
 });
 
 test("keeps fenced code that starts on a list item and preserves ordered nesting", () => {
@@ -40,7 +40,7 @@ test("keeps fenced code that starts on a list item and preserves ordered nesting
 });
 
 test("preserves multi-line inline code and keeps blockquotes as blockquotes", () => {
-  assert.equal(lintMarkdown("正文 ``a中文\nb中文``。\n> 中文abc, 继续"), "正文 ``a中文\nb中文``。\n> 中文 abc, 继续\n");
+  assert.equal(lintMarkdown("正文 ``a中文\nb中文``。\n> 中文abc, 继续"), "正文 ``a中文\nb中文``。\n> 中文 abc，继续\n");
 });
 
 test("normalizing list indent keeps wrapped continuations in their item", () => {
@@ -85,6 +85,28 @@ test("preserves English punctuation inside a mixed-language line", () => {
   assert.equal(lintMarkdown(input), input);
 });
 
-test("converts punctuation adjacent to Han characters only", () => {
+test("localizes punctuation after the English sentence ends", () => {
   assert.equal(lintMarkdown("The cat sat. 然后它走了."), "The cat sat. 然后它走了。\n");
 });
+
+const punctuationCases = [
+  ["中文(版本2.5),继续", "中文（版本 2.5），继续"],
+  ["中文abc, 继续", "中文 abc，继续"],
+  ["正文Typora, 版本2!", "正文 Typora，版本 2！"],
+  ["价格是3,000元,请确认!", "价格是 3,000 元，请确认！"],
+  ["你好, world", "你好，world"],
+  ["Hello, 世界", "Hello，世界"],
+  ["He said: hello, world. 这是中文。", "He said: hello, world. 这是中文。"],
+  ["The cat sat. 然后它走了.", "The cat sat. 然后它走了。"],
+  ["f(x) = g(y), see docs.", "f(x) = g(y), see docs."],
+  ["函数(foo)与(bar)", "函数（foo）与（bar）"],
+  ["正文[^1]\n\n[^1]: 说明,test", "正文[^1]\n\n[^1]: 说明,test"],
+];
+
+for (const [input, expected] of punctuationCases) {
+  test(`formats punctuation per acceptance spec: ${input}`, () => {
+    const options = { lintFinalNewline: false };
+    assert.equal(lintMarkdown(input, options), expected);
+    assert.equal(lintMarkdown(expected, options), expected);
+  });
+}
