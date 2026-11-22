@@ -34,6 +34,26 @@ function compareDistance(from, first, second) {
   return distance(first.path) - distance(second.path) || first.path.localeCompare(second.path, "zh-CN");
 }
 
+function pathSimilarity(wanted, candidate) {
+  const dirs = directory(candidate.path).map(normalize);
+  let suffix = 0;
+  while (suffix < wanted.length && suffix < dirs.length && wanted[wanted.length - 1 - suffix] === dirs[dirs.length - 1 - suffix]) suffix++;
+  return [suffix, wanted.filter((part) => dirs.includes(part)).length];
+}
+
+function fuzzyMarkdown(from, target, byName) {
+  const segments = target.split("/").filter((part) => part && part !== "." && part !== "..");
+  if (!segments.length) return undefined;
+  const candidates = byName.get(normalize(withoutExtension(segments.at(-1)))) ?? [];
+  const wanted = segments.slice(0, -1).map(normalize);
+  const score = new Map(candidates.map((candidate) => [candidate, pathSimilarity(wanted, candidate)]));
+  return [...candidates].sort((a, b) => {
+    const [sa, ca] = score.get(a);
+    const [sb, cb] = score.get(b);
+    return sb - sa || cb - ca || compareDistance(from, a, b);
+  })[0];
+}
+
 function findNote(from, destination, wiki, byPath, byName) {
   if (!destination) return byPath.get(normalize(withoutExtension(from)));
   const target = internalPath(destination);
@@ -44,7 +64,7 @@ function findNote(from, destination, wiki, byPath, byName) {
   const key = target.startsWith("/") ? rooted : relative;
   const exact = key && byPath.get(normalize(withoutExtension(key)));
   if (exact) return exact;
-  if (!wiki) return undefined;
+  if (!wiki) return fuzzyMarkdown(from, target, byName);
   const absolute = rooted && byPath.get(normalize(withoutExtension(rooted)));
   if (absolute) return absolute;
   if (target.includes("/")) return undefined;

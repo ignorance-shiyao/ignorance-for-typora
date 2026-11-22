@@ -64,3 +64,27 @@ test("shares current note edits across controllers using the same cache", async 
   await first.rebuild();
   assert.equal((await second.state()).records[0].properties.status, "已保存");
 });
+
+
+test("relativePath accepts macOS firmlink aliases of the same folder", () => {
+  assert.equal(relativePath("/private/tmp/库", "/tmp/库/项目/总计划.md"), "项目/总计划.md");
+  assert.equal(relativePath("/tmp/库", "/private/tmp/库/项目/总计划.md"), "项目/总计划.md");
+  assert.equal(relativePath("/private/var/folders/x/库", "/var/folders/x/库/甲.md"), "甲.md");
+});
+
+test("relativePath treats composed and decomposed Unicode names as the same", () => {
+  const decomposed = "/库/Cafe\u0301/笔记.md";
+  assert.equal(relativePath("/库/Caf\u00e9", decomposed), "笔记.md");
+});
+
+test("relativePath still rejects files outside the root, including look-alike prefixes", () => {
+  assert.equal(relativePath("/tmp/库", "/tmp/库外/甲.md"), null);
+  assert.equal(relativePath("/tmp/库", "/other/甲.md"), null);
+  assert.equal(relativePath("/private/tmp/库", "/privatex/tmp/库/甲.md"), null);
+  assert.equal(relativePath("/tmp/库", "/tmp/库/../甲.md"), null);
+});
+
+test("relativePath keeps working for ordinary and Windows-style paths", () => {
+  assert.equal(relativePath("/Users/a/库", "/Users/a/库/项目/甲.md"), "项目/甲.md");
+  assert.equal(relativePath("C:\\库", "C:\\库\\项目\\甲.md"), "项目/甲.md");
+});

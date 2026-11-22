@@ -4,10 +4,22 @@ const MAX_FILES = 5000;
 const MAX_DEPTH = 8;
 const NOTE_EXTENSION = /\.(?:md|markdown)$/i;
 
+const FIRMLINK = /^\/private(?=\/(?:tmp|var|etc)(?:\/|$))/;
+
 export function relativePath(root, file) {
   const base = root.replaceAll("\\", "/").replace(/\/+$/, "");
   const normalized = file.replaceAll("\\", "/");
-  const path = normalized.startsWith(base + "/") ? normalized.slice(base.length + 1) : normalized;
+  let path = normalized;
+  if (normalized.startsWith(base + "/")) path = normalized.slice(base.length + 1);
+  else {
+    // Typora can report the same folder as /private/tmp/... for the root and /tmp/... for a document.
+    const plainBase = base.replace(FIRMLINK, "");
+    const plainFile = normalized.replace(FIRMLINK, "");
+    const composedBase = plainBase.normalize("NFC");
+    const composedFile = plainFile.normalize("NFC");
+    if (plainFile.startsWith(plainBase + "/")) path = plainFile.slice(plainBase.length + 1);
+    else if (composedFile.startsWith(composedBase + "/")) path = composedFile.slice(composedBase.length + 1);
+  }
   if (!path || /^(?:\/|[a-z]:)/i.test(path) || path.split("/").some((part) => part === ".." || part === "." || !part)) return null;
   return path;
 }

@@ -36,3 +36,59 @@ test("resolves an unquoted wiki parent parsed by YAML as nested flow arrays", ()
   const note = parseVaultNote("项目/子项.md", "---\nparent: [[总计划]]\n---\n");
   assert.deepEqual(noteRelations(createRelations([...notes, note]), note.path).parents.map(({ path }) => path), ["项目/总计划.md"]);
 });
+
+const outgoingPaths = (all, from) => noteRelations(createRelations(all), from).outgoing.map(({ path, broken }) => (broken ? "!" : path));
+
+test("markdown link falls back to a unique note name when the relative path is wrong", () => {
+  const all = [
+    parseVaultNote("甲/来源.md", "[下一章](04-都在等风.md)"),
+    parseVaultNote("乙/04-都在等风.md", "# 目标"),
+  ];
+  assert.deepEqual(outgoingPaths(all, "甲/来源.md"), ["乙/04-都在等风.md"]);
+  assert.deepEqual(noteRelations(createRelations(all), "乙/04-都在等风.md").incoming.map(({ path }) => path), ["甲/来源.md"]);
+});
+
+test("markdown link with a wrong prefix matches the note whose path ends the same way", () => {
+  const all = [
+    parseVaultNote("甲/乙/丙/来源.md", "[目录](../../丙/00-目录.md)"),
+    parseVaultNote("丙/00-目录.md", "x"),
+    parseVaultNote("丁/00-目录.md", "x"),
+  ];
+  assert.deepEqual(outgoingPaths(all, "甲/乙/丙/来源.md"), ["丙/00-目录.md"]);
+});
+
+test("a bare file name shared by several notes picks the nearest one, and an exact relative path still wins", () => {
+  const shared = [
+    parseVaultNote("甲/来源.md", "[目录](00-目录.md)"),
+    parseVaultNote("丙/00-目录.md", "x"),
+    parseVaultNote("甲/丁/00-目录.md", "x"),
+  ];
+  assert.deepEqual(outgoingPaths(shared, "甲/来源.md"), ["甲/丁/00-目录.md"]);
+  assert.deepEqual(outgoingPaths([...shared, parseVaultNote("甲/00-目录.md", "x")], "甲/来源.md"), ["甲/00-目录.md"]);
+});
+
+test("a link path that matches no exact file prefers the candidate sharing the most trailing folders", () => {
+  const all = [
+    parseVaultNote("甲/来源.md", "[目录](../乙/丙/00-目录.md)"),
+    parseVaultNote("乙/丁/00-目录.md", "x"),
+    parseVaultNote("戊/丙/00-目录.md", "x"),
+  ];
+  assert.deepEqual(outgoingPaths(all, "甲/来源.md"), ["戊/丙/00-目录.md"]);
+});
+
+test("equally similar candidates resolve to the same note every time", () => {
+  const all = [
+    parseVaultNote("甲/来源.md", "[目录](00-目录.md)"),
+    parseVaultNote("丙/00-目录.md", "x"),
+    parseVaultNote("丁/00-目录.md", "x"),
+  ];
+  const first = outgoingPaths(all, "甲/来源.md");
+  assert.equal(first.length, 1);
+  assert.notEqual(first[0], "!");
+  assert.deepEqual(outgoingPaths([...all].reverse(), "甲/来源.md"), first);
+});
+
+test("a markdown link to a name that exists nowhere stays broken and attachments stay ignored", () => {
+  const all = [parseVaultNote("甲/来源.md", "[缺](不存在.md) [图](a.png)"), parseVaultNote("乙/其他.md", "x")];
+  assert.deepEqual(outgoingPaths(all, "甲/来源.md"), ["!"]);
+});
