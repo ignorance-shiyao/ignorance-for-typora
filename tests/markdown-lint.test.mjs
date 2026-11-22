@@ -55,6 +55,7 @@ test("registered formatter reads current settings and preserves the spacing comm
   t.after(() => { globalThis.typora = savedTypora; });
   globalThis.typora = {
     settings: { get: () => settings },
+    commands: { register: () => ({ dispose() {} }) },
     formatters: {
       register(id, format, metadata) {
         formatters.set(id, { format, ...metadata });

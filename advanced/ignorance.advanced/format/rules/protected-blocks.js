@@ -10,7 +10,7 @@ function insideQuote(line) {
   return line.replace(/^(?:[ \t]*>[ \t]?)+/, "");
 }
 
-export function protectedLines(lines) {
+export function protectedLines(lines, { includeTables = true } = {}) {
   const protectedRows = new Set();
   let closes = null;
   let table = false;
@@ -43,7 +43,7 @@ export function protectedLines(lines) {
       const ending = new RegExp(`</${html[1]}\\s*>`, "i");
       closes = (row) => ending.test(row) || (!/^(?:pre|script|style|textarea)$/i.test(html[1]) && !row.trim());
     }
-    if (DIVIDER.test(line) && line.includes("|") && previous.includes("|") && !protectedRows.has(index - 1)) {
+    if (includeTables && DIVIDER.test(line) && line.includes("|") && previous.includes("|") && !protectedRows.has(index - 1)) {
       table = true;
       protectedRows.add(index - 1);
     }
