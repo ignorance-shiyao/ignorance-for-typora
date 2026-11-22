@@ -24,3 +24,15 @@ button {
 .file-path { display: block; overflow-wrap: anywhere; user-select: text; }
 .file-path[hidden] { display: none; }
 svg { display: block; max-width: 100%; height: auto; min-width: 0; }
+input[type="search"] {
+  color: var(--typora-foreground);
+  background: var(--typora-background);
+  border: 1px solid var(--typora-border);
+  border-radius: 4px;
+  box-sizing: border-box;
+  padding: 6px 8px;
+  width: 100%;
+  margin-bottom: 10px;
+  font: inherit;
+}
+mark { background: var(--typora-panel); color: var(--typora-accent); }

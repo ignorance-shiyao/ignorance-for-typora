@@ -1,3 +1,4 @@
+import { registerSearch } from "./index/search-controller.js";
 import { parseTrack, runTrack } from "./index/track.js";
 import { registerDetailSnapshots } from "./index/details.js";
 import { parseTaskQuery, runTasks, weekTasks } from "./index/tasks.js";
@@ -11,6 +12,7 @@ export function activate(ctx) {
   registerIndexFence(typora, index, ctx.subscriptions, "tasks", parseTaskQuery, runTasks);
   registerIndexFence(typora, index, ctx.subscriptions, "track", parseTrack, runTrack);
   registerDetailSnapshots(typora, index, ctx.subscriptions, (records) => ({ week: weekTasks(records) }));
+  registerSearch(typora, index, ctx.subscriptions);
   const report = (error) => typora.ui.toast(`工作区索引失败：${error.message}`);
   ctx.subscriptions.push(
     typora.commands.register("rebuild-index", () => index.rebuild({ announce: true }).catch(report)),
