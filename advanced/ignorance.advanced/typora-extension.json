@@ -24,6 +24,14 @@
   "main": "main.js",
   "activationEvents": [
     "onStartupFinished",
+    "onCommand:outline-up",
+    "onCommand:outline-down",
+    "onCommand:outline-promote",
+    "onCommand:outline-demote",
+    "onCommand:outline-branch",
+    "onCommand:outline-depth",
+    "onCommand:outline-to-list",
+    "onCommand:outline-to-headings",
     "onCommand:table-sort-asc",
     "onCommand:table-sort-desc",
     "onCommand:table-recalculate",
@@ -33,6 +41,14 @@
   ],
   "contributes": {
     "commands": [
+      {"id": "outline-up", "title": "上移列表项", "category": "列表"},
+      {"id": "outline-down", "title": "下移列表项", "category": "列表"},
+      {"id": "outline-promote", "title": "提升列表层级", "category": "列表"},
+      {"id": "outline-demote", "title": "降低列表层级", "category": "列表"},
+      {"id": "outline-branch", "title": "查看列表分支", "category": "列表"},
+      {"id": "outline-depth", "title": "查看列表前几层", "category": "列表"},
+      {"id": "outline-to-list", "title": "将选中文本转换为列表", "category": "列表"},
+      {"id": "outline-to-headings", "title": "将选中列表转换为标题", "category": "列表"},
       {
         "id": "table-sort-asc",
         "title": "按列升序排序",
@@ -63,6 +79,12 @@
         "title": "将选中的 CSV 转为表格",
         "category": "表格"
       }
+    ],
+    "keyBindings": [
+      {"command": "outline-up", "key": "Mod+Shift+F7"},
+      {"command": "outline-down", "key": "Mod+Shift+F8"},
+      {"command": "outline-promote", "key": "Mod+Shift+F9"},
+      {"command": "outline-demote", "key": "Mod+Shift+F10"}
     ],
     "menus": {
       "editor/context": [
@@ -498,6 +520,7 @@
       }
     ],
     "detailViews": [
+      {"id": "outline-list", "title": "列表大纲", "icon": "list", "query": {"block": ["list_item"]}, "item": {"label": "{text}", "groupBy": "heading"}},
       {
         "id": "figures",
         "title": "图表与图片",
