@@ -3,7 +3,7 @@
 name = "Ignorance"
 color-scheme = "auto"
 author = "ignorance-shiyao"
-version = "0.1.0"
+version = "0.2.0"
 description = "纸面正文、中文排版与八套浅深配色。"
 css = "theme.css"
 
