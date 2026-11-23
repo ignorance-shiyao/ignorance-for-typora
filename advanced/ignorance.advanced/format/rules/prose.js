@@ -3,11 +3,23 @@ import { spaceText } from "../cjk-spacing.js";
 const HAN = /\p{Script=Han}/u;
 const PUNCTUATION = { ",": "，", ".": "。", ";": "；", ":": "：", "!": "！", "?": "？", "(": "（", ")": "）" };
 const FULL_WIDTH = /[ \t]*([，。；：！？（）])[ \t]*/g;
-const INLINE = /(?<ticks>`+)(?!`)[\s\S]*?(?<!`)\k<ticks>(?!`)|\$\$[\s\S]*?\$\$|\$[^$\n]+\$|!?\[(?:\\.|[^\]\\\n])*\](?:\((?:\\.|[^()\\\n]|\((?:\\.|[^()\\\n])*\))*\)|\[[^\]\n]*\])|\[\[[^\]\n]+\]\]|\[\^[^\]\n]+\]|<!--[^]*?-->|<[^>\n]+>|(?:https?:\/\/|www\.)[^\s<>，。；：！？（）]+|\\[^\s]/gu;
+const INLINE = /(?<ticks>`+)(?!`)[\s\S]*?(?<!`)\k<ticks>(?!`)|\$\$[\s\S]*?\$\$|\$[^$\n]+\$|!?\[(?:\\.|[^\]\\\n])*\](?:(?<destination>\()|\[[^\]\n]*\])|\[\[[^\]\n]+\]\]|\[\^[^\]\n]+\]|<!--[^]*?-->|<[^>\n]+>|(?:https?:\/\/|www\.)[^\s<>，。；：！？（）]+|\\[^\s]/gu;
+
+function destinationEnd(line, start) {
+  let depth = 1;
+  for (let index = start; index < line.length; index++) {
+    const char = line[index];
+    if (char === "\n" || char === "\r") break;
+    if (char === "\\") index++;
+    else if (char === "(") depth++;
+    else if (char === ")" && --depth === 0) return index + 1;
+  }
+  return -1;
+}
 
 function localizePunctuation(chunks, spans) {
   // Mask protected spans while keeping source offsets and sentence context.
-  const masked = chunks.map((chunk, index) => chunk + "\0".repeat(spans[index]?.[0].length ?? 0)).join("");
+  const masked = chunks.map((chunk, index) => chunk + "\0".repeat(spans[index]?.length ?? 0)).join("");
   const chars = [...masked];
   const parentheses = [];
   let hanCount = 0;
@@ -49,18 +61,26 @@ function localizePunctuation(chunks, spans) {
   const localized = chars.join("");
   return chunks.map((chunk, index) => {
     const value = localized.slice(offset, offset + chunk.length);
-    offset += chunk.length + (spans[index]?.[0].length ?? 0);
+    offset += chunk.length + (spans[index]?.length ?? 0);
     return value.replace(FULL_WIDTH, "$1");
   });
 }
 
 export function formatProse(line, options) {
-  const spans = [...line.matchAll(INLINE)];
+  const spans = [];
   const chunks = [];
   let start = 0;
-  for (const match of spans) {
+  const pattern = new RegExp(INLINE);
+  for (let match; (match = pattern.exec(line));) {
+    const end = match.groups.destination ? destinationEnd(line, pattern.lastIndex) : pattern.lastIndex;
+    if (end < 0) {
+      pattern.lastIndex = match.index + 1;
+      continue;
+    }
     chunks.push(line.slice(start, match.index));
-    start = match.index + match[0].length;
+    spans.push(line.slice(match.index, end));
+    start = end;
+    pattern.lastIndex = end;
   }
   chunks.push(line.slice(start));
 
@@ -70,6 +90,6 @@ export function formatProse(line, options) {
       chunk = chunk.replace(/(?<![\p{L}\p{N}_])_([^_\s](?:[^_]*?[^_\s])?)_(?![\p{L}\p{N}_])/gu, "*$1*");
     }
     if (options.lintCjkSpacing !== false) chunk = spaceText(chunk);
-    return chunk + (spans[index]?.[0] ?? "");
+    return chunk + (spans[index] ?? "");
   }).join("");
 }

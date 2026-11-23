@@ -111,3 +111,12 @@ for (const [input, expected] of punctuationCases) {
     assert.equal(lintMarkdown(expected, options), expected);
   });
 }
+
+test("preserves balanced Markdown link destinations with nested parentheses", () => {
+  const input = "[计划](./版本(初稿(2)).md) 中文ABC";
+  const expected = "[计划](./版本(初稿(2)).md) 中文 ABC\n";
+  assert.equal(lintMarkdown(input), expected);
+  assert.equal(lintMarkdown(expected), expected);
+  const image = "![标记](./版本\\(存档\\)(初稿(2)).png) 中文ABC";
+  assert.equal(lintMarkdown(image), "![标记](./版本\\(存档\\)(初稿(2)).png) 中文 ABC\n");
+});
