@@ -1622,3 +1622,8 @@ ok 228 - theme hides the suffix and colors the previous element
 - 可验收。独立商店包位于 `advanced/ignorance.value-track/`，包含 `track` 代码块、图表视图与静态快照。
 - `npm test` 输出 `tests 235 / pass 235 / fail 0`，含商店约束和 X4 副本一致性。商店构建后的 `diff -qr` 无输出。
 - Typora 复测第 8 项五行。导出快照改为解析具体主题颜色，避免 PDF 黑块。快照回归测试修正前失败、修正后通过。详见实测记录 S4。
+
+## S5 反向链接与关系导航
+
+- 可验收。独立商店包位于 `advanced/ignorance.backlinks/`，由关系侧栏首次使用触发索引。第 10 项六行已在 Typora 实测，见实测记录 S5。
+- `npm test` 输出 `tests 236 / pass 236 / fail 0`，含 `vault-relations.test.mjs`、商店约束及 X4 一致性。商店构建后 `diff -qr` 无输出。

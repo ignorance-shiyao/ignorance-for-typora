@@ -1,0 +1,43 @@
+{
+  "id": "ignorance.backlinks",
+  "name": "Ignorance Backlinks",
+  "version": "0.1.0",
+  "description": "在关系侧栏显示反向链接、未链接提及和父子关系。",
+  "author": "Ignorance",
+  "tags": [
+    "Markdown Extension",
+    "Productivity",
+    "Detail View"
+  ],
+  "engines": {
+    "typora": ">=2.0.0"
+  },
+  "main": "main.js",
+  "activationEvents": [
+    "onStartupFinished"
+  ],
+  "permissions": {
+    "workspace": "read",
+    "document": "read"
+  },
+  "contributes": {
+    "detailViews": [
+      {
+        "id": "relations",
+        "title": "关系",
+        "icon": "hash",
+        "entry": "views/relations.html"
+      }
+    ],
+    "configuration": {
+      "title": "Ignorance Backlinks",
+      "properties": {
+        "excludeFolders": {
+          "type": "string",
+          "title": "排除目录",
+          "default": "templates/, archive/"
+        }
+      }
+    }
+  }
+}

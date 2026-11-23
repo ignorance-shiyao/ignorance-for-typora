@@ -1,7 +1,7 @@
 import { test } from "node:test";
 import assert from "node:assert/strict";
-import { parseVaultNote } from "../advanced/ignorance.vault/index/parse.js";
-import { createRelations, noteRelations } from "../advanced/ignorance.vault/index/relations.js";
+import { parseVaultNote } from "../advanced/ignorance.backlinks/core/parse.js";
+import { createRelations, noteRelations } from "../advanced/ignorance.backlinks/index/relations.js";
 
 const notes = [
   parseVaultNote("项目/星河 (一期).md", "---\nparent: 总计划\n---\n\n[[缺失]] [[#本页]]"),

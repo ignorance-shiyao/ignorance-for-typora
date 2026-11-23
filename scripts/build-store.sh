@@ -21,6 +21,7 @@ done
 cp -R "$ROOT/advanced/ignorance.property-query" "$OUT/extensions/ignorance.property-query"
 cp -R "$ROOT/advanced/ignorance.task-rollup" "$OUT/extensions/ignorance.task-rollup"
 cp -R "$ROOT/advanced/ignorance.value-track" "$OUT/extensions/ignorance.value-track"
+cp -R "$ROOT/advanced/ignorance.backlinks" "$OUT/extensions/ignorance.backlinks"
 VAULT="$ROOT/advanced/ignorance.vault"
 if [[ -f "$VAULT/typora-extension.json" ]]; then
   mkdir -p "$OUT/extensions/ignorance.vault"
