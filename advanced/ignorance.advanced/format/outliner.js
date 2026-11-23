@@ -179,10 +179,17 @@ export function textToList(markdown) {
   }).join("");
 }
 
-export function listToHeadings(markdown) {
+export function listToHeadings(markdown, start, end) {
   const { lines, endings } = sourceLines(markdown);
   const { items } = listItems(lines);
-  for (const item of items) {
+  let selected = items;
+  if (start !== undefined && end !== undefined) {
+    const first = items[Math.min(start, end)];
+    const last = items[Math.max(start, end)];
+    if (!first || !last || first.roots !== last.roots) return markdown;
+    selected = items.slice(Math.min(start, end), Math.max(start, end) + 1);
+  }
+  for (const item of selected) {
     let level = 2;
     for (let p = item.parent; p; p = p.parent) level++;
     if (level > 6) throw new Error("列表超过五层，无法转换为 Markdown 标题");

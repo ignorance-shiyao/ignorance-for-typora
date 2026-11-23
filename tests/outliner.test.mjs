@@ -50,3 +50,35 @@ test("list probes cover protected content, boundaries, and deep branches", async
   ];
   for (const [name, actual, expected] of probes) assert.equal(actual, expected, name);
 });
+
+test("uses the host list range even when copied Markdown loses all or some markers", async () => {
+  const { registerOutlinerCommands } = await import("../advanced/ignorance.advanced/format/outliner-commands.js");
+  const source = "# 前言\n\n- 甲\n  - 乙\n    - 丙\n- 丁\n\n保留正文\n";
+  const commands = new Map();
+  const replacements = [];
+  let selectedMarkdown;
+  const api = {
+    commands: { register: (id, run) => { commands.set(id, run); } },
+    editor: {
+      getSelection: () => ({ anchor: { blockId: "leaf-d", offset: 1 }, focus: { blockId: "leaf-a", offset: 0 }, markdown: selectedMarkdown }),
+      getMarkdown: () => source,
+      replaceDocument: (text) => replacements.push(text),
+    },
+    document: { getBlocks: () => [
+      { id: "list", type: "list" },
+      { id: "a", type: "list_item", parent: "list" },
+      { id: "leaf-a", type: "paragraph", parent: "a" },
+      { id: "b", type: "list_item", parent: "a" },
+      { id: "c", type: "list_item", parent: "b" },
+      { id: "d", type: "list_item", parent: "list" },
+      { id: "leaf-d", type: "paragraph", parent: "d" },
+    ] },
+  };
+  registerOutlinerCommands(api, []);
+  for (const markdown of ["甲\n乙\n丙\n丁", "- 甲\n  - 乙", ""]) {
+    selectedMarkdown = markdown;
+    await commands.get("outline-to-headings")();
+    assert.equal(replacements.pop(), "# 前言\n\n## 甲\n### 乙\n#### 丙\n## 丁\n\n保留正文\n");
+    assert.equal(replacements.length, 0);
+  }
+});

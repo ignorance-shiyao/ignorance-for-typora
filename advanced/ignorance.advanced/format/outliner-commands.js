@@ -46,6 +46,21 @@ async function activeList(api) {
   return { markdown, index: context.index, blockId: blocks[0]?.id };
 }
 
+async function convertListSelection(api, selection) {
+  if (!selection?.anchor || !selection.focus || selection.anchor.blockId === selection.focus.blockId) return false;
+  const blocks = await api.document.getBlocks();
+  const first = currentListItem(blocks, selection.anchor);
+  const last = currentListItem(blocks, selection.focus);
+  if (!first || !last || first.index === last.index) return false;
+  const markdown = await api.editor.getMarkdown();
+  if (!matchingListTree(inspectList(markdown), first)) throw new Error("无法核对当前列表结构");
+  const next = listToHeadings(markdown, first.index, last.index);
+  if (next === markdown) throw new Error("请在同一列表内选择要转换的项目");
+  if (await api.editor.getMarkdown() !== markdown) throw new Error("文档已变化，请重新执行");
+  await api.editor.replaceDocument(next);
+  return true;
+}
+
 async function showInOutline(api, context, markdown) {
   if (!context.blockId) return;
   const stamp = Date.now();
@@ -86,9 +101,10 @@ export function registerOutlinerCommands(api, subscriptions) {
   for (const [id, convert] of [["outline-to-list", textToList], ["outline-to-headings", listToHeadings]]) {
     subscriptions.push(api.commands.register(id, async () => {
       const selection = await api.editor.getSelection();
-      if (!selection?.markdown?.trim()) return api.ui.toast("请先选中文字");
       let replacement;
       try {
+        if (id === "outline-to-headings" && await convertListSelection(api, selection)) return;
+        if (!selection?.markdown?.trim()) return api.ui.toast("请先选中文字");
         replacement = convert(selection.markdown);
       } catch (error) {
         return api.ui.toast(error.message);
