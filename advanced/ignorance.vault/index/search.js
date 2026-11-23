@@ -154,6 +154,7 @@ function excerpt(note, keywords) {
 }
 
 export function searchNotes(index, query, limit = 30) {
+  if (!Object.values(query).some((values) => values.length)) return [];
   const required = [...new Set(query.required.flatMap((term) => term.match(TOKEN) ?? []))];
   const optional = [...new Set(query.required.flatMap(terms))].filter((term) => !required.includes(term));
   const expansions = required.map((term) => alternatives(index, term));

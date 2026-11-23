@@ -50,7 +50,7 @@ function show(response) {
 function enqueue() {
   clearTimeout(changeTimer);
   pending = undefined;
-  if (!input.value.trim()) { matches.replaceChildren(); return; }
+  if (!input.value.trim()) { matches.textContent = "请输入关键词"; return; }
   if (!context) { matches.textContent = "请打开工作区文档"; return; }
   const key = context;
   const request = { query: input.value.trim().slice(0, 300), at: Date.now(), id: `${Date.now()}-${++sequence}` };

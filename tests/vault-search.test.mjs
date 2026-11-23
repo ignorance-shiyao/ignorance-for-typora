@@ -27,3 +27,9 @@ test("returns a heading and marked spans for the matching snippet", () => {
   assert.equal(result.heading, "知识图谱");
   assert.ok(result.snippet.some(({ match }) => match));
 });
+
+test("returns no results for blank searches and still supports filter-only searches", () => {
+  assert.deepEqual(names(""), []);
+  assert.deepEqual(names(" \t\n"), []);
+  assert.ok(names("path:检索/").length > 0);
+});

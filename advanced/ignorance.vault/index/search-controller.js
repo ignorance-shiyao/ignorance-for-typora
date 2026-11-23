@@ -31,7 +31,7 @@ export function registerSearch(api, index, subscriptions) {
   }
 
   async function run(source) {
-    if (!source.trim()) return { results: [] };
+    if (!source.trim()) return { message: "请输入关键词" };
     try {
       const parsed = parseSearch(source);
       const searchIndex = await getSearchIndex();
@@ -86,7 +86,7 @@ export function registerSearch(api, index, subscriptions) {
     { dispose() { disposed = true; clearInterval(timer); clearInterval(cleanup); } },
     api.commands.register("search-workspace", async () => {
       const query = await api.ui.input({ prompt: "搜索工作区", placeholder: "关键词" });
-      if (query == null || !query.trim()) return;
+      if (query == null) return;
       const result = await run(query);
       if (result.message) return api.ui.toast(result.message);
       if (!result.results.length) return api.ui.toast("没有匹配的文件");
