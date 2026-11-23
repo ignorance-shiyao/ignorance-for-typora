@@ -669,6 +669,7 @@ function build() {
   full.setAttribute("aria-label", state.full ? "退出全屏" : "全屏显示");
   full.append(icon(state.full ? "shrink" : "expand"));
   full.addEventListener("click", () => void toggleFull());
+  full.hidden = Boolean(sdk.capabilities?.toolbar);
   filters.append(chip("孤立笔记", "orphans", "orphan"), chip("断链节点", "broken", "unlink"), chip("层级", "parents", "layers"), chip("任务", "tasks", "task"), chip("箭头", "arrows", "arrow"), chip("分组", "grouped", "folder"), full);
   output.append(top, searchRow, filters);
   if (state.refreshError) output.append(control("p", { textContent: `刷新失败：${state.refreshError}` }));
@@ -759,7 +760,35 @@ document.addEventListener("fullscreenchange", () => {
   }
 });
 document.addEventListener("keydown", (event) => {
-  if (event.key === "Escape" && state.full) void toggleFull();
+  if (event.key === "Escape" && state.full && !sdk.capabilities?.toolbar) void toggleFull();
+});
+
+// Inside Typora the panel goes fullsize through a host toolbar button; the browser Fullscreen API is not available to the view.
+const FULL_ICONS = {
+  expand: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M15 3h6v6"/><path d="m21 3-7 7"/><path d="m3 21 7-7"/><path d="M9 21H3v-6"/></svg>',
+  shrink: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m14 10 7-7"/><path d="M20 10h-6V4"/><path d="m3 21 7-7"/><path d="M4 14h6v6"/></svg>',
+};
+let fullToolbar;
+
+function ensureFullToolbar() {
+  if (fullToolbar || !sdk.capabilities?.toolbar) return;
+  fullToolbar = sdk.Toolbar({
+    label: "图谱",
+    buttons: [sdk.Button({ id: "full", role: "fullsize", icon: FULL_ICONS.expand, activeIcon: FULL_ICONS.shrink, tooltip: "全屏显示" })],
+  });
+  void fullToolbar.ready?.catch(() => {});
+}
+
+sdk.onFullsize?.(({ fullsize }) => {
+  state.full = Boolean(fullsize);
+  output.classList.toggle("graph-full", state.full);
+  const rebuild = () => {
+    state.view = undefined;
+    if (data) build();
+  };
+  rebuild();
+  // The host resizes the panel after this event, so draw again once the new size is in place.
+  setTimeout(rebuild, 150);
 });
 
 function zoomBy(factor) {
@@ -894,11 +923,20 @@ async function readGraph() {
   build();
 }
 
+// An unsaved document never gets a snapshot, so the loading animation would run forever.
+let emptyTimer;
+
 sdk.onDocument(({ blocks }) => {
   graphRequest++;
+  ensureFullToolbar();
   currentContext = blocks[0]?.id;
   shownSnapshot = undefined;
   showLoading();
+  clearTimeout(emptyTimer);
+  const context = currentContext;
+  emptyTimer = setTimeout(() => {
+    if (context === currentContext && shownSnapshot === "null") output.textContent = "保存笔记后显示图谱";
+  }, 6000);
   void readGraph().catch(() => {});
 });
 setInterval(() => { void readGraph().catch(() => {}); }, 1000);
