@@ -27,6 +27,16 @@ function showRelations(data) {
       if (item.broken) line.append(" · 断链");
       else if (item.heading) line.append(` · ${item.heading}`);
       if (item.context) line.append(element("p", item.context));
+      if (item.references?.length) {
+        const references = element("ul");
+        for (const reference of item.references) {
+          const location = element("li", `第 ${reference.line} 行`);
+          if (reference.heading) location.append(` · ${reference.heading}`);
+          if (reference.context) location.append(element("p", reference.context));
+          references.append(location);
+        }
+        line.append(references);
+      }
       list.append(line);
     }
     section.append(list);

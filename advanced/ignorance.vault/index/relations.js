@@ -141,11 +141,14 @@ function plainMention(note, name) {
 export function noteRelations(graph, path) {
   const note = graph.byPath.get(normalize(withoutExtension(path)));
   if (!note) return undefined;
-  const incoming = graph.incoming.get(note.path) ?? [];
-  const linked = new Set(incoming.map((item) => item.path));
+  const sources = new Map();
+  for (const { path, name, ...reference } of graph.incoming.get(note.path) ?? []) {
+    if (!sources.has(path)) sources.set(path, { path, name, references: [] });
+    sources.get(path).references.push(reference);
+  }
   const mentions = [];
   for (const candidate of graph.notes) {
-    if (candidate.path === note.path || linked.has(candidate.path)) continue;
+    if (candidate.path === note.path || sources.has(candidate.path)) continue;
     const context = plainMention(candidate, note.name);
     if (context) mentions.push({ ...noteInfo(candidate), context });
   }
@@ -163,7 +166,7 @@ export function noteRelations(graph, path) {
   const siblings = directParents.flatMap((item) => graph.children.get(item.path) ?? []).filter((item) => item.path !== note.path);
   return {
     current: noteInfo(note),
-    incoming,
+    incoming: [...sources.values()],
     mentions,
     outgoing: graph.outgoing.get(note.path) ?? [],
     parents: directParents.map(noteInfo),
