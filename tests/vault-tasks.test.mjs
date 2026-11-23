@@ -1,7 +1,7 @@
 import { test } from "node:test";
 import assert from "node:assert/strict";
-import { parseVaultNote } from "../advanced/ignorance.vault/index/parse.js";
-import { parseTaskQuery, runTasks, weekTasks } from "../advanced/ignorance.vault/index/tasks.js";
+import { parseVaultNote } from "../advanced/ignorance.task-rollup/core/parse.js";
+import { parseTaskQuery, runTasks, weekTasks } from "../advanced/ignorance.task-rollup/index/tasks.js";
 
 const notes = [
   parseVaultNote("工作/甲.md", "# 交付\n- [ ] 明天 📅 2026-11-23 #重要\n- [ ] 逾期 due:2026-11-20 #重要\n- [x] 已完成 due:2026-11-23 #重要\n```\n- [ ] 忽略 due:2026-11-23\n```"),
@@ -24,4 +24,33 @@ test("handles missing dates with a distinct filter and reports invalid syntax", 
   assert.equal(runTasks(parseTaskQuery("due: none"), notes, today).count, 1);
   assert.throws(() => parseTaskQuery("status: maybe"), /第 1 行.*status/);
   assert.throws(() => parseTaskQuery("due: before now"), /第 1 行.*due/);
+});
+
+test("weekly snapshots do not request an index before the sidebar announces demand", async () => {
+  const { registerDetailSnapshots } = await import("../packages/vault-core/details.js");
+  const subscriptions = [];
+  let scans = 0;
+  let requested = false;
+  let invalidate;
+  const api = {
+    document: { info: async () => ({ path: "/vault/task.md" }), getBlocks: async () => [{ id: "task-block" }] },
+    storage: { update: async () => {} },
+    ui: { toast: (value) => assert.fail(value) },
+  };
+  const index = {
+    state: async () => { scans++; return { status: "ready", records: [] }; },
+    onChange: (listener) => { invalidate = listener; return { dispose() {} }; },
+  };
+  const settle = () => new Promise((resolve) => setImmediate(resolve));
+  registerDetailSnapshots(api, index, subscriptions, () => ({}), async () => requested);
+  try {
+    await settle();
+    assert.equal(scans, 0);
+    requested = true;
+    invalidate();
+    await settle();
+    assert.equal(scans, 1);
+  } finally {
+    for (const subscription of subscriptions) subscription.dispose();
+  }
 });

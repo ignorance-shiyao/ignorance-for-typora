@@ -1,0 +1,26 @@
+{
+  "id": "ignorance.task-rollup",
+  "name": "Ignorance Task Rollup",
+  "version": "0.1.0",
+  "description": "通过 tasks 代码块和本周任务侧栏汇总跨文件任务。",
+  "author": "Ignorance",
+  "tags": ["Markdown Extension", "Productivity", "Detail View"],
+  "engines": { "typora": ">=2.0.0" },
+  "main": "main.js",
+  "activationEvents": ["onFence:tasks", "onStartupFinished"],
+  "permissions": { "workspace": "read", "document": "read" },
+  "contributes": {
+    "fenceRenderers": [
+      { "id": "tasks", "lang": ["tasks"], "mode": "interactive", "resolver": true }
+    ],
+    "detailViews": [
+      { "id": "week", "title": "本周任务", "icon": "list-checks", "entry": "views/week.html" }
+    ],
+    "configuration": {
+      "title": "Ignorance Task Rollup",
+      "properties": {
+        "excludeFolders": { "type": "string", "title": "排除目录", "default": "templates/, archive/" }
+      }
+    }
+  }
+}

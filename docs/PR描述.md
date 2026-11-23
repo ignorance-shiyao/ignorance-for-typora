@@ -1610,3 +1610,9 @@ ok 228 - theme hides the suffix and colors the previous element
 - 独立包位于 `advanced/ignorance.property-query/`。首次遇到有效查询才启动索引，仅索引属性和标签。当前文档变更使用 300 ms 防抖。
 - `npm test` 输出 `tests 231 / pass 231 / fail 0`，包括新包的属性查询、商店约束和 X4 副本校验。商店构建后新包的 `diff -qr` 无输出。
 - 可验收。第 6 项六行及 R2、R3、R4 前半均在 Typora 2.0.0-beta1 实测，详见实测记录 S2。R3 为端到端无障碍观测，包含自动化开销。
+
+## S3 跨文件任务汇总
+
+- 工作区有独立的 `advanced/ignorance.task-rollup/`、两篇专项测试样例和迁移后的任务测试。通过代码块或本周任务侧栏触发索引。
+- `npm test` 输出 `tests 233 / pass 233 / fail 0`，含商店包约束和 X4 副本检查。商店构建后 `diff -qr` 无输出。
+- 可验收。第 7 项四行已在 Typora 2.0.0-beta1 复测。新增侧栏需求回归测试，先得到 1 次提前请求的失败结果，再验证修正通过。详见实测记录 S3。

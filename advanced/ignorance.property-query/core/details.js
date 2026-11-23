@@ -2,7 +2,7 @@ const CONTEXT_KEY = "detail-contexts";
 const MAX_CONTEXTS = 8;
 const MAX_AGE = 90_000;
 
-export function registerDetailSnapshots(api, index, subscriptions, compute) {
+export function registerDetailSnapshots(api, index, subscriptions, compute, isRequested) {
   let disposed = false;
   let inFlight = false;
   let invalidated = true;
@@ -28,7 +28,7 @@ export function registerDetailSnapshots(api, index, subscriptions, compute) {
         lastContext = blocks[0]?.id;
         lastPath = info.path;
       }
-      if (!lastContext) return;
+      if (!lastContext || (isRequested && !(await isRequested(lastContext)))) return;
       const state = await index.state();
       const detail = state.status === "ready"
         ? await compute(state.records, info.path, state)
