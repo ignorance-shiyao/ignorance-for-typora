@@ -1,7 +1,7 @@
 import { test } from "node:test";
 import assert from "node:assert/strict";
-import { createIndex } from "../advanced/ignorance.vault/index/controller.js";
-import { excludedPath, relativePath, scanNotes } from "../advanced/ignorance.vault/index/scan.js";
+import { createIndex } from "../packages/vault-core/controller.js";
+import { excludedPath, relativePath, scanNotes } from "../packages/vault-core/scan.js";
 
 test("scans inside the root with exclusions and reuses unmodified entries", async () => {
   const root = "/workspace";

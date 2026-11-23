@@ -4,7 +4,7 @@ import { readdir, readFile, rm } from "node:fs/promises";
 import { dirname, join } from "node:path";
 import { fileURLToPath } from "node:url";
 import { performance } from "node:perf_hooks";
-import { scanNotes } from "../advanced/ignorance.vault/index/scan.js";
+import { scanNotes } from "../packages/vault-core/scan.js";
 
 async function listFiles(directory) {
   const files = [];

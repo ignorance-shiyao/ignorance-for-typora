@@ -1,7 +1,7 @@
 import { performance } from "node:perf_hooks";
 import { readFileSync, readdirSync } from "node:fs";
-import { parseVaultNote } from "../advanced/ignorance.vault/index/parse.js";
-import { createSearchIndex, parseSearch, searchNotes } from "../advanced/ignorance.vault/index/search.js";
+import { parseVaultNote } from "../packages/vault-core/parse.js";
+import { createSearchIndex, parseSearch, searchNotes } from "../advanced/ignorance.vault-search/index/search.js";
 
 const folder = new URL("../tests/fixtures/vault/检索/", import.meta.url);
 const samples = readdirSync(folder).sort().map((file) =>

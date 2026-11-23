@@ -1,6 +1,6 @@
 import { test } from "node:test";
 import assert from "node:assert/strict";
-import { parseVaultNote } from "../advanced/ignorance.vault/index/parse.js";
+import { parseVaultNote } from "../packages/vault-core/parse.js";
 
 test("indexes properties, nested tasks, heading, links and tags without code", () => {
   const source = [

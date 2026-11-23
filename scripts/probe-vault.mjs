@@ -1,12 +1,12 @@
 import assert from "node:assert/strict";
-import { parseVaultNote } from "../advanced/ignorance.vault/index/parse.js";
-import { excludedPath, relativePath } from "../advanced/ignorance.vault/index/scan.js";
-import { parseQuery, runQuery } from "../advanced/ignorance.vault/index/query.js";
-import { parseTaskQuery, runTasks, weekTasks } from "../advanced/ignorance.vault/index/tasks.js";
-import { parseTrack, runTrack } from "../advanced/ignorance.vault/index/track.js";
-import { createSearchIndex, parseSearch, searchNotes } from "../advanced/ignorance.vault/index/search.js";
-import { createRelations, noteRelations } from "../advanced/ignorance.vault/index/relations.js";
-import { buildCards, noteCards, recordRating, reviewQueue, scheduleCard } from "../advanced/ignorance.vault/index/review.js";
+import { parseVaultNote } from "../packages/vault-core/parse.js";
+import { excludedPath, relativePath } from "../packages/vault-core/scan.js";
+import { parseQuery, runQuery } from "../advanced/ignorance.property-query/index/query.js";
+import { parseTaskQuery, runTasks, weekTasks } from "../advanced/ignorance.task-rollup/index/tasks.js";
+import { parseTrack, runTrack } from "../advanced/ignorance.value-track/index/track.js";
+import { createSearchIndex, parseSearch, searchNotes } from "../advanced/ignorance.vault-search/index/search.js";
+import { createRelations, noteRelations } from "../advanced/ignorance.backlinks/index/relations.js";
+import { buildCards, noteCards, recordRating, reviewQueue, scheduleCard } from "../advanced/ignorance.flashcards/index/review.js";
 
 const today = "2026-11-22";
 const notes = [

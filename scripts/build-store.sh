@@ -28,13 +28,6 @@ cp -R "$ROOT/advanced/ignorance.md-lint" "$OUT/extensions/ignorance.md-lint"
 cp -R "$ROOT/advanced/ignorance.table-tools" "$OUT/extensions/ignorance.table-tools"
 cp -R "$ROOT/advanced/ignorance.outliner" "$OUT/extensions/ignorance.outliner"
 cp -R "$ROOT/advanced/ignorance.natural-date" "$OUT/extensions/ignorance.natural-date"
-VAULT="$ROOT/advanced/ignorance.vault"
-if [[ -f "$VAULT/typora-extension.json" ]]; then
-  mkdir -p "$OUT/extensions/ignorance.vault"
-  for entry in "$VAULT"/*; do
-    [[ "${entry:t}" == experiments ]] || cp -R "$entry" "$OUT/extensions/ignorance.vault/"
-  done
-fi
 GRAPHS="$ROOT/advanced/ignorance.knowledge-graphs"
 if [[ -f "$GRAPHS/typora-extension.json" ]]; then
   mkdir -p "$OUT/extensions/ignorance.knowledge-graphs"
