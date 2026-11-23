@@ -1597,3 +1597,10 @@ ok 228 - theme hides the suffix and colors the previous element
 ## 风险与回退
 
 可回退以「R6」标记的独立提交，恢复原版链接目标识别并移除本轮探测与交付材料。深层括号链接在原版整理时可能被改写。R6 未切换已安装的扩展，实机验收结果仍以对应安装版本为准。
+
+## S1 共享索引模块
+
+- 改动包括 `packages/vault-core/`、`scripts/sync-vault-core.mjs` 和 `tests/vault-core-sync.test.mjs`。
+- `npm test` 输出 `tests 230 / pass 230 / fail 0`，涵盖旧工作区扩展测试和新增按需字段测试。旧扩展的 Typora 宿主回归未实测。
+- X4 在临时目录用示例扩展验证。首次同步后 `pass 2 / fail 0`，修改副本后 `pass 1 / fail 1`，重新同步后 `pass 2 / fail 0`。实际发布扩展的副本将在 S2 起逐项检查。
+- `scripts/build-store.sh` 后运行 `diff -qr advanced/ignorance.vault store/extensions/ignorance.vault -x experiments`，无输出。
