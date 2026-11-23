@@ -78,7 +78,8 @@ function forceLayout(graph, width, height) {
     py[position] = height / 2 + Math.sin(angle) * radius;
   });
   const links = graph.edges.map(({ source, target }) => [index.get(source), index.get(target)]);
-  const ideal = Math.sqrt((width * height) / count);
+  const idealSquared = (width * height) / count;
+  const ideal = Math.sqrt(idealSquared);
   const cell = ideal * 2;
   const rounds = count > 800 ? 80 : 200;
   const fx = new Float64Array(count);
@@ -102,13 +103,13 @@ function forceLayout(graph, width, height) {
             if (j <= i) continue;
             let dx = px[i] - px[j];
             let dy = py[i] - py[j];
-            let distance = Math.hypot(dx, dy);
-            if (distance < 0.01) {
+            let distanceSquared = dx * dx + dy * dy;
+            if (distanceSquared < 0.0001) {
               dx = hash(`x${i}`) - 0.5;
               dy = hash(`y${j}`) - 0.5;
-              distance = 0.01;
+              distanceSquared = 0.0001;
             }
-            const push = (ideal * ideal) / distance / distance;
+            const push = idealSquared / distanceSquared;
             fx[i] += dx * push;
             fy[i] += dy * push;
             fx[j] -= dx * push;
