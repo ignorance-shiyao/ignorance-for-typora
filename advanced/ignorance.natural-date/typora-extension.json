@@ -1,0 +1,89 @@
+{
+  "id": "ignorance.natural-date",
+  "name": "Ignorance Natural Date",
+  "version": "0.1.0",
+  "description": "用中文或英文日期词插入或转换为标准日期，如明天、下周一、三天后。",
+  "author": "ignorance-shiyao",
+  "repository": "https://github.com/ignorance-shiyao/ignorance-for-typora",
+  "engines": {
+    "typora": ">=2.0.0"
+  },
+  "keywords": [
+    "date",
+    "chinese",
+    "natural language"
+  ],
+  "tags": [
+    "Markdown Extension",
+    "Writing"
+  ],
+  "main": "main.js",
+  "activationEvents": [
+    "onStartupFinished",
+    "onCommand:date-insert",
+    "onCommand:date-convert"
+  ],
+  "contributes": {
+    "commands": [
+      {
+        "id": "date-insert",
+        "title": "插入自然语言日期",
+        "category": "日期"
+      },
+      {
+        "id": "date-convert",
+        "title": "将选中文字转换为日期",
+        "category": "日期"
+      }
+    ],
+    "menus": {
+      "editor/context": [
+        {
+          "command": "date-convert",
+          "when": "editorHasSelection"
+        }
+      ],
+      "inlinePalette": [
+        {
+          "command": "date-insert"
+        }
+      ]
+    },
+    "configuration": {
+      "title": "Ignorance Natural Date",
+      "properties": {
+        "dateFormat": {
+          "type": "string",
+          "title": "插入日期格式",
+          "enum": [
+            "iso",
+            "weekday",
+            "wiki"
+          ],
+          "enumLabels": [
+            "日期",
+            "日期和星期",
+            "Wiki 链接"
+          ],
+          "default": "iso"
+        },
+        "dateWeekStart": {
+          "type": "number",
+          "title": "每周起始日",
+          "enum": [
+            1,
+            0
+          ],
+          "enumLabels": [
+            "周一",
+            "周日"
+          ],
+          "default": 1
+        }
+      }
+    }
+  },
+  "permissions": {
+    "document": "write"
+  }
+}
