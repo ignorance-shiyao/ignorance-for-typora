@@ -1633,3 +1633,9 @@ ok 228 - theme hides the suffix and colors the previous element
 - 可验收。独立商店包位于 `advanced/ignorance.flashcards/`，复习侧栏首次打开时建立卡片索引，定时提醒不会触发首次扫描。
 - `npm test` 输出 `tests 237 / pass 237 / fail 0`，包含 SM-2、去重评分、旧记录清理、商店约束和 X4 一致性。商店构建后 `diff -qr` 无输出。
 - 第 11 项六行已在 Typora 2.0.0-beta1 实测。R4 后半五轮双窗口提交均在 1 秒内完成，每轮已复习数只增加 1。详见实测记录 S6。
+
+## S7 相关性全文搜索
+
+- 可验收。独立商店包位于 `advanced/ignorance.vault-search/`，命令和侧栏在首次查询时建立仅含搜索字段的索引。
+- `npm test` 输出 `tests 238 / pass 238 / fail 0`，包含 50 篇固定排序、过滤、容错、高亮、商店约束和 X4 一致性。商店构建后 `diff -qr` 无输出。
+- 第 9 项六行已在 Typora 2.0.0-beta1 实测。5,000 篇宿主暖态 20 次中位数 134.5 ms、p95 191 ms，门槛为中位数不超过 300 ms。临时计时补丁未写入提交。详见实测记录 S7。

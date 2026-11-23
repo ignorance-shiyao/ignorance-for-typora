@@ -1,8 +1,8 @@
 import { test } from "node:test";
 import assert from "node:assert/strict";
 import { readdirSync, readFileSync } from "node:fs";
-import { parseVaultNote } from "../advanced/ignorance.vault/index/parse.js";
-import { createSearchIndex, parseSearch, searchNotes } from "../advanced/ignorance.vault/index/search.js";
+import { parseVaultNote } from "../advanced/ignorance.vault-search/core/parse.js";
+import { createSearchIndex, parseSearch, searchNotes } from "../advanced/ignorance.vault-search/index/search.js";
 
 const root = new URL("./fixtures/vault/检索/", import.meta.url);
 const notePaths = readdirSync(root).sort();

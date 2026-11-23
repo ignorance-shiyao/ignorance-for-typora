@@ -1,0 +1,26 @@
+{
+  "id": "ignorance.vault-search",
+  "name": "Ignorance Vault Search",
+  "version": "0.1.0",
+  "description": "按相关性搜索工作区 Markdown 笔记。",
+  "author": "Ignorance",
+  "tags": ["Productivity", "Detail View"],
+  "engines": { "typora": ">=2.0.0" },
+  "main": "main.js",
+  "activationEvents": ["onCommand:search-workspace", "onStartupFinished"],
+  "permissions": { "workspace": "read", "document": "read" },
+  "contributes": {
+    "commands": [
+      { "id": "search-workspace", "title": "搜索工作区", "category": "工作区" }
+    ],
+    "detailViews": [
+      { "id": "search", "title": "工作区搜索", "icon": "search", "entry": "views/search.html" }
+    ],
+    "configuration": {
+      "title": "Ignorance Vault Search",
+      "properties": {
+        "excludeFolders": { "type": "string", "title": "排除目录", "default": "templates/, archive/" }
+      }
+    }
+  }
+}
