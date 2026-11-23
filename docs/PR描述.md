@@ -1604,3 +1604,9 @@ ok 228 - theme hides the suffix and colors the previous element
 - `npm test` 输出 `tests 230 / pass 230 / fail 0`，涵盖旧工作区扩展测试和新增按需字段测试。旧扩展的 Typora 宿主回归未实测。
 - X4 在临时目录用示例扩展验证。首次同步后 `pass 2 / fail 0`，修改副本后 `pass 1 / fail 1`，重新同步后 `pass 2 / fail 0`。实际发布扩展的副本将在 S2 起逐项检查。
 - `scripts/build-store.sh` 后运行 `diff -qr advanced/ignorance.vault store/extensions/ignorance.vault -x experiments`，无输出。
+
+## S2 属性查询代码块
+
+- 独立包位于 `advanced/ignorance.property-query/`。首次遇到有效查询才启动索引，仅索引属性和标签。当前文档变更使用 300 ms 防抖。
+- `npm test` 输出 `tests 231 / pass 231 / fail 0`，包括新包的属性查询、商店约束和 X4 副本校验。商店构建后新包的 `diff -qr` 无输出。
+- 可验收。第 6 项六行及 R2、R3、R4 前半均在 Typora 2.0.0-beta1 实测，详见实测记录 S2。R3 为端到端无障碍观测，包含自动化开销。

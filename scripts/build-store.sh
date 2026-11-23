@@ -18,6 +18,7 @@ for img in cover.webp screenshot.webp; do [[ -f "$ROOT/theme/store/$img" ]] && c
 for ext in ignorance.file-viewers ignorance.advanced; do
   cp -R "$ROOT/advanced/$ext" "$OUT/extensions/$ext"
 done
+cp -R "$ROOT/advanced/ignorance.property-query" "$OUT/extensions/ignorance.property-query"
 VAULT="$ROOT/advanced/ignorance.vault"
 if [[ -f "$VAULT/typora-extension.json" ]]; then
   mkdir -p "$OUT/extensions/ignorance.vault"

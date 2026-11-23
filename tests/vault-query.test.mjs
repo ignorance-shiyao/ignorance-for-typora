@@ -1,6 +1,6 @@
 import { test } from "node:test";
 import assert from "node:assert/strict";
-import { parseQuery, runQuery } from "../advanced/ignorance.vault/index/query.js";
+import { parseQuery, runQuery } from "../advanced/ignorance.property-query/index/query.js";
 
 const rows = [
   { path: "项目/星河.md", name: "星河", tags: ["重要"], properties: { status: "进行中", due: "2026-11-26", owner: "甲", categories: ["文档", "测试"] } },

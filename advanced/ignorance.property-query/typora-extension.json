@@ -1,0 +1,23 @@
+{
+  "id": "ignorance.property-query",
+  "name": "Ignorance Property Query",
+  "version": "0.1.0",
+  "description": "通过 query 代码块筛选和汇总工作区笔记属性。",
+  "author": "Ignorance",
+  "tags": ["Markdown Extension", "Productivity"],
+  "engines": { "typora": ">=2.0.0" },
+  "main": "main.js",
+  "activationEvents": ["onFence:query"],
+  "permissions": { "workspace": "read", "document": "read" },
+  "contributes": {
+    "fenceRenderers": [
+      { "id": "query", "lang": ["query"], "mode": "interactive", "resolver": true }
+    ],
+    "configuration": {
+      "title": "Ignorance Property Query",
+      "properties": {
+        "excludeFolders": { "type": "string", "title": "排除目录", "default": "templates/, archive/" }
+      }
+    }
+  }
+}
