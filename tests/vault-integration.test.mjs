@@ -90,9 +90,15 @@ test("runs the Vault Worker entry from indexing through query, search and review
   for (const key of ["review-request-one", "review-request-two"]) {
     keyValues.set(key, { card: card.id, version: 0, quality: 4, scope, at: Date.now() });
   }
-  await until(() => keyValues.get("review-responses")?.["review-request-two"]);
-  assert.equal(keyValues.get(scope + "-review").records[card.id].version, 1);
-  assert.match(keyValues.get("review-responses")["review-request-two"].error, /其他窗口/);
+  const responses = await until(() => {
+    const result = keyValues.get("review-responses");
+    return result?.["review-request-one"] && result?.["review-request-two"] && result;
+  });
+  assert.equal(responses["review-request-one"].error, "");
+  assert.match(responses["review-request-two"].error, /其他窗口/);
+  const review = keyValues.get(scope + "-review");
+  assert.equal(review.records[card.id].version, 1);
+  assert.deepEqual(Object.values(review.history), [1]);
   assert.equal(inputs.writes, 0);
 
   keyValues.set("search-request-first-block", { id: "search-one", query: "星河", at: Date.now() });
