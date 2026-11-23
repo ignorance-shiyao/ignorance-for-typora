@@ -24,6 +24,8 @@ A side-panel graph of the notes in your workspace folder. Notes are nodes; `[[wi
 
 没有 `network`、`process`、`clipboard`。索引缓存在扩展专用存储中。
 
+升级时如果清单新增了权限，Typora 会在 设置 ▸ 扩展 里把本扩展标为「需要你的授权」，点「查看权限…」确认后图谱视图才会出现在「视图」菜单里。
+
 ## Vendored library
 
 `vendor/js-yaml.js` is `dist/js-yaml.js` from js-yaml 4.3.2 (MIT license in `vendor/LICENSE-js-yaml.txt`), with only the trailing `sourceMappingURL` comment and trailing whitespace removed. It parses front matter. The long-line warning for this file is expected.

@@ -130,7 +130,8 @@ function drawHulls(graph, groups, unit) {
     if (!members.has(node.group)) members.set(node.group, []);
     members.get(node.group).push(node);
   }
-  for (const [name, nodes] of members) {
+  const labels = [];
+  for (const [name, nodes] of [...members].sort((a, b) => b[1].length - a[1].length)) {
     if (nodes.length < 2) continue;
     const pad = 20 * unit;
     const left = Math.min(...nodes.map((node) => node.x)) - pad;
@@ -140,7 +141,14 @@ function drawHulls(graph, groups, unit) {
     const index = groups.get(name) ?? 0;
     const box = make("g", { class: `graph-hull g${index}` });
     box.append(make("rect", { class: "graph-hull-box", x: left, y: top, width: right - left, height: bottom - top, rx: 12 * unit, "stroke-width": unit }));
-    box.append(pill(left + 8 * unit, top + 2 * unit, name || "根目录", 11 * unit, unit, "graph-hull-label"));
+    const text = name || "根目录";
+    const labelWidth = textUnits(text) * 11 * unit + 10 * unit;
+    const x = left + 8 * unit;
+    let y = top + 2 * unit;
+    // Boxes of different folders overlap in a local graph, so push a name down until it clears the others.
+    while (labels.some((other) => x < other.x + other.width && x + labelWidth > other.x && Math.abs(y - other.y) < 16 * unit) && y < bottom - 8 * unit) y += 16 * unit;
+    labels.push({ x, y, width: labelWidth });
+    box.append(pill(x, y, text, 11 * unit, unit, "graph-hull-label"));
     layer.append(box);
   }
   svg.append(layer);
