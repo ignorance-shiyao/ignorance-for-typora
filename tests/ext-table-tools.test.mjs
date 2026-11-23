@@ -124,3 +124,13 @@ test("table commands leave the document untouched when the caret is outside a ta
     assert.equal(messages.at(-1), "请将光标放在表格内");
   }
 });
+
+// Typora opens the "/" palette from an empty paragraph, never from inside a
+// cell, so a blockType condition would hide every table command from it.
+test("the inline palette lists table commands without a block type condition", async () => {
+  const { readFile } = await import("node:fs/promises");
+  const manifest = JSON.parse(await readFile(new URL("../advanced/ignorance.table-tools/typora-extension.json", import.meta.url), "utf8"));
+  const entries = manifest.contributes.menus.inlinePalette;
+  assert.ok(entries.length >= 5);
+  for (const entry of entries) assert.equal(entry.when, undefined, entry.command);
+});
