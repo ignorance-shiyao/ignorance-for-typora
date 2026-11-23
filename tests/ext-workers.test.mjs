@@ -191,3 +191,14 @@ test("flashcards：重复评分只计一次，重建索引复用缓存且不写�
   assert.equal(replacement.reviewedToday, 1);
   assert.equal(replacement.next, null);
 });
+
+for (const id of ["property-query", "task-rollup", "value-track", "backlinks", "vault-search", "flashcards"]) {
+  test(`${id}：没有被使用时不扫描工作区`, async (t) => {
+    const host = createHost(t, { notes: { "项目/星河.md": STAR }, current: "项目/星河.md" });
+    const { activate } = await import(ADVANCED + `ignorance.${id}/main.js`);
+    activate({ subscriptions: host.subscriptions });
+    await delay(400);
+    assert.equal(host.state.reads, 0);
+    assert.equal(host.files.size, 0);
+  });
+}
