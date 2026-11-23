@@ -14,7 +14,7 @@ const SEMVER = /^\d+\.\d+\.\d+([-+].*)?$/;
 const TAGS = ["Language Pack", "Markdown Extension", "Diagram", "Math", "Theme", "Writing", "Template", "AI", "Media", "Image Uploader", "Export", "Publish", "Data Sync", "Productivity", "File Viewer", "Detail View", "Developer"];
 
 // Extensions assembled by the store build.
-const STORE_READY = ["ignorance.file-viewers", "ignorance.advanced", "ignorance.vault", "ignorance.property-query", "ignorance.task-rollup", "ignorance.value-track", "ignorance.backlinks", "ignorance.flashcards", "ignorance.vault-search"];
+const STORE_READY = ["ignorance.file-viewers", "ignorance.advanced", "ignorance.vault", "ignorance.property-query", "ignorance.task-rollup", "ignorance.value-track", "ignorance.backlinks", "ignorance.flashcards", "ignorance.vault-search", "ignorance.md-lint", "ignorance.table-tools", "ignorance.outliner", "ignorance.natural-date"];
 const all = readdirSync(ROOT, { withFileTypes: true }).filter((e) => e.isDirectory()).map((e) => e.name);
 const manifestOf = (id) => JSON.parse(readFileSync(join(ROOT, id, "typora-extension.json"), "utf8"));
 

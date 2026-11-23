@@ -24,6 +24,10 @@ cp -R "$ROOT/advanced/ignorance.value-track" "$OUT/extensions/ignorance.value-tr
 cp -R "$ROOT/advanced/ignorance.backlinks" "$OUT/extensions/ignorance.backlinks"
 cp -R "$ROOT/advanced/ignorance.flashcards" "$OUT/extensions/ignorance.flashcards"
 cp -R "$ROOT/advanced/ignorance.vault-search" "$OUT/extensions/ignorance.vault-search"
+cp -R "$ROOT/advanced/ignorance.md-lint" "$OUT/extensions/ignorance.md-lint"
+cp -R "$ROOT/advanced/ignorance.table-tools" "$OUT/extensions/ignorance.table-tools"
+cp -R "$ROOT/advanced/ignorance.outliner" "$OUT/extensions/ignorance.outliner"
+cp -R "$ROOT/advanced/ignorance.natural-date" "$OUT/extensions/ignorance.natural-date"
 VAULT="$ROOT/advanced/ignorance.vault"
 if [[ -f "$VAULT/typora-extension.json" ]]; then
   mkdir -p "$OUT/extensions/ignorance.vault"

@@ -1,9 +1,9 @@
 import { isDeepStrictEqual } from "node:util";
-import { lintMarkdown } from "../advanced/ignorance.advanced/format/lint.js";
-import { appendTotal, csvToTable, findTables, parseTable, sortRows, transposeTable } from "../advanced/ignorance.advanced/format/table-tools.js";
-import { calculateTable } from "../advanced/ignorance.advanced/format/table-formula.js";
-import { changeListItem, listToHeadings, listOutline, textToList } from "../advanced/ignorance.advanced/format/outliner.js";
-import { parseNaturalDate } from "../advanced/ignorance.advanced/format/natural-date.js";
+import { lintMarkdown } from "../advanced/ignorance.md-lint/format/lint.js";
+import { appendTotal, csvToTable, findTables, parseTable, sortRows, transposeTable } from "../advanced/ignorance.table-tools/format/table-tools.js";
+import { calculateTable } from "../advanced/ignorance.table-tools/format/table-formula.js";
+import { changeListItem, listToHeadings, listOutline, textToList } from "../advanced/ignorance.outliner/format/outliner.js";
+import { parseNaturalDate } from "../advanced/ignorance.natural-date/format/natural-date.js";
 
 let passed = 0;
 let failed = 0;
@@ -75,7 +75,9 @@ probe(3, "保留任务标记的标题", "- [x] 甲\n  - 乙", listToHeadings, "#
 
 const dateCases = [
   ["周日的下周一", "下周一", "2026-11-22", "2026-11-23"],
-  ["周日的周末", "周末", "2026-11-22", "2026-11-21"],
+  ["周日的周末", "周末", "2026-11-22", "2026-11-28"],
+  ["周六的周末", "周末", "2026-11-28", "2026-11-28"],
+  ["周一的周末", "周末", "2026-11-23", "2026-11-28"],
   ["跨年", "三天后", "2026-12-31", "2027-01-03"],
   ["闰年月末", "一个月后", "2024-01-31", "2024-02-29"],
   ["非闰年月底", "下个月 31 号", "2027-01-31", "2027-02-28"],
