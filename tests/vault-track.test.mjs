@@ -1,6 +1,6 @@
 import { test } from "node:test";
 import assert from "node:assert/strict";
-import { parseTrack, runTrack } from "../advanced/ignorance.vault/index/track.js";
+import { parseTrack, runTrack } from "../advanced/ignorance.value-track/index/track.js";
 
 const notes = [
   { path: "日记/2026-11-16.md", properties: { date: "2026-11-16", 睡眠: 7 }, tags: ["运动"] },
@@ -27,4 +27,38 @@ test("renders each day in a range as a heatmap cell", () => {
   assert.equal([...result.chart.matchAll(/data-day=/g)].length, 4);
   assert.equal(result.points.length, 2);
   assert.match(result.chart, /data-day="2026-11-22"/);
+});
+
+test("static chart snapshots resolve theme colors when SDK variables are empty", async () => {
+  const { readFile } = await import("node:fs/promises");
+  const { runInNewContext } = await import("node:vm");
+  const attributes = new Map([["fill", "var(--typora-foreground)"]]);
+  const summary = { setAttribute(name, value) { this[name] = value; } };
+  const svg = {
+    localName: "svg", namespaceURI: "http://www.w3.org/2000/svg",
+    querySelectorAll: () => [svg],
+    getAttribute: (key) => attributes.get(key) ?? "100",
+    setAttribute: (key, value) => attributes.set(key, value),
+    append() {},
+  };
+  let receive;
+  let snapshot;
+  const sdk = {
+    theme: { vars: {}, dark: true },
+    onMessage: (fn) => { receive = fn; }, onSnapshot: (fn) => { snapshot = fn; },
+    autoHeight() {}, onOpen() {}, onTheme() {},
+  };
+  const output = { replaceChildren() {}, append() {} };
+  const context = {
+    window: { typora: { view: sdk }, addEventListener() {} },
+    document: { querySelector: () => output, createElement: () => ({}), createElementNS: () => summary, importNode: () => svg, addEventListener() {} },
+    DOMParser: class { parseFromString() { return { documentElement: svg }; } },
+    XMLSerializer: class { serializeToString() { return "<svg/>"; } },
+    getComputedStyle: () => ({ getPropertyValue: () => "" }), setInterval() {},
+  };
+  runInNewContext(await readFile(new URL("../advanced/ignorance.value-track/views/results.js", import.meta.url), "utf8"), context);
+  receive({ chart: "<svg/>", summary: "平均 7.25" });
+  await snapshot();
+  assert.match(attributes.get("fill"), /^#[0-9a-f]{6}$/i);
+  assert.equal(summary.fill, attributes.get("fill"));
 });

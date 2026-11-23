@@ -1616,3 +1616,9 @@ ok 228 - theme hides the suffix and colors the previous element
 - 工作区有独立的 `advanced/ignorance.task-rollup/`、两篇专项测试样例和迁移后的任务测试。通过代码块或本周任务侧栏触发索引。
 - `npm test` 输出 `tests 233 / pass 233 / fail 0`，含商店包约束和 X4 副本检查。商店构建后 `diff -qr` 无输出。
 - 可验收。第 7 项四行已在 Typora 2.0.0-beta1 复测。新增侧栏需求回归测试，先得到 1 次提前请求的失败结果，再验证修正通过。详见实测记录 S3。
+
+## S4 跨文件数值图表
+
+- 可验收。独立商店包位于 `advanced/ignorance.value-track/`，包含 `track` 代码块、图表视图与静态快照。
+- `npm test` 输出 `tests 235 / pass 235 / fail 0`，含商店约束和 X4 副本一致性。商店构建后的 `diff -qr` 无输出。
+- Typora 复测第 8 项五行。导出快照改为解析具体主题颜色，避免 PDF 黑块。快照回归测试修正前失败、修正后通过。详见实测记录 S4。

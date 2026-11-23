@@ -1,0 +1,44 @@
+{
+  "id": "ignorance.value-track",
+  "name": "Ignorance Value Track",
+  "version": "0.1.0",
+  "description": "通过 track 代码块绘制跨文件数值图表。",
+  "author": "Ignorance",
+  "tags": [
+    "Markdown Extension",
+    "Productivity"
+  ],
+  "engines": {
+    "typora": ">=2.0.0"
+  },
+  "main": "main.js",
+  "activationEvents": [
+    "onFence:track"
+  ],
+  "permissions": {
+    "workspace": "read",
+    "document": "read"
+  },
+  "contributes": {
+    "fenceRenderers": [
+      {
+        "id": "track",
+        "lang": [
+          "track"
+        ],
+        "mode": "interactive",
+        "resolver": true
+      }
+    ],
+    "configuration": {
+      "title": "Ignorance Value Track",
+      "properties": {
+        "excludeFolders": {
+          "type": "string",
+          "title": "排除目录",
+          "default": "templates/, archive/"
+        }
+      }
+    }
+  }
+}
