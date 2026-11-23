@@ -41,3 +41,21 @@ test("a lone # or path: prefix is ignored instead of matching everything or noth
   assert.equal(matchNode(parseQuery("#"), node, info), true);
   assert.equal(matchNode(parseQuery("path:"), node, info), true);
 });
+
+test("arrow navigation picks the nearest node in the pressed direction", () => {
+  const { nextNode } = globalThis.graphMatch;
+  const at = (id, x, y) => ({ id, x, y });
+  const nodes = [at("c", 0, 0), at("r", 10, 1), at("far", 30, 0), at("d", 1, 12), at("u", -2, -8), at("l", -15, 3)];
+  const from = nodes[0];
+  assert.equal(nextNode(from, nodes, [1, 0]).id, "r");
+  assert.equal(nextNode(from, nodes, [0, 1]).id, "d");
+  assert.equal(nextNode(from, nodes, [0, -1]).id, "u");
+  assert.equal(nextNode(from, nodes, [-1, 0]).id, "l");
+});
+
+test("arrow navigation ignores nodes outside the cone and stays put at the edge", () => {
+  const { nextNode } = globalThis.graphMatch;
+  const nodes = [{ id: "c", x: 0, y: 0 }, { id: "side", x: 3, y: 20 }];
+  assert.equal(nextNode(nodes[0], nodes, [1, 0]), undefined);
+  assert.equal(nextNode(nodes[0], [nodes[0]], [0, 1]), undefined);
+});

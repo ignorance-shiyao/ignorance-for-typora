@@ -1,6 +1,6 @@
 import test from "node:test";
 import assert from "node:assert/strict";
-import { columnIndex, columnName, parsePptx, parseXlsx, sharedStrings, unescapeXml } from "../advanced/ignorance.file-viewers/viewers/office/core.js";
+import { columnIndex, columnName, dateStyles, parsePptx, parseXlsx, serialToText, sharedStrings, unescapeXml } from "../advanced/ignorance.file-viewers/viewers/office/core.js";
 
 test("列字母与序号互转", () => {
   assert.equal(columnIndex("A1"), 0);
@@ -51,4 +51,22 @@ test("幻灯片解析：按编号排序，标题与正文分开", () => {
   });
   assert.deepEqual(slides.map((s) => s.title), ["一", "二", "十"]);
   assert.deepEqual(slides[1].paras, ["要点 & 说明", "第二条"]);
+});
+
+test("xlsx 日期：内置与自定义日期格式的单元格按日期显示，普通数字不变", () => {
+  const styles = `<styleSheet><numFmts count="2"><numFmt numFmtId="164" formatCode="yyyy&quot;年&quot;m&quot;月&quot;"/><numFmt numFmtId="165" formatCode="0.00&quot;d&quot;"/></numFmts>
+    <cellXfs count="4"><xf numFmtId="0"/><xf numFmtId="14"/><xf numFmtId="164"/><xf numFmtId="165"/></cellXfs></styleSheet>`;
+  assert.deepEqual([...dateStyles(styles)], [1, 2]);
+  const workbook = { "xl/workbook.xml": `<workbook><sheets><sheet name="S" sheetId="1" r:id="rId1"/></sheets></workbook>`, "xl/_rels/workbook.xml.rels": `<Relationships><Relationship Id="rId1" Target="worksheets/sheet1.xml"/></Relationships>`, "xl/styles.xml": styles };
+  const sheet = `<worksheet><sheetData><row r="1"><c r="A1" s="1"><v>45292</v></c><c r="B1" s="0"><v>45292</v></c><c r="C1" s="3"><v>45292</v></c><c r="D1" s="1"><v>45292.5</v></c></row></sheetData></worksheet>`;
+  const [parsed] = parseXlsx({ ...workbook, "xl/worksheets/sheet1.xml": sheet });
+  assert.deepEqual(parsed.rows[0], ["2024-01-01", "45292", "45292", "2024-01-01 12:00"]);
+});
+
+test("xlsx 日期：序列号转换、纯时间与 1904 纪元", () => {
+  assert.equal(serialToText("45292"), "2024-01-01");
+  assert.equal(serialToText("0.75"), "18:00");
+  assert.equal(serialToText("0", true), "00:00");
+  assert.equal(serialToText("1", true), "1904-01-02");
+  assert.equal(serialToText("abc"), "abc");
 });

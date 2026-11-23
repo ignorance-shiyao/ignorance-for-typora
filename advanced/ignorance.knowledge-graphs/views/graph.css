@@ -17,6 +17,7 @@
 .graph-count { color: var(--typora-foreground); font-size: 12px; margin-inline-start: auto; font-variant-numeric: tabular-nums; }
 .graph-canvas { display: block; width: 100%; height: auto; max-height: 72vh; background: var(--typora-panel); border-radius: 10px; touch-action: none; cursor: grab; user-select: none; }
 .graph-canvas.dragging { cursor: grabbing; }
+.graph-canvas:focus-visible { outline: 2px solid var(--typora-accent); outline-offset: 2px; }
 .graph-edge { stroke: var(--typora-foreground); stroke-opacity: .22; stroke-linecap: round; }
 .graph-edge.parent { stroke: var(--typora-accent); stroke-opacity: .9; }
 .graph-edge.active { stroke: var(--typora-accent); stroke-opacity: .9; }

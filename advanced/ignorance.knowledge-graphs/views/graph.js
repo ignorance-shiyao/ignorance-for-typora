@@ -668,6 +668,9 @@ function build() {
   if (notice) output.append(control("p", { textContent: notice }));
   svg = document.createElementNS(NS, "svg");
   svg.setAttribute("class", "graph-canvas graph-scope");
+  svg.setAttribute("tabindex", "0");
+  svg.setAttribute("role", "group");
+  svg.setAttribute("aria-label", "笔记关系图，方向键切换笔记，Esc 取消选择");
   legendBox = control("div", { className: "graph-legend" });
   detailBox = control("div", { className: "graph-detail" });
   const stage = control("div", { className: "graph-stage" });
@@ -702,6 +705,7 @@ function build() {
   wrap.append(body);
   output.append(wrap);
   bindPointer();
+  bindKeys();
   renderDetail();
   draw();
 }
@@ -764,6 +768,26 @@ function zoomBy(factor) {
 function scheduleDraw() {
   if (frame) return;
   frame = requestAnimationFrame(() => { frame = undefined; draw(); });
+}
+
+const ARROWS = { ArrowLeft: [-1, 0], ArrowRight: [1, 0], ArrowUp: [0, -1], ArrowDown: [0, 1] };
+
+function bindKeys() {
+  svg.addEventListener("keydown", (event) => {
+    if (event.key === "Escape" && state.selected && !state.full) {
+      state.selected = undefined;
+      renderDetail();
+      draw();
+      return;
+    }
+    const direction = ARROWS[event.key];
+    if (!direction || event.metaKey || event.ctrlKey || event.altKey) return;
+    event.preventDefault();
+    const { nodes } = filtered(shown().graph);
+    const current = nodes.find((node) => node.id === state.selected) ?? nodes.find((node) => node.path && node.path === data.current);
+    const target = current ? globalThis.graphMatch.nextNode(current, nodes, direction) : nodes[0];
+    if (target && target.id !== state.selected) select(target.id);
+  });
 }
 
 function bindPointer() {

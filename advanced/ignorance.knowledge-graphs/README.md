@@ -7,6 +7,7 @@ A side-panel graph of the notes in your workspace folder. Notes are nodes; `[[wi
 - 节点是工作区里的 Markdown 笔记，边来自 `[[wiki]]` 链接、Markdown 链接，以及 front matter 里的 `parent:` / `up:`。找不到目标的链接显示为虚线断链节点。
 - 点击节点查看路径、属性、任务、复习卡片数、上级、下级、反向链接和出链。
 - 搜索支持名称、`#标签`、`path:目录`。可按孤立笔记、断链、层级、任务、箭头过滤，按目录分组。
+- 图谱画布获得焦点后，方向键选中相邻方向最近的笔记，Esc 取消选择；全屏按钮或 Esc 进出全屏。
 - 图谱计算全部在本机完成，不访问网络。
 
 ## 模型整理建议
