@@ -1,0 +1,114 @@
+{
+  "id": "ignorance.table-tools",
+  "name": "Ignorance Table Tools",
+  "version": "0.1.0",
+  "description": "表格排序、公式计算、合计行、转置和 CSV 转表格。",
+  "author": "ignorance-shiyao",
+  "repository": "https://github.com/ignorance-shiyao/ignorance-for-typora",
+  "engines": {
+    "typora": ">=2.0.0"
+  },
+  "keywords": [
+    "table",
+    "formula",
+    "sort",
+    "csv"
+  ],
+  "tags": [
+    "Markdown Extension",
+    "Writing"
+  ],
+  "main": "main.js",
+  "activationEvents": [
+    "onStartupFinished",
+    "onCommand:table-sort-asc",
+    "onCommand:table-sort-desc",
+    "onCommand:table-recalculate",
+    "onCommand:table-total",
+    "onCommand:table-transpose",
+    "onCommand:table-csv-convert"
+  ],
+  "contributes": {
+    "commands": [
+      {
+        "id": "table-sort-asc",
+        "title": "按列升序排序",
+        "category": "表格"
+      },
+      {
+        "id": "table-sort-desc",
+        "title": "按列降序排序",
+        "category": "表格"
+      },
+      {
+        "id": "table-recalculate",
+        "title": "重新计算表格",
+        "category": "表格"
+      },
+      {
+        "id": "table-total",
+        "title": "追加合计行",
+        "category": "表格"
+      },
+      {
+        "id": "table-transpose",
+        "title": "转置表格",
+        "category": "表格"
+      },
+      {
+        "id": "table-csv-convert",
+        "title": "将选中的 CSV 转为表格",
+        "category": "表格"
+      }
+    ],
+    "menus": {
+      "editor/context": [
+        {
+          "command": "table-sort-asc",
+          "when": "blockType == 'table_cell'"
+        },
+        {
+          "command": "table-sort-desc",
+          "when": "blockType == 'table_cell'"
+        },
+        {
+          "command": "table-recalculate",
+          "when": "blockType == 'table_cell'"
+        },
+        {
+          "command": "table-total",
+          "when": "blockType == 'table_cell'"
+        },
+        {
+          "command": "table-transpose",
+          "when": "blockType == 'table_cell'"
+        }
+      ],
+      "inlinePalette": [
+        {
+          "command": "table-sort-asc",
+          "when": "blockType == 'table_cell'"
+        },
+        {
+          "command": "table-sort-desc",
+          "when": "blockType == 'table_cell'"
+        },
+        {
+          "command": "table-recalculate",
+          "when": "blockType == 'table_cell'"
+        },
+        {
+          "command": "table-total",
+          "when": "blockType == 'table_cell'"
+        },
+        {
+          "command": "table-transpose",
+          "when": "blockType == 'table_cell'"
+        }
+      ]
+    }
+  },
+  "permissions": {
+    "document": "write"
+  }
+}
