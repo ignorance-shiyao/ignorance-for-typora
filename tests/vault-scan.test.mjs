@@ -88,3 +88,75 @@ test("relativePath keeps working for ordinary and Windows-style paths", () => {
   assert.equal(relativePath("/Users/a/库", "/Users/a/库/项目/甲.md"), "项目/甲.md");
   assert.equal(relativePath("C:\\库", "C:\\库\\项目\\甲.md"), "项目/甲.md");
 });
+
+test("keeps edits to two different notes when both windows publish concurrently", async () => {
+  const root = "/workspace";
+  const paths = [root + "/a.md", root + "/b.md"];
+  const disk = new Map(paths.map((path) => [path, "---\nowner: before\n---\n"]));
+  const cache = new Map();
+  const metadata = new Map();
+  const locks = new Map();
+  const common = {
+    settings: { get: () => "" },
+    workspace: { folders: () => [root], listFiles: () => paths, readFile: (path) => disk.get(path) },
+    storage: {
+      get: (key) => metadata.get(key),
+      set: (key, value) => metadata.set(key, value),
+      files: { readText: (key) => cache.get(key), write: (key, value) => cache.set(key, value) },
+    },
+    runtime: { lock: (key, operation) => {
+      const next = (locks.get(key) ?? Promise.resolve()).then(operation);
+      locks.set(key, next.catch(() => {}));
+      return next;
+    } },
+    ui: { toast() {} },
+  };
+  const windows = paths.map((path, index) => createIndex({
+    ...common,
+    document: { info: () => ({ path }) },
+    editor: { getMarkdown: () => `---\nowner: window-${index + 1}\n---\n` },
+  }));
+  await windows[0].rebuild();
+  await Promise.all(windows.map((window) => window.state()));
+  await Promise.all(windows.map((window) => window.updateCurrent()));
+
+  const expected = [
+    ["a.md", "window-1"],
+    ["b.md", "window-2"],
+  ];
+  for (const window of windows) {
+    const { records } = await window.state();
+    assert.deepEqual(records.map(({ path, properties }) => [path, properties.owner]), expected);
+  }
+  assert.ok([...disk.values()].every((markdown) => markdown.includes("owner: before")));
+});
+
+test("announces the first scan when a workspace opens after Worker startup", async () => {
+  let folders = [];
+  const metadata = new Map();
+  const cache = new Map();
+  const notices = [];
+  const index = createIndex({
+    settings: { get: () => "" },
+    workspace: {
+      folders: () => folders,
+      listFiles: () => ["/workspace/a.md"],
+      readFile: () => "# First note",
+    },
+    storage: {
+      get: (key) => metadata.get(key),
+      set: (key, value) => metadata.set(key, value),
+      files: { readText: (key) => cache.get(key), write: (key, value) => cache.set(key, value) },
+    },
+    runtime: { lock: async (_key, work) => work() },
+    ui: { toast: (value) => notices.push(value) },
+  });
+  assert.equal((await index.state()).status, "no-workspace");
+  const finished = new Promise((resolve) => index.onChange(resolve));
+  folders = ["/workspace"];
+  assert.equal((await index.state()).status, "indexing");
+  await finished;
+
+  assert.equal((await index.state()).records.length, 1);
+  assert.equal(notices.filter((notice) => /已索引 1 个文件，\d+ 毫秒/.test(notice)).length, 1);
+});

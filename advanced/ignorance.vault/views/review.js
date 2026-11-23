@@ -3,6 +3,7 @@ let reviewModel;
 let flipped = false;
 let inFlight;
 let feedback = "";
+let readVersion = 0;
 
 function showReview(model) {
   output.replaceChildren();
@@ -51,12 +52,15 @@ async function submitRating(quality) {
   const card = reviewModel.next;
   const nonce = globalThis.crypto?.randomUUID?.() ?? Math.random().toString(36).slice(2);
   const key = `review-request-${Date.now()}-${nonce}`;
-  inFlight = { key, at: Date.now(), card: card.id, version: card.version };
+  const scope = reviewModel.scope;
+  const request = { key, at: Date.now(), card: card.id, version: card.version, scope };
+  inFlight = request;
   feedback = "";
   showReview(reviewModel);
   try {
-    await sdk.storage.set(key, { card: card.id, version: card.version, quality, scope: reviewModel.scope, at: Date.now() });
+    await sdk.storage.set(key, { card: card.id, version: card.version, quality, scope, at: request.at });
   } catch (error) {
+    if (inFlight !== request) return;
     inFlight = undefined;
     feedback = "无法保存评分";
     sdk.log(error.message);
@@ -67,18 +71,31 @@ async function submitRating(quality) {
 async function readReview() {
   const context = reviewContext;
   if (!context) return;
-  const data = (await sdk.storage.get("detail-contexts"))?.[context]?.review;
-  if (context !== reviewContext) return;
+  const version = ++readVersion;
+  const stored = (await sdk.storage.get("detail-contexts"))?.[context];
+  if (version !== readVersion || context !== reviewContext) return;
+  if (stored?.message || stored?.status === "no-workspace") {
+    reviewModel = undefined;
+    output.textContent = stored.message ?? "请先打开工作区文件夹";
+    return;
+  }
+  const data = stored?.review;
   let changed = JSON.stringify(data) !== JSON.stringify(reviewModel);
-  if (inFlight) {
-    const response = (await sdk.storage.get("review-responses"))?.[inFlight.key];
-    const advanced = data?.next?.id !== inFlight.card || data?.next?.version !== inFlight.version;
-    if ((response && (response.error || advanced)) || Date.now() - inFlight.at > 12_000) {
+  const pending = inFlight;
+  if (pending && data && pending.scope === data.scope) {
+    const response = (await sdk.storage.get("review-responses"))?.[pending.key];
+    if (version !== readVersion || context !== reviewContext || inFlight !== pending) return;
+    const advanced = data.next?.id !== pending.card || data.next?.version !== pending.version;
+    if ((response && (response.error || advanced)) || Date.now() - pending.at > 12_000) {
       feedback = response?.error || (response ? "" : "评分暂未确认");
       if (advanced) flipped = false;
       inFlight = undefined;
       changed = true;
     }
+  }
+  if (data && pending && pending.scope !== data.scope) {
+    inFlight = undefined;
+    feedback = "";
   }
   if (data?.next?.id !== reviewModel?.next?.id) flipped = false;
   reviewModel = data;

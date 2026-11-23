@@ -5,6 +5,8 @@ const EXPIRY = 20_000;
 
 export function registerSearch(api, index, subscriptions) {
   let cached;
+  let cachedScope;
+  let cachedRevision;
   let invalidated = true;
   let refreshAt = 0;
   let polling = false;
@@ -16,8 +18,13 @@ export function registerSearch(api, index, subscriptions) {
   async function getSearchIndex() {
     if (!invalidated && Date.now() < refreshAt) return cached;
     const state = await index.state();
+    if (state.status === "error") throw new Error(state.message);
     if (state.status !== "ready") return undefined;
-    cached = createSearchIndex(state.records);
+    if (!cached || cachedScope !== state.scope || cachedRevision !== state.revision) {
+      cached = createSearchIndex(state.records);
+      cachedScope = state.scope;
+      cachedRevision = state.revision;
+    }
     invalidated = false;
     refreshAt = Date.now() + 5000;
     return cached;

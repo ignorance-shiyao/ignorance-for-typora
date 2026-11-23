@@ -1,5 +1,6 @@
 const sdk = window.typora.view;
 const output = document.querySelector("#output");
+const isFenceResults = output.hasAttribute("data-fence-results");
 const SVG = "http://www.w3.org/2000/svg";
 let rawSource = "";
 let latest;
@@ -23,7 +24,7 @@ function pathValue(text, path) {
   button.addEventListener("click", () => {
     value.hidden = !value.hidden;
     button.setAttribute("aria-expanded", String(!value.hidden));
-    if (sdk.kind === "fence") sdk.autoHeight();
+    if (isFenceResults) sdk.autoHeight();
   });
   display.append(button, value);
   return display;
@@ -100,7 +101,7 @@ function render(model) {
       output.append(group);
     }
   }
-  if (sdk.kind === "fence") sdk.autoHeight();
+  if (isFenceResults) sdk.autoHeight();
 }
 
 function snapshotRows(model) {
@@ -166,13 +167,16 @@ function svgSnapshot(model) {
   return { svg: new XMLSerializer().serializeToString(svg) };
 }
 
-if (sdk.kind === "fence") {
+if (isFenceResults) {
   sdk.onMessage((model) => {
     latest = model;
     render(model);
     if (model.message !== "正在建立索引") resolveFirst();
   });
-  sdk.onOpen(({ source }) => { rawSource = source; });
+  sdk.onOpen(({ source }) => {
+    rawSource = source;
+    sdk.postMessage("ready");
+  });
   sdk.onTheme(() => { if (latest?.chart) render(latest); });
   sdk.onSnapshot(async () => {
     if (!latest || latest.message === "正在建立索引") {
@@ -185,5 +189,12 @@ if (sdk.kind === "fence") {
     }
     return svgSnapshot(latest);
   });
-  sdk.postMessage("ready");
+  const refreshVisible = () => {
+    if (!document.hidden) sdk.postMessage("refresh");
+  };
+  const retry = setInterval(refreshVisible, 250);
+  document.addEventListener("visibilitychange", refreshVisible);
+  window.addEventListener("pagehide", ({ persisted }) => {
+    if (!persisted) clearInterval(retry);
+  });
 }

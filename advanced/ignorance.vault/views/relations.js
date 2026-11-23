@@ -40,10 +40,11 @@ async function readRelations() {
   if (!context) return;
   const stored = (await sdk.storage.get("detail-contexts"))?.[context];
   if (context !== currentContext) return;
-  const signature = JSON.stringify(stored?.relations ?? stored?.status ?? null);
+  const signature = JSON.stringify(stored?.relations ?? stored?.message ?? stored?.status ?? null);
   if (signature === shownSnapshot) return;
   shownSnapshot = signature;
-  if (!stored || stored.status === "indexing") output.textContent = "正在建立索引";
+  if (stored?.message) output.textContent = stored.message;
+  else if (!stored || stored.status === "indexing") output.textContent = "正在建立索引";
   else if (stored.status === "no-workspace") output.textContent = "请先打开工作区文件夹";
   else showRelations(stored.relations);
 }

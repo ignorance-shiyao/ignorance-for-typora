@@ -49,10 +49,15 @@ export function createReview(api, index, subscriptions) {
     if (polling || disposed) return;
     polling = true;
     try {
-      const keys = (await api.storage.keys()).filter((key) => key.startsWith(REQUEST_PREFIX)).slice(0, REQUESTS_PER_TICK);
+      const keys = (await api.storage.keys()).filter((key) => key.startsWith(REQUEST_PREFIX));
       if (!keys.length) return;
       const state = await index.state();
+      let handled = 0;
       for (const key of keys) {
+        if (handled >= REQUESTS_PER_TICK) break;
+        const queued = await api.storage.get(key);
+        if (!queued) continue;
+        if (Date.now() - queued.at <= TIMEOUT && (state.status !== "ready" || state.scope !== queued.scope)) continue;
         await api.runtime.lock(key, async () => {
           const request = await api.storage.get(key);
           if (!request || Date.now() - request.at > TIMEOUT) {
@@ -60,6 +65,7 @@ export function createReview(api, index, subscriptions) {
             return;
           }
           if (state.status !== "ready" || state.scope !== request.scope) return;
+          handled++;
           const error = await score(state, request);
           await api.storage.update(RESPONSE_KEY, (previous) => {
             const active = Object.entries(previous ?? {}).filter(([id, item]) => id !== key && Date.now() - item.at < TIMEOUT).slice(-15);

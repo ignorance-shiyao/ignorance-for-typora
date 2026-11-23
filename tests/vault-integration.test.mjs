@@ -24,13 +24,14 @@ test("runs the Vault Worker entry from indexing through query, search and review
   const root = "/验收";
   const path = root + "/项目/星河.md";
   const noop = () => ({ dispose() {} });
-  const inputs = { reads: 0, writes: 0 };
+  const notices = [];
+  const inputs = { reads: 0, writes: 0, blockId: "first-block" };
   const api = {
     settings: { get: (key) => key ? settings[key] : settings, onDidChange: noop },
     workspace: { folders: () => [root], listFiles: () => [path], readFile: () => { inputs.reads++; return original; } },
     editor: { getMarkdown: () => original, replaceDocument: () => { inputs.writes++; } },
     document: {
-      info: () => ({ path }), getBlocks: () => [{ id: "first-block", type: "heading" }], onDidChange: noop,
+      info: () => ({ path }), getBlocks: () => [{ id: inputs.blockId, type: "heading" }], onDidChange: noop,
     },
     views: { registerFenceResolver: (id, value) => { resolvers.set(id, value); return noop(); } },
     commands: { register: (id, value) => { commands.set(id, value); return noop(); } },
@@ -58,7 +59,7 @@ test("runs the Vault Worker entry from indexing through query, search and review
       locks.set(key, result.catch(() => {}));
       return result;
     } },
-    ui: { toast: async () => {} },
+    ui: { toast: async (notice) => { notices.push(notice); } },
   };
   const originalTypora = globalThis.typora;
   globalThis.typora = api;
@@ -73,15 +74,12 @@ test("runs the Vault Worker entry from indexing through query, search and review
   assert.equal(inputs.reads, 1);
 
   let onReady;
-  let onDispose;
   let model;
   const panel = {
     postMessage: (next) => { model = next; },
     onMessage: (callback) => { onReady = callback; },
-    onDidDispose: (callback) => { onDispose = callback; },
   };
   resolvers.get("query").resolve({ source: "fields: 文件, owner" }, panel);
-  t.after(onDispose);
   onReady("ready");
   await until(() => model?.count);
   assert.deepEqual(model.groups[0].rows[0].cells, ["星河", "甲"]);
@@ -102,4 +100,12 @@ test("runs the Vault Worker entry from indexing through query, search and review
   assert.equal(result.results[0].name, "星河");
   assert.ok(result.results[0].snippet.some(({ match }) => match));
   assert.ok(commands.has("rebuild-index"));
+
+  // Typora can replace the leading block ID while the computed data stays identical.
+  inputs.blockId = "replacement-block";
+  await commands.get("rebuild-index")();
+  assert.ok(notices.some((notice) => notice.includes("复用 1 个文件的解析缓存")));
+  const replacement = await until(() => keyValues.get("detail-contexts")?.["replacement-block"]?.review);
+  assert.equal(replacement.reviewedToday, 1);
+  assert.equal(replacement.next, null);
 });

@@ -7,6 +7,8 @@ export function createIndex(api) {
   const memory = new Map();
   const persisted = new Map();
   const listeners = new Set();
+  const failed = new Set();
+  const recordLists = new WeakMap();
 
   function exclusions() {
     return String(api.settings.get("excludeFolders") ?? "").split(/[,，\n]/);
@@ -17,8 +19,10 @@ export function createIndex(api) {
   }
 
   async function readSnapshot(key) {
-    if (memory.has(key)) return memory.get(key);
     const revision = await api.storage.get(key + "-revision");
+    const local = memory.get(key);
+    if (local && local.baseRevision === revision) return local.data;
+    memory.delete(key);
     const cached = persisted.get(key);
     if (revision && cached?.revision === revision) return cached;
     const data = await loadIndex(api.storage, key);
@@ -27,25 +31,35 @@ export function createIndex(api) {
   }
 
   async function writeSnapshot(key, data) {
-    memory.set(key, data);
+    const baseRevision = await api.storage.get(key + "-revision");
+    memory.set(key, { data, baseRevision });
     await saveIndex(api.storage, key, data);
     await api.storage.set(key + "-revision", data.revision);
     persisted.set(key, data);
     memory.delete(key);
   }
 
-  async function rebuild({ announce = false } = {}) {
+  async function rebuild({ announce = false, expectedScope } = {}) {
     const root = (await api.workspace.folders())[0];
     if (!root) {
+      if (expectedScope) throw new Error("工作区已切换，请再次刷新");
       if (announce) await api.ui.toast("请先打开工作区文件夹");
       return;
     }
     const key = await cacheFile(root);
+    if (expectedScope && key !== expectedScope) throw new Error("工作区已切换，请再次刷新");
     if (inFlight.has(key)) return inFlight.get(key);
+    failed.delete(key);
     const pending = api.runtime.lock(key, async () => {
       const started = performance.now();
       const excluded = exclusions();
-      const old = await readSnapshot(key);
+      let old;
+      let cacheReadError;
+      try {
+        old = await readSnapshot(key);
+      } catch (error) {
+        cacheReadError = error.message;
+      }
       const result = await scanNotes(api.workspace, root, old, { exclude: excluded });
       result.excluded = excluded;
       result.revision = globalThis.crypto.randomUUID();
@@ -61,9 +75,14 @@ export function createIndex(api) {
       if (result.depthLimit) notices.push("已达到 Typora 的 8 层目录扫描范围");
       else if (announce) notices.push("Typora 最多读取 8 层目录");
       if (result.unreadable.length) notices.push(`${result.unreadable.length} 个文件读取失败`);
+      if (cacheReadError) notices.push(`缓存无法读取，已重新扫描：${cacheReadError}`);
       if (cacheError) notices.push(`缓存未写入：${cacheError}`);
+      if (announce) notices.push(`复用 ${result.reused} 个文件的解析缓存`);
       if (announce || notices.length > 1) await api.ui.toast(notices.join("。"));
       return result;
+    }).catch((error) => {
+      failed.add(key);
+      throw error;
     }).finally(() => {
       inFlight.delete(key);
       notify();
@@ -77,12 +96,19 @@ export function createIndex(api) {
     if (!root) return { status: "no-workspace", records: [] };
     const key = await cacheFile(root);
     if (inFlight.has(key)) return { status: "indexing", records: [] };
-    const existing = await readSnapshot(key);
+    // An unreadable cache can be reconstructed from the workspace.
+    const existing = await readSnapshot(key).catch(() => undefined);
     if (!existing || JSON.stringify(existing.excluded) !== JSON.stringify(exclusions())) {
-      void rebuild().catch((error) => api.ui.toast(`无法建立索引：${error.message}`));
+      if (failed.has(key)) return { status: "error", records: [], message: "工作区索引失败，请执行「重建索引」" };
+      void rebuild({ announce: !existing }).catch((error) => api.ui.toast(`无法建立索引：${error.message}`));
       return { status: "indexing", records: [] };
     }
-    return { status: "ready", root, scope: key, revision: existing.revision, records: existing.entries.map(({ note, live }) => live ?? note) };
+    let records = recordLists.get(existing);
+    if (!records) {
+      records = existing.entries.map(({ note, live }) => live ?? note);
+      recordLists.set(existing, records);
+    }
+    return { status: "ready", root, scope: key, revision: existing.revision, records };
   }
 
   async function updateCurrent() {
@@ -98,8 +124,9 @@ export function createIndex(api) {
     await api.runtime.lock(key, async () => {
       const existing = await readSnapshot(key);
       if (!existing) return;
-      const entry = existing.entries.find((item) => item.note.path === path);
-      if (!entry) return;
+      const position = existing.entries.findIndex((item) => item.note.path === path);
+      if (position < 0) return;
+      const entry = { ...existing.entries[position] };
       if (digest === entry.hash) {
         if (!entry.live) return;
         delete entry.live;
@@ -109,11 +136,13 @@ export function createIndex(api) {
         entry.live = parseVaultNote(path, markdown);
         entry.liveHash = digest;
       }
-      existing.revision = globalThis.crypto.randomUUID();
+      const entries = [...existing.entries];
+      entries[position] = entry;
+      const updated = { ...existing, entries, revision: globalThis.crypto.randomUUID() };
       try {
-        await writeSnapshot(key, existing);
-      } catch {
-        memory.set(key, existing);
+        await writeSnapshot(key, updated);
+      } catch (error) {
+        await api.ui.toast(`索引缓存未写入：${error.message}`);
       }
     });
     notify();
