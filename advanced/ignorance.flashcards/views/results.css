@@ -1,0 +1,26 @@
+:root {
+  color: var(--typora-foreground);
+  background: var(--typora-background);
+  font: 14px/1.55 system-ui, sans-serif;
+}
+body { margin: 0; }
+main { padding: 8px; overflow-x: auto; }
+section + section { margin-top: 16px; }
+h3 { font-size: 1em; margin: 0 0 4px; }
+p { margin: 0; }
+ul { padding-inline-start: 1.4em; margin: 4px 0; }
+button {
+  color: var(--typora-accent);
+  background: transparent;
+  border: 0;
+  padding: 0;
+  text-align: left;
+  font: inherit;
+  text-decoration: underline;
+  cursor: pointer;
+}
+.file-path { display: block; overflow-wrap: anywhere; user-select: text; }
+.file-path[hidden] { display: none; }
+.review-text { white-space: pre-wrap; overflow-wrap: anywhere; margin: 8px 0; }
+.review-actions { display: flex; flex-wrap: wrap; gap: 12px; margin: 8px 0; }
+button:disabled { opacity: .55; cursor: default; }

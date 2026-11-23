@@ -1627,3 +1627,9 @@ ok 228 - theme hides the suffix and colors the previous element
 
 - 可验收。独立商店包位于 `advanced/ignorance.backlinks/`，由关系侧栏首次使用触发索引。第 10 项六行已在 Typora 实测，见实测记录 S5。
 - `npm test` 输出 `tests 236 / pass 236 / fail 0`，含 `vault-relations.test.mjs`、商店约束及 X4 一致性。商店构建后 `diff -qr` 无输出。
+
+## S6 间隔复习卡片
+
+- 可验收。独立商店包位于 `advanced/ignorance.flashcards/`，复习侧栏首次打开时建立卡片索引，定时提醒不会触发首次扫描。
+- `npm test` 输出 `tests 237 / pass 237 / fail 0`，包含 SM-2、去重评分、旧记录清理、商店约束和 X4 一致性。商店构建后 `diff -qr` 无输出。
+- 第 11 项六行已在 Typora 2.0.0-beta1 实测。R4 后半五轮双窗口提交均在 1 秒内完成，每轮已复习数只增加 1。详见实测记录 S6。

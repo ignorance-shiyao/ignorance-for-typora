@@ -92,7 +92,7 @@ export function createIndex(api, fields) {
     return pending;
   }
 
-  async function state() {
+  async function state({ start = true } = {}) {
     const root = (await api.workspace.folders())[0];
     if (!root) return { status: "no-workspace", records: [] };
     const key = await cacheFile(root);
@@ -100,6 +100,7 @@ export function createIndex(api, fields) {
     // An unreadable cache can be reconstructed from the workspace.
     const existing = await readSnapshot(key).catch(() => undefined);
     if (!existing || existing.fieldKey !== fieldKey || JSON.stringify(existing.excluded) !== JSON.stringify(exclusions())) {
+      if (!start) return { status: "idle", records: [] };
       if (failed.has(key)) return { status: "error", records: [], message: "工作区索引失败，请执行「重建索引」" };
       void rebuild({ announce: !existing }).catch((error) => api.ui.toast(`无法建立索引：${error.message}`));
       return { status: "indexing", records: [] };

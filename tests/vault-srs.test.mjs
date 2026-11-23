@@ -1,7 +1,7 @@
 import { test } from "node:test";
 import assert from "node:assert/strict";
-import { parseVaultNote } from "../advanced/ignorance.vault/index/parse.js";
-import { buildCards, noteCards, reviewQueue, recordRating, scheduleCard, pruneReviews } from "../advanced/ignorance.vault/index/review.js";
+import { parseVaultNote } from "../advanced/ignorance.flashcards/core/parse.js";
+import { buildCards, noteCards, reviewQueue, recordRating, scheduleCard, pruneReviews } from "../advanced/ignorance.flashcards/index/review.js";
 
 test("recognizes three card formats and distinguishes matching questions by path", async () => {
   const source = "要点 :: 答案\n\n为何？\n?\n因为甲\n还有乙\n\n核对 ==答案== #flashcard\n\n```md\n伪造 :: 忽略\n```";

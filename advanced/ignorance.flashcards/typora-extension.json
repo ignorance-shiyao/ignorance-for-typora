@@ -1,0 +1,56 @@
+{
+  "id": "ignorance.flashcards",
+  "name": "Ignorance Flashcards",
+  "version": "0.1.0",
+  "description": "识别笔记里的卡片并安排间隔复习。",
+  "author": "Ignorance",
+  "tags": [
+    "Markdown Extension",
+    "Productivity",
+    "Detail View"
+  ],
+  "engines": {
+    "typora": ">=2.0.0"
+  },
+  "main": "main.js",
+  "activationEvents": [
+    "onStartupFinished",
+    "onCommand:rebuild-flashcards"
+  ],
+  "permissions": {
+    "workspace": "read",
+    "document": "read"
+  },
+  "contributes": {
+    "detailViews": [
+      {
+        "id": "review",
+        "title": "复习",
+        "icon": "layers",
+        "entry": "views/review.html"
+      }
+    ],
+    "configuration": {
+      "title": "Ignorance Flashcards",
+      "properties": {
+        "excludeFolders": {
+          "type": "string",
+          "title": "排除目录",
+          "default": "templates/, archive/"
+        },
+        "reviewReminders": {
+          "type": "boolean",
+          "title": "提醒复习到期卡片",
+          "default": true
+        }
+      }
+    },
+    "commands": [
+      {
+        "id": "rebuild-flashcards",
+        "title": "重建卡片索引",
+        "category": "复习"
+      }
+    ]
+  }
+}
