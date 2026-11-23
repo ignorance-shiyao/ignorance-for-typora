@@ -1,0 +1,103 @@
+{
+  "id": "ignorance.md-lint",
+  "name": "Ignorance Markdown Lint",
+  "version": "0.1.0",
+  "description": "手动整理 Markdown：标题层级、列表、空白、中文标点、中英文间距和斜体标记。",
+  "author": "ignorance-shiyao",
+  "repository": "https://github.com/ignorance-shiyao/ignorance-for-typora",
+  "engines": {
+    "typora": ">=2.0.0"
+  },
+  "keywords": [
+    "markdown",
+    "lint",
+    "cjk",
+    "chinese"
+  ],
+  "tags": [
+    "Markdown Extension",
+    "Writing"
+  ],
+  "main": "main.js",
+  "activationEvents": [
+    "onStartupFinished"
+  ],
+  "contributes": {
+    "configuration": {
+      "title": "Ignorance Markdown Lint",
+      "properties": {
+        "lintHeadings": {
+          "type": "boolean",
+          "default": true,
+          "title": "整理标题层级与空行"
+        },
+        "lintBullets": {
+          "type": "boolean",
+          "default": true,
+          "title": "列表符号统一"
+        },
+        "lintNumbering": {
+          "type": "boolean",
+          "default": true,
+          "title": "有序列表重新编号"
+        },
+        "lintBlankLines": {
+          "type": "boolean",
+          "default": true,
+          "title": "合并连续空行"
+        },
+        "lintTrailingSpaces": {
+          "type": "boolean",
+          "default": true,
+          "title": "删除行尾空白"
+        },
+        "lintHardBreaks": {
+          "type": "boolean",
+          "default": true,
+          "title": "保留 Markdown 硬换行",
+          "when": {
+            "lintTrailingSpaces": true
+          }
+        },
+        "lintFinalNewline": {
+          "type": "boolean",
+          "default": true,
+          "title": "文件末尾保留一个换行"
+        },
+        "lintPunctuation": {
+          "type": "boolean",
+          "default": true,
+          "title": "中文标点全角化"
+        },
+        "lintCjkSpacing": {
+          "type": "boolean",
+          "default": true,
+          "title": "中英文之间加空格"
+        },
+        "lintEmphasis": {
+          "type": "boolean",
+          "default": true,
+          "title": "统一斜体标记"
+        },
+        "lintIndent": {
+          "type": "number",
+          "default": 2,
+          "enum": [
+            0,
+            2,
+            4
+          ],
+          "enumLabels": [
+            "保留原样",
+            "2 空格",
+            "4 空格"
+          ],
+          "title": "列表缩进"
+        }
+      }
+    }
+  },
+  "permissions": {
+    "document": "write"
+  }
+}
