@@ -160,7 +160,7 @@ function drawRegions(graph, groups, unit) {
     if (nodes.length < REGION_MIN_NODES) continue;
     const index = groups.get(name) ?? 0;
     const size = Math.min(17, 11 + Math.sqrt(nodes.length) * 0.4) * unit;
-    layer.append(make("text", { class: `graph-region g${index}`, x: middle(nodes.map((node) => node.x)), y: [...nodes.map((node) => node.y)].sort((a, b) => a - b)[Math.floor(nodes.length * 0.04)] - size * 0.8, "font-size": size, "text-anchor": "middle", "stroke-width": 3 * unit }, name || "根目录"));
+    layer.append(make("text", { class: `graph-region g${index}`, x: middle(nodes.map((node) => node.x)), y: [...nodes.map((node) => node.y)].sort((a, b) => a - b)[Math.floor(nodes.length * 0.04)] - size * 0.8, "font-size": size, "text-anchor": "middle", "stroke-width": 6 * unit }, name || "根目录"));
   }
   svg.append(layer);
 }
@@ -272,8 +272,8 @@ function draw() {
     taken.push(box);
     labelLayer.append(pill(x, node.y, node.name, labelSize, unit, dimmed ? "graph-dim" : "", { strong }));
   }
-  if (state.grouped && dense) drawRegions(graph, groups, unit);
   svg.append(nodeLayer);
+  if (state.grouped && dense) drawRegions(graph, groups, unit);
   svg.append(labelLayer);
   countLine.textContent = `${graph.nodes.length} 笔记 · ${graph.edges.length} 链接`;
   drawLegend(graph, groups);
