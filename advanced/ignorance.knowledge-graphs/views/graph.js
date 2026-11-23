@@ -156,11 +156,19 @@ function drawRegions(graph, groups, unit) {
     members.get(node.group).push(node);
   }
   const middle = (values) => [...values].sort((a, b) => a - b)[Math.floor(values.length / 2)];
-  for (const [name, nodes] of members) {
-    if (nodes.length < REGION_MIN_NODES) continue;
+  const placed = [];
+  const regions = [...members].filter(([, nodes]) => nodes.length >= REGION_MIN_NODES).sort((a, b) => b[1].length - a[1].length);
+  for (const [name, nodes] of regions) {
     const index = groups.get(name) ?? 0;
     const size = Math.min(17, 11 + Math.sqrt(nodes.length) * 0.4) * unit;
-    layer.append(make("text", { class: `graph-region g${index}`, x: middle(nodes.map((node) => node.x)), y: [...nodes.map((node) => node.y)].sort((a, b) => a - b)[Math.floor(nodes.length * 0.04)] - size * 0.8, "font-size": size, "text-anchor": "middle", "stroke-width": 6 * unit }, name || "根目录"));
+    const label = name || "根目录";
+    const width = textUnits(label) * size;
+    const x = middle(nodes.map((node) => node.x));
+    let y = [...nodes.map((node) => node.y)].sort((a, b) => a - b)[Math.floor(nodes.length * 0.04)] - size * 0.8;
+    const clash = () => placed.some((box) => Math.abs(box.x - x) < (box.width + width) / 2 && Math.abs(box.y - y) < size * 1.1);
+    for (let step = 0; step < 8 && clash(); step++) y -= size * 1.1;
+    placed.push({ x, y, width });
+    layer.append(make("text", { class: `graph-region g${index}`, x, y, "font-size": size, "text-anchor": "middle", "stroke-width": 6 * unit }, label));
   }
   svg.append(layer);
 }
