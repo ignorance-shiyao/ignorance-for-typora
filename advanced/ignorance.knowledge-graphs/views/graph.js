@@ -138,20 +138,23 @@ function drawHulls(graph, groups, unit) {
   const labels = [];
   for (const [name, nodes] of [...members].sort((a, b) => b[1].length - a[1].length)) {
     if (nodes.length < 2) continue;
-    const pad = 20 * unit;
-    const left = Math.min(...nodes.map((node) => node.x)) - pad;
-    const right = Math.max(...nodes.map((node) => node.x)) + pad;
-    const top = Math.min(...nodes.map((node) => node.y)) - pad - 8 * unit;
-    const bottom = Math.max(...nodes.map((node) => node.y)) + pad;
+    const pad = 18 * unit;
+    const xs = nodes.map((node) => node.x);
+    const ys = nodes.map((node) => node.y);
+    const cx = (Math.min(...xs) + Math.max(...xs)) / 2;
+    const cy = (Math.min(...ys) + Math.max(...ys)) / 2;
+    // An ellipse through the corners of the bounding box would cover a lot of empty space, so 1.2 of the half extent plus padding.
+    const rx = ((Math.max(...xs) - Math.min(...xs)) / 2) * 1.2 + pad;
+    const ry = ((Math.max(...ys) - Math.min(...ys)) / 2) * 1.2 + pad;
     const index = groups.get(name) ?? 0;
     const box = make("g", { class: `graph-hull g${index}` });
-    box.append(make("rect", { class: "graph-hull-box", x: left, y: top, width: right - left, height: bottom - top, rx: 12 * unit, "stroke-width": unit, "stroke-dasharray": `${4 * unit} ${4 * unit}` }));
+    box.append(make("ellipse", { class: "graph-hull-box", cx, cy, rx, ry, "stroke-width": unit, "stroke-dasharray": `${4 * unit} ${4 * unit}` }));
     const text = name || "根目录";
     const labelWidth = textUnits(text) * 11 * unit + 10 * unit;
-    const x = (left + right) / 2 - labelWidth / 2;
-    let y = top;
-    // Boxes of different folders overlap in a local graph, so push a name down until it clears the others.
-    while (labels.some((other) => x < other.x + other.width && x + labelWidth > other.x && Math.abs(y - other.y) < 16 * unit) && y < bottom - 8 * unit) y += 16 * unit;
+    const x = cx - labelWidth / 2;
+    let y = cy - ry;
+    // Ellipses of different folders overlap in a local graph, so push a name down until it clears the others.
+    while (labels.some((other) => x < other.x + other.width && x + labelWidth > other.x && Math.abs(y - other.y) < 16 * unit) && y < cy) y += 16 * unit;
     labels.push({ x, y, width: labelWidth });
     box.append(pill(x, y, text, 11 * unit, unit, "graph-hull-label"));
     layer.append(box);
