@@ -1,0 +1,106 @@
+{
+  "id": "ignorance.outliner",
+  "name": "Ignorance Outliner",
+  "version": "0.1.0",
+  "description": "列表项上移、下移、提升、降低，文本与列表、标题互转，侧栏查看列表分支。",
+  "author": "ignorance-shiyao",
+  "repository": "https://github.com/ignorance-shiyao/ignorance-for-typora",
+  "engines": {
+    "typora": ">=2.0.0"
+  },
+  "keywords": [
+    "outline",
+    "list",
+    "outliner"
+  ],
+  "tags": [
+    "Markdown Extension",
+    "Writing",
+    "Detail View"
+  ],
+  "main": "main.js",
+  "activationEvents": [
+    "onStartupFinished",
+    "onCommand:outline-up",
+    "onCommand:outline-down",
+    "onCommand:outline-promote",
+    "onCommand:outline-demote",
+    "onCommand:outline-branch",
+    "onCommand:outline-depth",
+    "onCommand:outline-to-list",
+    "onCommand:outline-to-headings"
+  ],
+  "contributes": {
+    "commands": [
+      {
+        "id": "outline-up",
+        "title": "上移列表项",
+        "category": "列表"
+      },
+      {
+        "id": "outline-down",
+        "title": "下移列表项",
+        "category": "列表"
+      },
+      {
+        "id": "outline-promote",
+        "title": "提升列表层级",
+        "category": "列表"
+      },
+      {
+        "id": "outline-demote",
+        "title": "降低列表层级",
+        "category": "列表"
+      },
+      {
+        "id": "outline-branch",
+        "title": "查看列表分支",
+        "category": "列表"
+      },
+      {
+        "id": "outline-depth",
+        "title": "查看列表前几层",
+        "category": "列表"
+      },
+      {
+        "id": "outline-to-list",
+        "title": "将选中文本转换为列表",
+        "category": "列表"
+      },
+      {
+        "id": "outline-to-headings",
+        "title": "将选中列表转换为标题",
+        "category": "列表"
+      }
+    ],
+    "keyBindings": [
+      {
+        "command": "outline-up",
+        "key": "Mod+Shift+F7"
+      },
+      {
+        "command": "outline-down",
+        "key": "Mod+Shift+F8"
+      },
+      {
+        "command": "outline-promote",
+        "key": "Mod+Shift+F9"
+      },
+      {
+        "command": "outline-demote",
+        "key": "Mod+Shift+F10"
+      }
+    ],
+    "detailViews": [
+      {
+        "id": "outline-list",
+        "title": "列表大纲",
+        "icon": "list",
+        "entry": "outline/index.html"
+      }
+    ]
+  },
+  "permissions": {
+    "document": "write"
+  }
+}
