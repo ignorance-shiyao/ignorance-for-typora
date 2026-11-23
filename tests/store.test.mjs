@@ -13,9 +13,8 @@ const ID = /^[a-z0-9][a-z0-9-]*(\.[a-z0-9][a-z0-9-]*)+$/;
 const SEMVER = /^\d+\.\d+\.\d+([-+].*)?$/;
 const TAGS = ["Language Pack", "Markdown Extension", "Diagram", "Math", "Theme", "Writing", "Template", "AI", "Media", "Image Uploader", "Export", "Publish", "Data Sync", "Productivity", "File Viewer", "Detail View", "Developer"];
 
-// Extensions that are meant for the store. ignorance.advanced is local only: its vendored
-// ECharts is over the 1 MB file limit and the package is over 5 MB.
-const STORE_READY = ["ignorance.file-viewers", "ignorance.advanced"];
+// Extensions assembled by the store build.
+const STORE_READY = ["ignorance.file-viewers", "ignorance.advanced", "ignorance.vault"];
 const all = readdirSync(ROOT, { withFileTypes: true }).filter((e) => e.isDirectory()).map((e) => e.name);
 const manifestOf = (id) => JSON.parse(readFileSync(join(ROOT, id, "typora-extension.json"), "utf8"));
 
